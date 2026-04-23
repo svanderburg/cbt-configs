@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=docbook
+version=4.2
+group=Libraries/Docbook
+license=MIT
+description="Docbook SGML DTD 4.2"
+src="d/docbook/$name-$version.zip"
+workDir=docbook
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains document type definitions for verification of SGML data
+files against version 4.2 of the DocBook rule set.
+EOF
+}
+
+unpackPhase()
+{
+    mkdir docbook
+    cd docbook
+    unzip "$sourcesDir/$src"
+    cd ..
+}
+
+buildPhase()
+{
+    cp docbook.cat docbook.cat.orig
+    sed -e '/ISO 8879/d' docbook.cat.orig > docbook.cat
+    cp docbook.cat docbook.cat.orig
+    sed -e '/gml/d' docbook.cat.orig > docbook.cat
+}
+
+installPhase()
+{
+    install -d /usr/share/sgml/docbook/sgml-dtd-$version
+
+    chown -R root:root .
+    chmod -R 755 .
+
+    install docbook.cat /usr/share/sgml/docbook/sgml-dtd-$version/catalog
+    cp -af *.dtd *.mod *.dcl /usr/share/sgml/docbook/sgml-dtd-$version
+}
+
+postConfigurePhase()
+{
+    install-catalog --add /etc/sgml/sgml-docbook-dtd-$version.cat \
+      /usr/share/sgml/docbook/sgml-dtd-$version/catalog
+    install-catalog --add /etc/sgml/sgml-docbook-dtd-$version.cat \
+      /etc/sgml/sgml-docbook.cat
+
+    cat >> /usr/share/sgml/docbook/sgml-dtd-$version/catalog << "EOF"
+ -- Begin Single Major Version catalog changes --
+
+PUBLIC "-//OASIS//DTD DocBook V4.1//EN" "docbook.dtd"
+PUBLIC "-//OASIS//DTD DocBook V4.0//EN" "docbook.dtd"
+
+ -- End Single Major Version catalog changes --
+EOF
+}

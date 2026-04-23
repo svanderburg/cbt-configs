@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cdrtools
+version=2.01
+group=Hardware
+license=GPLv2
+description="Tools for CD Recordables"
+src="c/cdrtools/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The cdrtools package contains CD recording utilities. These are useful for
+reading, creating or writing (burning) Compact Discs.
+EOF
+}
+
+buildPhase()
+{
+    make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root
+}
+
+installPhase()
+{
+    make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root install
+}

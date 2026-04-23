@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/bzip2
+
+group=lfs-stage2
+
+buildPhase()
+{
+    make -f Makefile-libbz2_so
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    rm -f /usr/bin/bz* /bin/bz* # Added to allow a second install with checkinstall
+    make PREFIX=/usr install
+    cp bzip2-shared /bin/bzip2
+    ln -sf libbz2.so.1.0 libbz2.so
+    cp -a libbz2.so* /lib
+    cd /usr/lib
+    ln -sf ../../lib/libbz2.so
+    cd /usr/bin
+    rm bunzip2 bzcat bzip2
+    #rm /bin/bzless /bin/bzmore (not required, because previous version is in /stage1)
+    mv bzip2recover bzless bzmore /bin
+    cd /bin
+    ln -sf bzip2 bunzip2
+    ln -sf bzip2 bzcat
+}

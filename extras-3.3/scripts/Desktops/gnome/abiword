@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=abiword
+version=1.0.7
+group=Desktops/gnome
+license=GPLv2
+description="Abiword word processor"
+src="a/abiword/$name-$version.tar.gz"
+workDir=$name-$version/abi
+
+showLongDescription()
+{
+    cat << "EOF"
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-gnome
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/gnome/share/gnome/apps ]
+    then
+        mkdir -p /opt/gnome/share/gnome/apps/Applications
+        cp src/pkg/linux/rpm/data/abiword.desktop /opt/gnome/share/gnome/apps/Applications
+    fi
+
+    if [ -d /opt/kde/share/applnk ]
+    then
+        mkdir -p /opt/kde/share/applnk/Office
+        cp src/pkg/linux/rpm/data/abiword.desktop /opt/kde/share/applnk/Office
+    fi
+}

@@ -1,0 +1,6 @@
+#!/bin/bash --login
+
+# Description: Xsession
+
+source /usr/share/ul/ul-xsession/common
+exec xsm

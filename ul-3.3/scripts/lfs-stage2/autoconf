@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=autoconf
+version=2.53
+group=lfs-stage2
+description="GNU Autoconf"
+license=GPLv2
+src="a/autoconf/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Autoconf is an extensible package of M4 macros that produce shell scripts to
+automatically configure software source code packages. These scripts can adapt
+the packages to many kinds of UNIX-like systems without manual user
+intervention.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

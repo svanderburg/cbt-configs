@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=rcs
+version=5.7
+group=Tools/Development
+license=GPLv2
+description="Revision Control System"
+src="r/rcs/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Revision Control System (RCS) manages multiple revisions of files. RCS
+automates the storing, retrieval, logging, identification and merging of
+revisions. RCS is useful for text that is revised frequently, including source
+code, programs, documentation, graphics, papers, and form letters.
+
+RCS design is an improvement from its predecessor Source Code Control System
+(SCCS).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

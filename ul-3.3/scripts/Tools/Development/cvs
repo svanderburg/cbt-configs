@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cvs
+version=1.11.5
+group=Tools/Development
+license=GPLv2
+description="Concurrent Versioning System"
+src="c/cvs/$name-$version.tar.gz"
+patches=("c/cvs/$name-$version-zlib.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+CVS is the concurrent versioning system. This is useful for projects on which
+multiple people are working or where archives of previous versions of files
+need to be kept.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+
+    mkdir -p /etc/xinetd.d
+    cat > /etc/xinetd.d/cvspserver << "EOF"
+service cvspserver
+{
+    port        = 2401
+    socket_type = stream
+    protocol    = tcp
+    wait        = no
+    passenv     = PATH
+    server      = /usr/bin/cvs
+    server_args = -f --alow-root=/cvsroot pserver
+}
+EOF
+}

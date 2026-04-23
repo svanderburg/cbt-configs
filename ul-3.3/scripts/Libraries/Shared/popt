@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=popt
+version=1.7
+group=Libraries/Shared
+license=MIT
+description="Command-line parser library"
+src="p/popt/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides the popt command-line option parsing library. While it is
+similar to getopt, it contains a number of enhancements.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

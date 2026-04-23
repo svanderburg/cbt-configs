@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ppp
+version=2.4.1
+group=Network/Tools
+license=BSD
+description="PPP daemon and chat program"
+src="p/ppp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+ppp is an open source package which implements the Point-to-Point Protocol (PPP)
+on Linux and Solaris systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

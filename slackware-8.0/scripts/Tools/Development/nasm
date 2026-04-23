@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=nasm
+version=0.98.38
+group=Tools/Development
+license=LGPLv2.1
+description="Netwide assembler"
+src="n/nasm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Netwide Assembler (NASM) is an assembler for the x86 CPU architecture portable
+to nearly every modern platform, and with code generation for many platforms old
+and new.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr/local
+    make
+}
+
+installPhase()
+{
+    make install
+}

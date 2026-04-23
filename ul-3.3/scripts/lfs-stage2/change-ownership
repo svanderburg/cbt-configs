@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=change-ownership
+group=lfs-stage2
+description="Change ownership of all files to root"
+
+execute()
+{
+    cd /
+    chown 0.0 . proc
+    chown -R 0.0 bin boot dev etc home lib mnt opt root sbin tmp usr var
+}

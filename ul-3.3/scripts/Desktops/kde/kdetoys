@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdetoys
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE toys"
+src="k/kdetoys/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A number of toy applications for KDE.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

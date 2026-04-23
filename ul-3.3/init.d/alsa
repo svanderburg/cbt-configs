@@ -1,0 +1,53 @@
+#!/bin/sh
+# Begin $rc_base/init.d/alsa
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+# ALSA specific parts by Mark Hymers - markh@linuxfromscratch.org
+# Stores mixer settings in the default location: /etc/asound.state
+# MIDI font setting introduced by Sander van der Burg
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+if [ -f /etc/sysconfig/alsa ]
+then
+    source /etc/sysconfig/alsa
+fi
+
+case "$1" in
+	start)
+		echo "Starting alsa...    Restoring volumes..."
+		loadproc /usr/sbin/alsactl restore
+		
+		if [ "$MIDIFONT" != "" ]
+		then
+		    echo "                    Loading MIDI font..."
+		    loadproc sfxload "$MIDIFONT"
+		fi
+		;;
+
+	stop)
+		echo "Stopping alsa...    Saving volumes......"
+		loadproc /usr/sbin/alsactl store
+
+                if [ "$MIDIFONT" != "" ]
+		then
+		    echo "            Removing MIDI font.........."
+		    loadproc sfxload -i
+		fi
+		;;
+
+	restart)
+		$0 stop
+		/usr/bin/sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/alsa

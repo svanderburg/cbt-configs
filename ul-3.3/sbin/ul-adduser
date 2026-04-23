@@ -1,0 +1,177 @@
+#!/bin/bash -e
+
+queryAvailableShells()
+{
+    availableShells=()
+
+    for shell in /usr/lib/ul-adduser/*
+    do
+        source "$shell"
+        availableShells=("${availableShells[@]}" "$shellPath" "$description" off)
+    done
+}
+
+queryWindowManagers()
+{
+    windowManagers=()
+
+    for wm in /usr/share/ul/ul-xinit/*
+    do
+        source "$wm"
+	local wmName="$(basename "$wm")"
+	local targetLink="$(readlink /etc/X11/xinit/xinitrc)"
+	
+        windowManagers=("${windowManagers[@]}" "$wmName" "$description" off)
+    done
+}
+
+exec 3>&1
+
+set +e
+USERID=$(dialog --backtitle "UL" \
+       --title "Add new user" \
+       --inputbox "Enter user ID. Leave empty for next user ID." 10 50 2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+set +e
+USERNAME=$(dialog --backtitle "UL" \
+       --title "Add new user" \
+       --inputbox "Enter username" 10 50 "user" 2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+set +e
+FULLNAME=$(dialog --backtitle "UL" \
+       --title "Add new user" \
+       --inputbox "Enter full name of the user" 10 50 "User" 2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+set +e
+USERGROUP=$(dialog --backtitle "UL" \
+       --title "Add new user" \
+       --inputbox "Enter user group" 10 50 "users" 2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+queryAvailableShells
+
+set +e
+USERSHELL=$(dialog --backtitle "UL" \
+       --title "Add new user" \
+       --radiolist "Select shell" 20 60 12 \
+       "${availableShells[@]}" \
+       2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+set +e
+dialog --backtitle "UL" \
+       --title "Add new user" \
+       --yesno "Copy contents of template directory\n(/etc/skel) to the homedirectory?" 8 50
+
+if [ $? = 0 ]
+then
+    SKEL=y
+else
+    SKEL=n
+fi
+set -e
+
+queryWindowManagers
+
+set +e
+DESKTOPENV=$(dialog --backtitle "UL" \
+       --title "Add new user" \
+       --radiolist "Select personal desktop environment" 20 50 12 \
+       "${windowManagers[@]}" \
+       2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+( if [ "$USERID" = "" ]
+  then
+      echo "User ID: (next User ID)"
+  else
+      echo "User ID: $USERID"
+  fi
+
+  cat <<EOF
+Username: $USERNAME
+Full name: $FULLNAME
+Usergroup: $USERGROUP
+Shell: $USERSHELL
+Copy files from /etc/skel: $SKEL
+Desktop environment: $DESKTOPENV
+EOF
+) > /tmp/status
+
+dialog --backtitle "UL" \
+       --title "Add new user" \
+       --textbox /tmp/status 20 50
+
+set +e
+dialog --backtitle "UL" \
+       --title "Add new user" \
+       --yesno "Are these settings correct?" 7 40
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    clear
+    echo "Cancelled!"
+    exit 1
+fi
+
+################################################################################
+# Add user                                                                     #
+################################################################################
+
+useradd `[ "$USERID" != "" ] && echo "-u $USERID"` -g "$USERGROUP" \
+        -d "/home/$USERNAME" `[ "$SKEL" = "y" ] && echo "-m"` \
+        -c "$FULLNAME" -s "$USERSHELL" "$USERNAME"
+passwd "$USERNAME"
+
+if [ "$DESKTOPENV" = "(none)" ]
+then
+    rm -f "/home/$USERNAME/.xinitrc"
+    rm -f "/home/$USERNAME/.xsession"
+else
+    cd "/home/$USERNAME"
+    ln -sf "/etc/X11/xinit/xinitrc.$DESKTOPENV" "/home/$USERNAME/.xinitrc"
+    chown "$USERNAME:$USERGROUP" .xinitrc
+    ln -sf .xinitrc "/home/$USERNAME/.xsession"
+    chown "$USERNAME:$USERGROUP" .xsession
+fi

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=groff
+version=1.17.2
+group=lfs-stage2
+description="GNU roff"
+license=GPLv2
+src="g/groff/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+groff (GNU roff) is a typesetting system that reads plain text input that
+includes formatting commands to produce output in PostScript, PDF, HTML, or DVI
+formats or for display to a terminal. Formatting commands can be low-level
+typesetting primitives, macros from a supplied package, or user-defined macros.
+All three approaches can be combined.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    cd /usr/bin
+    ln -sf soelim zsoelim
+    ln -sf eqn geqn
+    ln -sf tbl gtbl
+}

@@ -1,0 +1,234 @@
+#!/bin/bash
+
+# Adds an open port to the firewall configuration
+#
+# Parameters:
+# Protocol - Protocol name (tcp or udp)
+# Port number - (1-65535)
+
+addport()
+{
+    cat <<EOF
+iptables -A INPUT -p $1 --dport $2 -m state --state ESTABLISHED,RELATED,NEW -j ACCEPT
+iptables -A OUTPUT -p $1 --sport $2 -j ACCEPT
+
+EOF
+}
+
+exec 3>&1
+
+set +e
+TYPE=$(dialog --backtitle "UL" \
+       --title "Firewall configuration" \
+       --radiolist "Select firewall type" 20 40 10 \
+           "personal" "Personal firewall" on \
+           "router"   "Masquerading router" off 2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+if [ "$TYPE" = "personal" ]
+then
+    echo "TYPE=personal" > /etc/sysconfig/firewall
+else
+    set +e
+    INTNET=$(dialog --backtitle "`echo $BACKTITLE`" \
+            --title "`echo $TITLE`" \
+            --radiolist "Select internet interface" 20 50 10 \
+               "ppp0"    "First serial modem" off \
+               "eth0"    "First ethernet device" on \
+               "eth1"    "Second ethernet device" off \
+               "(other)" "Other device" off 2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ $exitStatus -ne 0 ]
+    then
+        exit 1
+    fi
+
+    if [ "$INTNET" = "(other)" ]
+    then
+        # Select internet interface
+
+        set +e
+        INTNET=$(dialog --backtitle "UL" \
+                --title "Firewall configuration" \
+                --inputbox "Enter internet interface" 9 40 2>&1 1>&3)
+        exitStatus=$?
+        set -e
+
+        if [ $exitStatus -ne 0 ]
+        then
+            exit 1
+        fi
+    fi
+
+    # Select intranet interface
+
+    set +e
+    ETHNET=$(dialog --backtitle "UL" \
+            --title "Firewall configuration" \
+            --radiolist "Select intranet interface" 20 50 10 \
+               "eth0"    "First ethernet device" on \
+               "eth1"    "Second ethernet device" off \
+               "plip0"   "First laplink device" off \
+               "(other)" "Other device" off 2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ $exitStatus -ne 0 ]
+    then
+        exit 1
+    fi
+
+    if [ "$ETHNET" = "(other)" ]
+    then
+        set +e
+        ETHNET=$(dialog --backtitle "UL" \
+                --title "Firewall configuration" \
+                --inputbox "Enter intranet interface" 9 40 2>&1 1>&3)
+        exitStatus=$?
+        set -e
+
+        if [ $exitStatus -ne 0 ]
+        then
+            exit 1
+        fi
+    fi
+
+    set +e
+    dialog --backtitle "UL" \
+            --title "Firewall configuration" \
+            --yesno "Accept local network\nconnections to router?" 9 40 2>&1 1>&3
+    exitStatus=$?
+    set -e
+
+    if [ $exitStatus -eq 0 ]
+    then
+        ACCEPTLOCALNET="yes"
+    else
+        ACCEPTLOCALNET="no"
+    fi
+
+    set +e
+    dialog --backtitle "UL" \
+            --title "Firewall configuration" \
+            --yesno "Accept filtered internet\nconnections to router?" 9 40 2>&1 1>&3
+    exitStatus=$?
+    set -e
+
+    if [ $? = 0 ]
+    then
+        ACCEPTINTNET="yes"
+
+        set +e
+        openports=$(dialog  --backtitle "UL" \
+                --title "Firewall configuration" \
+                --checklist "Select ports to open\n(input will be filtered)" 20 60 10 \
+                 "ftp"    "FTP, port: 21, protocol: TCP" off \
+                 "ssh"    "SSH/SFTP, port: 22, protocol: TCP" off \
+                 "telnet" "Telnet, port: 23, protocol: TCP" off \
+                 "smtp"   "SMTP, port: 25, protocol: TCP" off \
+                 "dns"    "DNS, port: 42, protocol: TCP" off \
+                 "http"   "HTTP, port: 80, protocol: TCP" off \
+                 "pop3"   "POP3, port: 110, protocol: TCP" off \
+                 "sunrpc" "RPC, port: 111, protocol: TCP" off \
+                 "nntp"   "NNTP, port: 119, protocol: TCP" off \
+                 "irc"    "IRC, port: 194, protocol: TCP" off 2>&1 1>&3)
+        exitStatus=$?
+        set -e
+
+        if [ $exitStatus -ne 0 ]
+        then
+            exit 1
+        fi
+
+        cat > /etc/sysconfig/openports.sh << "EOF"
+#!/bin/bash
+
+EOF
+        case "$openports" in
+            *\"ftp\"*)
+                addport tcp 21 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"ssh\"*)
+                addport tcp 22 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"telnet\"*)
+                addport tcp 23 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"smtp\"*)
+                addport tcp 25 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"dns\"*)
+                addport udp 42 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"http\"*)
+                addport tcp 80 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"pop3\"*)
+                addport tcp 110 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"sunrpc\"*)
+                addport tcp 111 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"sunrpc\"*)
+                addport tcp 119 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"nntp\"*)
+                addport tcp 119 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+        case "$openports" in
+            *\"irc\"*)
+                addport tcp 194 >> /etc/sysconfig/openports.sh
+                ;;
+        esac
+
+    else
+        ACCEPTINTNET="no"
+        rm -f /etc/sysconfig/openports.sh
+    fi
+
+    cat > /etc/sysconfig/firewall <<EOF
+TYPE=$TYPE
+INTNET=$INTNET
+ETHNET=$ETHNET
+ACCEPTLOCALNET=$ACCEPTLOCALNET
+ACCEPTINTNET=$ACCEPTINTNET
+EOF
+
+fi

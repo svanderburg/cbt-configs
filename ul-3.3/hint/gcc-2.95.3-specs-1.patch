@@ -1,0 +1,126 @@
+Submitted By: Sander van der Burg <svanderburg@gmail.com>
+Date: 2026-03-02
+Initial Package Version: 2.95.3
+Upstream Status: Not submitted - LFS Specific
+Origin: Idea originally developed by Ryan Oliver and Greg Schafer for
+        the Pure LFS project.
+Description: This patch modifies the location of the dynamic linker for the
+        gcc pass 2 step in the lfs-3.3-retro.txt hint
+
+diff -Naur gcc-2.95.3/gcc/config/alpha/linux-elf.h gcc-2.95.3-new/gcc/config/alpha/linux-elf.h
+--- gcc-2.95.3/gcc/config/alpha/linux-elf.h	2000-12-18 15:05:58.000000000 +0100
++++ gcc-2.95.3-new/gcc/config/alpha/linux-elf.h	2025-09-07 10:51:51.610449506 +0200
+@@ -31,9 +31,9 @@
+ #define SUB_CPP_PREDEFINES	"-D__ELF__"
+ 
+ #ifdef USE_GNULIBC_1
+-#define ELF_DYNAMIC_LINKER	"/lib/ld.so.1"
++#define ELF_DYNAMIC_LINKER	"/stage1/lib/ld.so.1"
+ #else
+-#define ELF_DYNAMIC_LINKER	"/lib/ld-linux.so.2"
++#define ELF_DYNAMIC_LINKER	"/stage1/lib/ld-linux.so.2"
+ #endif
+ 
+ #ifndef USE_GNULIBC_1
+diff -Naur gcc-2.95.3/gcc/config/arm/linux-elf.h gcc-2.95.3-new/gcc/config/arm/linux-elf.h
+--- gcc-2.95.3/gcc/config/arm/linux-elf.h	2001-01-25 15:03:29.000000000 +0100
++++ gcc-2.95.3-new/gcc/config/arm/linux-elf.h	2025-09-07 10:50:01.569958945 +0200
+@@ -96,7 +96,7 @@
+    %{shared:-shared} \
+    %{symbolic:-Bsymbolic} \
+    %{rdynamic:-export-dynamic} \
+-   %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2} \
++   %{!dynamic-linker:-dynamic-linker /stage1/lib/ld-linux.so.2} \
+    -X \
+    %{mbig-endian:-EB}" \
+    SUBTARGET_EXTRA_LINK_SPEC
+diff -Naur gcc-2.95.3/gcc/config/i386/linux.h gcc-2.95.3-new/gcc/config/i386/linux.h
+--- gcc-2.95.3/gcc/config/i386/linux.h	1999-04-08 02:32:13.000000000 +0200
++++ gcc-2.95.3-new/gcc/config/i386/linux.h	2025-09-07 10:50:10.416999316 +0200
+@@ -204,7 +204,7 @@
+     %{!ibcs: \
+       %{!static: \
+ 	%{rdynamic:-export-dynamic} \
+-	%{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++	%{!dynamic-linker:-dynamic-linker /stage1/lib/ld-linux.so.2}} \
+ 	%{static:-static}}}"
+ #endif
+ 
+diff -Naur gcc-2.95.3/gcc/config/m68k/linux.h gcc-2.95.3-new/gcc/config/m68k/linux.h
+--- gcc-2.95.3/gcc/config/m68k/linux.h	1998-12-16 22:06:47.000000000 +0100
++++ gcc-2.95.3-new/gcc/config/m68k/linux.h	2025-09-07 10:51:40.154399549 +0200
+@@ -174,7 +174,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker*:-dynamic-linker /lib/ld.so.1}} \
++      %{!dynamic-linker*:-dynamic-linker /stage1/lib/ld.so.1}} \
+     %{static}}"
+ #endif
+ 
+diff -Naur gcc-2.95.3/gcc/config/mips/linux.h gcc-2.95.3-new/gcc/config/mips/linux.h
+--- gcc-2.95.3/gcc/config/mips/linux.h	1999-04-14 12:46:45.000000000 +0200
++++ gcc-2.95.3-new/gcc/config/mips/linux.h	2025-09-07 10:51:26.748340778 +0200
+@@ -62,7 +62,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++        %{!dynamic-linker:-dynamic-linker /stage1/lib/ld.so.1}} \
+         %{static:-static}}}"
+ 
+ 
+diff -Naur gcc-2.95.3/gcc/config/rs6000/linux.h gcc-2.95.3-new/gcc/config/rs6000/linux.h
+--- gcc-2.95.3/gcc/config/rs6000/linux.h	2000-12-18 15:05:59.000000000 +0100
++++ gcc-2.95.3-new/gcc/config/rs6000/linux.h	2025-09-07 10:51:33.415370047 +0200
+@@ -40,7 +40,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}} \
++      %{!dynamic-linker:-dynamic-linker /stage1/lib/ld.so.1}} \
+     %{static:-static}}"
+ 
+ #undef	LIB_DEFAULT_SPEC
+diff -Naur gcc-2.95.3/gcc/config/sparc/linux64.h gcc-2.95.3-new/gcc/config/sparc/linux64.h
+--- gcc-2.95.3/gcc/config/sparc/linux64.h	1998-12-16 22:13:13.000000000 +0100
++++ gcc-2.95.3-new/gcc/config/sparc/linux64.h	2025-09-07 10:49:47.119892615 +0200
+@@ -190,7 +190,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /stage1/lib/ld-linux.so.2}} \
+         %{static:-static}}} \
+ "
+ 
+@@ -199,7 +199,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib64/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /stage1/lib64/ld-linux.so.2}} \
+         %{static:-static}}} \
+ "
+ 
+@@ -251,7 +251,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib64/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /stage1/lib64/ld-linux.so.2}} \
+         %{static:-static}}} \
+ %{mlittle-endian:-EL} \
+ "
+diff -Naur gcc-2.95.3/gcc/config/sparc/linux.h gcc-2.95.3-new/gcc/config/sparc/linux.h
+--- gcc-2.95.3/gcc/config/sparc/linux.h	2000-12-18 15:05:59.000000000 +0100
++++ gcc-2.95.3-new/gcc/config/sparc/linux.h	2025-09-07 10:49:23.926785142 +0200
+@@ -177,7 +177,7 @@
+     %{!ibcs: \
+       %{!static: \
+         %{rdynamic:-export-dynamic} \
+-        %{!dynamic-linker:-dynamic-linker /lib/ld-linux.so.2}} \
++        %{!dynamic-linker:-dynamic-linker /stage1/lib/ld-linux.so.2}} \
+         %{static:-static}}}"
+ #endif
+ 

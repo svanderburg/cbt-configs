@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=bug-buddy
+version=2.0.8
+group=Desktops/gnome
+license=GPLv2
+description="GNOME bug buddy"
+src="b/bug-buddy/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+bug-buddy can extract debugging information from a crashed application and
+create either a stacktrace or a minidump file to send to the GNOME
+bug tracker.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

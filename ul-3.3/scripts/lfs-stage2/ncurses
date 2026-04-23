@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/ncurses
+
+group=lfs-stage2
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libdir=/lib \
+      --with-shared
+    make
+}
+
+installPhase()
+{
+    make install
+    cd /lib
+    mv *.a /usr/lib
+    chmod 755 *.5.2
+    cd /usr/lib
+    ln -sf libncurses.la libcurses.a
+    ln -sf ../../lib/libncurses.so
+    ln -sf ../../lib/libcurses.so
+    ln -sf ../../lib/libform.so
+    ln -sf ../../lib/libpanel.so
+    ln -sf ../../lib/libmenu.so
+}

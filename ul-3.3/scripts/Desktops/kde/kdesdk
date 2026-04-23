@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdesdk
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE SDK"
+src="k/kdesdk/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of applications and tools used by KDE developers.
+EOF
+}
+
+buildPhase()
+{
+    CFLAGS="$CFLAGS -I/opt/db-2.7/include" \
+    CPPFLAGS='-I/opt/db-2.7/include' \
+    LDFLAGS="-L/opt/db-2.7/lib" \
+      ./configure --prefix=/opt/kde-$kdeVersion \
+      --mandir=/opt/kde-$kdeVersion/share/man \
+      --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

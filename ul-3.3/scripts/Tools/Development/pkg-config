@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pkg-config
+version=0.18.1
+group=Tools/Development
+license=GPLv2
+description="pkg-config"
+src="p/pkg-config/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The pkg-config program is used to retrieve information about installed libraries
+in the system. It is typically used to compile and link against one or more
+libraries.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m755 $cbtBaseDir/profile.d/02pkg-config.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/02pkg-config.csh /etc/profile.d
+    fi
+}

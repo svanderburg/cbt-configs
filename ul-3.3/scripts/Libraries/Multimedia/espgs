@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=espgs
+version=7.05.6
+group=Libraries/Multimedia
+license=GPLv2
+description="ESP Ghostscript"
+src="e/espgs/$name-$version-source.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Ghostscript is a versatile processor for PostScript data with the ability to
+render PostScript to different targets. ESP Ghostscript is a customized version
+of GNU Ghostscript that includes an enhanced configuration script, the CUPS
+raster driver to support CUPS raster printer drivers, and additional patches and
+drivers from various Linux distributors.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

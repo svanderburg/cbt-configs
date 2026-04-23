@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=vim-configure
+group=lfs-stage2
+description="Creates a basic vim config"
+
+execute()
+{
+    mkdir -p /etc/skel
+    cat > /etc/skel/.vimrc << "EOF"
+" Begin /root/.vimrc
+
+set nocompatible
+set bs=2
+set columns=80
+set background=dark
+set tabstop=8
+set wrapmargin=8
+set nobk
+syntax on
+set ruler
+set noexpandtab
+
+" End /root/.vimrc
+EOF
+
+    cp /etc/skel/.vimrc /root
+}

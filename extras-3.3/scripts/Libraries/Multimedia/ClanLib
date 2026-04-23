@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=ClanLib
+version=0.6.5_1
+pkgVersion=0.6.5-1
+license=GPLv2
+group=Libraries/Multimedia
+description="ClanLib"
+src="c/ClanLib/$name-$pkgVersion.tar.gz"
+patches=("c/ClanLib/$name-$pkgVersion-glXGetProcAddressARB.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+ClanLib is a cross platform toolkit library with a primary focus on game
+creation.
+EOF
+}
+
+buildPhase()
+{
+    sed "s|#include <freetype/freetype.h>|#include <freetype2/freetype/freetype.h>|" Sources/TTF/font_ttf.cpp > Sources/TTF/font_ttf.cpp.new
+    mv Sources/TTF/font_ttf.cpp.new Sources/TTF/font_ttf.cpp
+    ./configure --prefix=/usr
+    sed "s|-lfreetype|-L/usr/X11R6/lib -lfreetype|" Setup/Unix/Makefile.ttf > Setup/Unix/Makefile.ttf.new
+    mv Setup/Unix/Makefile.ttf.new Setup/Unix/Makefile.ttf
+    make
+}
+
+installPhase()
+{
+    make install
+}

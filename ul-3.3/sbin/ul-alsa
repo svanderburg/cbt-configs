@@ -1,0 +1,54 @@
+#!/bin/bash
+
+if [ -f /etc/sysconfig/alsa ]
+then
+    source /etc/sysconfig/alsa
+fi
+
+MIDIFONT="${MIDIFONT:-/etc/midi/soundfont.sf2}"
+
+exec 3>&1
+
+while true
+do
+    set +e
+    selectedOption=$(dialog --backtitle "UL" \
+        --title "ALSA configuration" \
+        --menu "Select an option" 15 45 7 \
+        "alsamixer" "Configure mixer settings" \
+        "midifont"  "Configure sound font" \
+        "quit"      "Quit" \
+	2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ $exitStatus -ne 0 ]
+    then
+        exit
+    fi
+
+    case "$selectedOption" in
+        alsamixer)
+            alsamixer
+            ;;
+        midifont)
+            set +e
+            MIDIFONT=$(dialog --backtitle "UL" \
+                --title "ALSA configuration" \
+                --inputbox "Enter path of MIDI soundfont" 10 50 "$MIDIFONT" \
+	        2>&1 1>&3)
+            exitStatus=$?
+            set -e
+
+            if [ $exitStatus -ne 0 ]
+            then
+                exit
+            fi
+
+            echo "MIDIFONT=$MIDIFONT" > /etc/sysconfig/alsa
+            ;;
+        quit)
+            exit
+            ;;
+    esac
+done

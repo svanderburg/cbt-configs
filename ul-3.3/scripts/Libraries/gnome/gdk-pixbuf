@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gdk-pixbuf
+version=0.18.0
+group=Libraries/gnome
+license=LGPLv2.1
+description="GDK pixbuf library"
+src="g/gdk-pixbuf/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GdkPixbuf is a library that loads image data in various formats and stores
+it as linear buffers in memory. The buffers can then be scaled, composited,
+modified, saved, or rendered.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=xrick
+version=021212
+group=Games
+license=unknown
+description="XRick"
+src="x/xrick/$name-$version.tgz"
+
+desktopName="XRick"
+category=Games
+exec=/usr/local/bin/run-xrick
+comment="XRick"
+
+showLongDescription()
+{
+    cat << "EOF"
+xrick is a clone of Rick Dangerous, known to run on Linux, Windows, BeOs, Amiga,
+QNX, all sorts of gaming consoles...
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    cp -v xrick /usr/local/bin
+    cp -v xrick.6.gz /usr/local/man/man6
+    mkdir -p /usr/local/share/xrick
+    cp data.zip /usr/local/share/xrick
+    cat > /usr/local/bin/run-xrick << "EOF"
+#!/bin/bash -e
+
+cd /usr/local/share/xrick
+exec /usr/local/bin/xrick "$@"
+EOF
+    chmod 755 /usr/local/bin/run-xrick
+}

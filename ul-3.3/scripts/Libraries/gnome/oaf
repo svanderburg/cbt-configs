@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=oaf
+version=0.6.10
+group=Libraries/gnome
+license=LGPLv2.1
+description="Object Activation Framework"
+src="o/oaf/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+OAF is the GNOME Object Activation Framework (OAF), a core component for the
+GNOME desktop environment allowing applications to easily communicate and share
+data, acting as a bridge for distributed objects.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

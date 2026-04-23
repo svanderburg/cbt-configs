@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=create-bashrc
+group=lfs-stage2
+description="Creates a basic bashrc config"
+
+execute()
+{
+    cat > /etc/bashrc << "EOF"
+# Begin /etc/bashrc
+
+# By default we want the umask to get set
+# Even for non-interactive and non-login shells
+
+if [ "$(id -gn)" = "$(id -un)" -a $(id -u) -gt 99 ]
+then
+    umask 002
+else
+    umask 022
+fi
+
+# Provides a colored /bin/ls command
+alias ls='ls --color=auto'
+
+# Configure prompt
+export PS1='\u:\w\$ '
+
+# End /etc/bashrc
+EOF
+
+    mkdir -p /etc/skel
+
+    cat > /etc/skel/.bashrc << "EOF"
+# Begin ~/.bashrc
+
+if [ -f "/etc/bashrc" ]
+then
+    source /etc/bashrc
+fi
+
+# End ~/.bashrc
+EOF
+
+    cp /etc/skel/.bashrc /root
+}

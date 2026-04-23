@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=adjust-toolchain
+group=lfs-stage2
+description="Adjusts the toolchain used by gcc"
+
+execute()
+{
+    cd /usr/src/binutils-build
+    cd ld
+    make INSTALL=/stage1/bin/install install-data-local
+
+    SPECFILE=/stage1/lib/gcc-lib/i686-pc-linux-gnu/*/specs
+    cp ${SPECFILE} ./XX
+    sed 's@/stage1/lib/ld-linux.so.2@/lib/ld-linux.so.2@g' ./XX > ${SPECFILE}
+    unset SPECFILE
+    rm -f ./XX
+
+    rm -r /usr/src/binutils-*
+}

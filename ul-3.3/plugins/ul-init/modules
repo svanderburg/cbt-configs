@@ -1,0 +1,4 @@
+description="Kernel module loading script"
+startSequenceNumber=5
+startRunLevels="sysinit"
+stopRunLevels=""

@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=duke3d
+version=20090414
+group=Games
+license=GPLv2
+description="Duke Nukem 3D"
+src="d/duke3d/$name-$version.tar.gz"
+workDir=$name-$version/source
+
+desktopName="Duke Nukem 3D"
+category=Games
+exec=/usr/local/bin/run-duke3d
+comment="Duke Nukem 3D"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a Duke Nukem 3D port provided by icculus.org that supports
+various modern operating systems, including Linux. This port is the first source
+port of Duke Nukem 3D.
+EOF
+}
+
+buildPhase()
+{
+    pwd
+    echo 'extern int ignore_escape;' > a
+    sed 's|extern int ignore_escape;||' game.c > game.new
+    cat a game.new > game.c
+    make
+}
+
+installPhase()
+{
+    cp build duke3d /usr/local/bin
+    cat > /usr/local/bin/run-duke3d << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/duke3d
+exec /usr/local/bin/duke3d "$@"
+EOF
+    chmod 755 /usr/local/bin/run-duke3d
+}

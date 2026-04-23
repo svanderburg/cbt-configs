@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=libtifiles
+version=0.4.8
+group=Libraries/App
+license=LGPLv2.1
+description="TI files library"
+src="l/libtifiles/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library is part of the TILP framework and provides support for file
+transfers from and to Texas Instruments (TI) calculators.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

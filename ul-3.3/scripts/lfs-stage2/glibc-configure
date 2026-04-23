@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=glibc-configure
+group=lfs-stage2
+description="Configures various glibc aspects"
+
+execute()
+{
+    # Configure nameservice switch
+
+    cat > /etc/nsswitch.conf << "EOF"
+# Begin /etc/nsswitch.conf
+
+passwd: files
+group: files
+shadow: files
+
+publickey: files
+
+hosts: files dns
+networks: files
+
+protocols: db files
+services: db files
+ethers: db files
+rpc: db files
+
+netgroup: db files
+
+# End /etc/nsswitch.conf
+EOF
+
+    # Configure timezone
+    cd /etc
+    ln -sf ../usr/share/zoneinfo/UTC localtime
+}

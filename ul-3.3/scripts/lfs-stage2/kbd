@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=kbd
+version=1.06
+group=lfs-stage2
+description="Linux keyboard tools"
+license=GPLv2
+src="k/kbd/$name-$version.tar.gz"
+patches=("k/kbd/$name-$version-2.patch.bz2")
+
+showLongDescription()
+{
+    cat << "EOF"
+The kbd project contains utilities for managing Linux console (Linux console,
+virtual terminals, keyboard, etc.)
+
+Mainly, what they do is loading console fonts and keyboard maps. The utilities
+use kernel interfaces to load the keymap.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

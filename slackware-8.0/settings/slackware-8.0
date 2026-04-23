@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+sourcesDir=/mnt/source
+
+# deployDesktopItem settings
+desktopFolders="/opt/kde/share/applnk /opt/gnome/share/gnome/apps"

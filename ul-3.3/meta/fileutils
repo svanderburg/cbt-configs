@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=fileutils
+version=4.1
+description="GNU Fileutils"
+license=GPLv2
+src="f/fileutils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU File Utilities are the basic file-manipulation utilities of the GNU
+operating system.
+EOF
+}

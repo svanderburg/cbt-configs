@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeutils
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE utilities"
+src="k/kdeutils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of useful utilities for the KDE desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion \
+      --mandir=/opt/kde-$kdeVersion/share/man \
+      --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

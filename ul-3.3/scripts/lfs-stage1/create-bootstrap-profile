@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=create-bootstrap-profile
+group=lfs-stage1
+description="Creates a bootstrap /etc/profile"
+
+execute()
+{
+    cat > $LFS/etc/profile << "EOF"
+#!/bin/bash -e
+
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/stage1/bin
+
+EOF
+
+    if [ "$CFLAGS" != "" ]
+    then
+        echo "export CFLAGS=\"$CFLAGS\"" >> $LFS/etc/profile
+    fi
+
+    if [ "$CXXFLAGS" != "" ]
+    then
+        echo "export CXXFLAGS=\"$CXXFLAGS\"" >> $LFS/etc/profile
+    fi
+}

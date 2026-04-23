@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=zsnes
+version=1.40
+license=GPLv2
+group=Emulators
+description="SNES emulator"
+src="z/zsnes/zsnes140src.tar.gz"
+workDir=zsnes_1_40/src
+
+desktopName="ZSNES"
+category=Emulators
+exec=zsnes
+comment="ZSNES emulator"
+mimeType="application/vnd.nintendo.snes.rom"
+
+showLongDescription()
+{
+    cat << "EOF"
+ZSNES is an emulator for the Super Nintendo Entertainment System released as
+free software.
+EOF
+}
+
+buildPhase()
+{
+    ./autogen.sh
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > snes.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Super NES ROM
+MimeType=application/vnd.nintendo.snes.rom
+Icon=binary
+Patterns=*.sfc;*.SFC;*.sfc.gz;*.SFC.gz;*.smc;*.SMC;*.smc.gz;*.SMC.gz;*.swc;*.SWC;*.swc.gz;*.SWC.gz
+EOF
+    fi
+}

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=fileutils-ln
+version=4.1
+group=Base
+license=GPLv2
+description="Dynamic ln from GNU fileutils"
+src="f/fileutils/fileutils-$version.tar.gz"
+noCheckInstall=true
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a new version of the 'ln' command from the GNU fileutils
+package that is dynamically linked to libc, rather than statically linked, as
+Slackware's bundled 'ln' command is. The advantage of using this version is that
+this command uses less memory/storage and installwatch/checkinstall can record
+symlinks created by it.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/bin --bindir=/bin
+    make -C lib
+    make -C src ln
+}
+
+installPhase()
+{
+    install -m 0755 src/ln /bin/ln
+}

@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/binutils
+
+group=lfs-stage1
+patches=("b/binutils/$name-2.13.2.lib-path.patch.gz")
+workDir=$name-$version
+
+buildPhase()
+{
+    mkdir ../$name-build
+    cd ../$name-build
+    CFLAGS="-O2 -pipe" ../$name-$version/configure --prefix=/stage1 \
+       --with-lib-path=/stage1/lib --enable-shared
+    make LDFLAGS="-s"
+    make check
+}
+
+installPhase()
+{
+    cd ../$name-build
+    make install
+
+    # Build a ld for later use
+    cd ld
+    make clean
+    make LIB_PATH=/usr/lib:/lib
+
+    # Move the extract folder so that it will be retained
+    cd ..
+    mv ../$name-$version $LFS/usr/src
+    mv ../$name-build $LFS/usr/src
+}

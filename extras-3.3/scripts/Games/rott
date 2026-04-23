@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=rott
+version=1.1.2
+group=Games
+license=GPLv2
+description="Rise of the Triad: Dark War"
+src="r/rott/$name-$version.tar.gz"
+workDir=$name-$version/rott
+
+desktopName="Rise of the Triad"
+category=Games
+exec=/usr/local/bin/run-rott
+comment="Rise of the Triad: Dark War"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides an SDL port of the game Rise of the Triad.
+
+Rise of the Triad is a high quality, fast scrolling first-person perspective 3D
+action game. It includes a lot of destructive enemies, an arsenal of weapons
+from simple pistols to missile launchers, life-preserving armor, traps and
+ambushes galore.
+EOF
+}
+
+buildPhase()
+{
+    make SHAREWARE=0
+}
+
+installPhase()
+{
+    cp -v rott /usr/local/bin
+    cat > /usr/local/bin/run-rott << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/rott
+exec /usr/local/bin/rott "$@"
+EOF
+    chmod 755 /usr/local/bin/run-rott
+}

@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+name=ncurses
+version=5.2
+description="Ncurses"
+license=BSD
+src="n/ncurses/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+ncurses (new curses) is a programming library for creating textual user
+interfaces (TUIs) that work across a wide variety of terminals. It is written
+in a way that attempts to optimize the commands that are sent to the terminal,
+to reduce the latency experienced when updating the displayed content.
+EOF
+}

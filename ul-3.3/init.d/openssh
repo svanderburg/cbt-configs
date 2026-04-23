@@ -1,0 +1,39 @@
+#!/bin/sh
+# Begin $rc_base/init.d/sshd
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+case "$1" in
+	start)
+		echo "Starting SSH Server..."
+		loadproc /usr/sbin/sshd
+		;;
+
+	stop)
+		echo "Stopping SSH Server..."
+		killproc /usr/sbin/sshd
+		;;
+
+	reload)
+		echo "Reloading SSH Server..."
+		reloadproc /usr/sbin/sshd
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/sbin/sshd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/sshd

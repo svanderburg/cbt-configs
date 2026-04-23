@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=openssl
+version=0.9.6m
+group=Libraries/Shared
+license=zlib
+description="OpenSSL library library"
+src="o/openssl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+OpenSSL contains an open-source implementation of the SSL and TLS protocols.
+The core library, written in the C programming language, implements basic
+cryptographic functions and provides various utility functions. Wrappers
+allowing the use of the OpenSSL library in a variety of computer languages are
+available.
+EOF
+}
+
+buildPhase()
+{
+    ./config --prefix=/usr --openssldir=/usr/lib/openssl shared
+    make
+}
+
+installPhase()
+{
+    make install
+    ldconfig
+    for m in /usr/lib/openssl/man/man?
+    do
+        cp $m/* /usr/man/$(basename $m)/
+        rm -rf $m
+    done
+}

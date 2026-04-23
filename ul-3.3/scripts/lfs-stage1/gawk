@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/gawk
+
+group=lfs-stage1
+
+buildPhase()
+{
+    cp awklib/Makefile.in awklib/Makefile.in.backup
+    sed -e '/^datadir/s/awk/gawk/' \
+      -e '/^libexecdir/s%/awk%%' awklib/Makefile.in.backup \
+      > awklib/Makefile.in
+    ./configure --prefix=/stage1 --disable-nls \
+      --libexecdir=/stage1/bin
+    make
+}
+
+installPhase()
+{
+    make install
+}

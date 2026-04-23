@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=bonobo-conf
+version=0.16
+group=Libraries/gnome
+license=GPLv2.1
+description="Bonobo conf"
+src="b/bonobo-conf/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The bonobo-conf package contains the Bonobo configuration moniker. The system
+is built on top of GConf and provides a convenient way to handle configuration
+data.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

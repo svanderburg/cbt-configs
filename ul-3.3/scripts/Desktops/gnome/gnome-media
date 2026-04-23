@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-media
+version=1.2.3
+group=Desktops/gnome
+license=GPLv2
+description="GNOME media"
+src="g/gnome-media/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of GNOME media tools: gtcd, cddbslave, gmix, vumeter, grecord.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --localstatedir=/var/lib --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

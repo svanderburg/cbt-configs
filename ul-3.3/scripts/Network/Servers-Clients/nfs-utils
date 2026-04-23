@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nfs-utils
+version=1.0.1
+group=Network/Servers-Clients
+license=GPLv2
+description="NFS utilities"
+src="n/nfs-utils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The NFS Utilities package contains the userspace server and client tools
+necessary to use the kernel's NFS abilities. NFS is a protocol that allows
+sharing file systems over the network.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m754 $cbtBaseDir/init.d/nfs /etc/rc.d/init.d
+    install -m754 $cbtBaseDir/init.d/nfsclient /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/nfs /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/nfsclient /usr/share/ul/ul-init
+}

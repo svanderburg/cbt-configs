@@ -1,0 +1,58 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=dia
+version=0.88.1
+group=Applications
+description="Diagram editor"
+license=GPLv2
+src="d/dia/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dia is a GTK+ based diagram creation program.
+
+Dia is roughly inspired by the commercial Windows program 'Visio,' though more
+geared towards informal diagrams for casual use. It can be used to draw many
+different kinds of diagrams. It currently has special objects to help draw
+entity relationship diagrams, UML diagrams, flowcharts, network diagrams, and
+many other diagrams. It is also possible to add support for new shapes by
+writing simple XML files, using a subset of SVG to draw the shape.
+
+It can load and save diagrams to a custom XML format (gzipped by default, to
+save space), can export diagrams to a number of formats, including EPS, SVG,
+XFIG, WMF and PNG, and can print diagrams (including ones that span multiple
+pages).
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Move GNOME desktop item to the right location
+    sed "s|Icon=|Icon=/usr/local/share/pixmaps/|" /usr/local/share/gnome/apps/Applications/dia.desktop > dia.desktop
+    install -m644 dia.desktop /opt/gnome/share/gnome/apps/Graphics
+
+    # Create a KDE desktop item from the GNOME desktop item
+    install -m644 dia.desktop /opt/kde/share/applnk/Graphics
+
+    # Move MIME type info to the right location
+    mv /usr/local/share/mime-info/* /opt/gnome/share/mime-info
+    rmdir --ignore-fail-on-non-empty /opt/gnome/share/mime-info
+
+    # Remove wrong GNOME desktop item
+    rm /usr/local/share/gnome/apps/Applications/dia.desktop
+    rmdir --ignore-fail-on-non-empty /usr/local/share/gnome/apps/Applications
+    rmdir --ignore-fail-on-non-empty /usr/local/share/gnome/apps
+    rmdir --ignore-fail-on-non-empty /usr/local/share/gnome
+}

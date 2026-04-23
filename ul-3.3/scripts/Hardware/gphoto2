@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gphoto2
+version=2.1.0
+group=Hardware
+license=GPLv2
+description="Photo camera library"
+src="g/gphoto2/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gPhoto2 is a free, redistributable, ready to use set of digital camera software
+applications for Unix-like systems, written by a whole team of dedicated
+volunteers around the world. It supports more than 2700 cameras and media
+players.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

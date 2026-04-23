@@ -1,0 +1,57 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=apache
+version=1.3.42
+group=Network/Servers
+license=ASF
+description="Apache HTTP server"
+src="a/apache/${name}_${version}.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Apache HTTP server is a free and open-source cross-platform web server
+maintained by a community of developers under the auspices of the Apache
+Software Foundation.
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 25 apache
+    useradd -u 25 -c apache -d /dev/null -g apache -s /bin/false apache
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sbindir=/usr/sbin \
+        --libexecdir=/usr/lib/apache \
+        --sysconfdir=/etc/apache \
+        --includedir=/usr/include/apache \
+        --datadir=/var/www \
+        --localstatedir=/var/www \
+        --logfiledir=/var/log/apache \
+        --runtimedir=/var/run \
+        --enable-module=all \
+        --enable-shared=max \
+        --disable-module=auth_db \
+        --disable-module=auth_dbm \
+        --server-uid=apache \
+        --server-gid=apache
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make install
+
+    install -m754 $cbtBaseDir/init.d/apache /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/apache /usr/share/ul/ul-init
+}

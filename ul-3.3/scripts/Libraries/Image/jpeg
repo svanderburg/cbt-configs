@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=jpeg
+version=6b
+group=Libraries/Image
+license=zlib
+description="JPEG library"
+src="j/jpeg/${name}src.v$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libjpeg package contains libraries that allow compression of image files
+based on the Joint Photographic Experts Group standard. It is a "lossy"
+compression algorithm.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared --enable-static
+    make
+}
+
+installPhase()
+{
+    make install
+}

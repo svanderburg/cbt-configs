@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ammonite
+version=1.0.2
+group=Desktops/gnome
+license=GPLv2
+description="Client side HTTP proxy for Eazel services"
+src="a/ammonite/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Ammonite is a client-side HTTP proxy that implements special features needed
+for the Eazel Service user authentication system.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=dialog
+version=0.9b_20020519
+pkgVersion=0.9b-20020519
+group=lfs-stage2
+description="Dialog"
+license=GPLv2
+src="d/dialog/$name-$pkgVersion.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dialog is a program that will let you to present a variety of questions or
+display messages using dialog boxes from a shell script.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --bindir=/bin
+    make
+}
+
+installPhase()
+{
+    make install
+}

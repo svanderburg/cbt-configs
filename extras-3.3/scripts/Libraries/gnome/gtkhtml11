@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gtkhtml11
+version=1.1.10
+group=Libraries/gnome
+license=LGPLv2.1
+description="GTK HTML extension library"
+src="g/gtkhtml/gtkhtml-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GtkHTML is a lightweight HTML rendering/printing/editing engine.
+
+This is a newer version that GNOME Evolution requires. Most other GNOME
+components use an older version.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include/libcapplet-1.4' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

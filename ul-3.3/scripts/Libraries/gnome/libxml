@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libxml
+version=1.8.17
+group=Libraries/gnome
+license=LGPLv2.1
+description="XML parser library"
+src="l/libxml/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+An XML parser infrastructure for the GNOME project.
+
+This is an old implementation that got superseded by libxml2 but it is still
+used by the current GNOME release.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

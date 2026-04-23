@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fam
+version=2.6.10
+group=Services
+license=GPLv2
+description="File Alteration Monitor"
+src="f/fam/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The fam package contains a File Alteration Monitor.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    mkdir -p /etc/xinetd.d
+    cat > /etc/xinetd.d/sgi_fam << "EOF"
+service sgi_fam
+{
+    disabled    = yes
+    type        = RPC UNLISTED
+    socket_type = stream
+    user        = root
+    group       = nogroup
+    server      = /usr/bin/fam
+    wait        = yes
+    protocol    = tcp
+    rpc_version = 2
+    rpc_number  = 391002
+}
+EOF
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=rep-gtk
+version=0.15
+group=Libraries/gnome
+license=GPLv2
+description="librep GTK+ bindings"
+src="r/rep-gtk/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+rep-gtk is a binding of the GTK and GDK libraries for the librep Lisp
+environment.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

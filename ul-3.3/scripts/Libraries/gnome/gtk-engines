@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtk-engines
+version=0.12
+group=Libraries/gnome
+license=GPLv2
+description="GTK engines"
+src="g/gtk-engines/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+gtk-engines provides a central location for commonly used GTK+ engines.
+
+It currently supplies several engines and default themes for those which have
+one.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

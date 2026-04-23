@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/findutils
+
+group=lfs-stage2
+patches=("f/findutils/$name-$version.patch.bz2")
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make localstatedir=/var/lib/misc
+}
+
+installPhase()
+{
+    make localstatedir=/var/lib/misc libexecdir=/usr/bin install
+}

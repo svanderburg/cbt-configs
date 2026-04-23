@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=librep
+version=0.15.2
+group=Programming
+license=GPLv2
+description="Emacs Lisp-like interpreter"
+src="l/librep/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+librep provides a Lisp system for UNIX. It contains a Lisp interpreter,
+byte-code compiler and virtual machine. Applications may use the Lisp
+interpreter as an extension language, or it may be used for stand-alone
+scripts.
+
+The Lisp dialect was originally inspired by Emacs Lisp, but with the
+worst features removed. It also borrows many ideas from Scheme.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/lib --mandir=/usr/share/man \
+       --infodir=/usr/share/info --enable-shared --enable-static
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=k3b
+version=0.5.1
+group=Desktops/kde
+license=GPLv2
+description="K3B disc burning program"
+src="k/k3b/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+k3b - The CD creator. Software to write CDs under Linux.
+EOF
+}
+
+buildPhase()
+{
+    # Force using older Automake
+    export PATH=/opt/automake-1.5/bin:$PATH
+
+    # Automake fixes
+    cp Makefile.am Makefile.am.orig
+    sed -e '/EXTRA_DIST = admin/d' \
+      -e 's/kruader.spec/k3b.lsb admin/' \
+      Makefile.am.orig > Makefile.am
+
+    ./configure --prefix=/opt/kde-$kdeVersion
+    make
+}
+
+installPhase()
+{
+    make install
+}

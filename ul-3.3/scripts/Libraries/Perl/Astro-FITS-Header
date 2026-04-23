@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=Astro-FITS-Header
+version=2.2
+group=Libraries/Perl
+license=GPLv2
+description="Library for managing FITS header blocks"
+src="a/Astro-FITS-Header/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Astro::FITS::Header and associated sub-classes are tools for reading,
+modifying and then writing out FITS standard header blocks to FITS, NDF
+and GSD files. The module now fully supports ESO HIERARCH header keywords.
+Support for instantiating Astro::FITS:Header objects from Starlink::AST
+FrameSet objects is also supported.
+EOF
+}
+
+buildPhase()
+{
+    perl Makefile.PL
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dosfstools
+version=2.11
+group=Tools/Misc
+license=GPLv2
+description="FAT filesystem tools"
+src="d/dosfstools/$name-$version.src.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The dosfstools package contains various utilities for use with the FAT family of
+file systems.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

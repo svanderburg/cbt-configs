@@ -1,0 +1,34 @@
+#!/bin/sh
+# Begin $rc_base/init.d/sendmail
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+case "$1" in
+	start)
+		echo "Starting sendmail..."
+		loadproc /usr/sbin/sendmail -bs -bd -q5m start
+		;;
+
+	stop)
+		echo "Stopping Sendmail..."
+		killproc sendmail
+		;;
+
+	status)
+		statusproc sendmail
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|status|restart}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/sendmail

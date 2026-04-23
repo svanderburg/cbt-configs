@@ -1,0 +1,66 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=docbook-xsl
+version=1.60.1
+group=Libraries/Docbook
+license=MIT
+description="Docbook XSL stylesheets"
+src="d/docbook-xsl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The docbook-xsl package contains xsl stylesheets that are useful for performing
+transformations on XML DocBook files.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    chown -R root:root *
+    install -d /usr/share/xml/docbook/xsl-stylesheets-$version
+    cp -af VERSION common extensions fo html htmlhelp images javahelp lib \
+      manpages params profiling template tools xhtml \
+      /usr/share/xml/docbook/xsl-stylesheets-$version
+    install -d /usr/share/doc/xml
+    cp -af doc/* /usr/share/doc/xml
+}
+
+postConfigurePhase()
+{
+    if [ ! -f /etc/xml/catalog ]
+    then
+        mkdir -p /etc/xml
+        xmlcatalog --noout --create /etc/xml/catalog
+    fi
+    if [ ! -e /etc/xml/docbook ]
+    then
+        xmlcatalog --noout --create /etc/xml/docbook
+    fi
+    xmlcatalog --noout --add "rewriteSystem" \
+      "http://docbook.sourceforge.net/releases/xsl/1.45" \
+      "/usr/share/xml/docbook/xsl-stylesheets-$version" /etc/xml/catalog
+    xmlcatalog --noout --add "rewriteURI" \
+      "http://docbook.sourceforge.net/releases/xsl/1.45" \
+      "/usr/share/xml/docbook/xsl-stylesheets-$version" /etc/xml/catalog
+    xmlcatalog --noout --add "rewriteSystem" \
+      "http://docbook.sourceforge.net/releases/xsl/current" \
+      "/usr/share/xml/docbook/xsl-stylesheets-$version" /etc/xml/catalog
+    xmlcatalog --noout --add "rewriteURI" \
+      "http://docbook.sourceforge.net/releases/xsl/current" \
+      "/usr/share/xml/docbook/xsl-stylesheets-$version" /etc/xml/catalog
+    xmlcatalog --noout --add "delegateSystem" \
+      "http://docbook.sourceforge.net/releases/xsl/" \
+      "file:///etc/xml/docbook" /etc/xml/catalog
+    xmlcatalog --noout --add "delegateURI" \
+      "http://docbook.sourceforge.net/releases/xsl/" \
+      "file:///etc/xml/docbook" /etc/xml/catalog  
+}

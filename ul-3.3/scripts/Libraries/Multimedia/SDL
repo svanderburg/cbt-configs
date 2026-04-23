@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=SDL
+version=1.2.5
+group=Libraries/Multimedia
+license=LGPLv2
+description="Simple DirectMedia Layer"
+src="s/SDL/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Simple DirectMedia Layer is a cross-platform development library designed to
+provide low level access to audio, keyboard, mouse, joystick, and graphics
+hardware via OpenGL.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=""
+
+    if aalib-config --version
+    then
+        extraArgs="--enable-video-aalib"
+    fi
+
+    if [ -f /usr/lib/libvga.so ]
+    then
+        extraArgs="$extraArgs --enable-video-svga"
+    fi
+
+    ./configure --prefix=/usr $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+}

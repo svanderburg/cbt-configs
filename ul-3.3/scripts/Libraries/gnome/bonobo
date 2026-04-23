@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=bonobo
+version=1.0.22
+group=Libraries/gnome
+license=LGPLv2.1
+description="Bonobo library"
+src="b/bonobo/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Bonobo is the component object model of the GNOME project. Bonobo provides a
+COM-like model, using CORBA as a location-transparent transport. It is the
+foundation of the GNOME vision to provide a fully Free
+GNU Network Object Model Environment.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

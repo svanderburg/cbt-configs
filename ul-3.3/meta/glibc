@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+name=glibc
+version=2.2.5
+description="GNU C Library"
+license=LGPLv2.1
+srcs=("g/glibc/$name-$version.tar.gz" "g/glibc/$name-linuxthreads-$version.tar.gz")
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU C Library project provides the core libraries for the GNU system and
+GNU/Linux systems, as well as many other systems that use Linux as the kernel.
+These libraries provide critical APIs including ISO C, POSIX, BSD, OS-specific
+APIs and more. These APIs include such foundational facilities as open, read,
+write, malloc, printf, getaddrinfo, dlopen, pthread_create, crypt, login, exit
+and more.
+EOF
+}

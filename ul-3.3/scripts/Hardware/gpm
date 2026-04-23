@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gpm
+version=1.20.1
+group=Hardware
+license=GPLv2
+description="General Purpose Mouse"
+src="g/gpm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GPM (General Purpose Mouse daemon) package contains a mouse server for the
+console and xterm.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m754 $cbtBaseDir/init.d/gpm /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/gpm /usr/share/ul/ul-init
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=aalib
+version=1.4rc5
+group=Display
+license=LGPLv2.1
+description="ASCII Art library"
+src="a/aalib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+AAlib is a software library which allows applications to automatically convert
+still and moving images into ASCII art.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

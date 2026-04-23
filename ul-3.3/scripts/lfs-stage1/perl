@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/perl
+
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure.gnu --prefix=/stage1 -Doptimize="$CFLAGS -pipe"
+    make utilities
+}
+
+installPhase()
+{
+    cp miniperl /stage1/bin/perl
+    cp pod/pod2man /stage1/bin
+    mkdir -p /stage1/lib/perl5/$version
+    cp -R lib/* /stage1/lib/perl5/$version
+}

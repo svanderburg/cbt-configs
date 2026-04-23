@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=scrollkeeper
+version=0.2
+group=Libraries/gnome
+license=LGPLv2.1
+description="Scrollkeeper documentation system"
+src="s/scrollkeeper/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+ScrollKeeper is a document cataloging system. It manages documentation metadata,
+as specified by the Open Source Metadata Framework (OMF).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --localstatedir=/var \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

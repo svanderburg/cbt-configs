@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-pim
+version=1.4.0
+group=Desktops/gnome
+license=GPLv2
+description="GNOME Personal Information Management"
+src="g/gnome-pim/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A number of personal information management utilities for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

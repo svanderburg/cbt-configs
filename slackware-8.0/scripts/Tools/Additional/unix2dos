@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=unix2dos
+version=2.3
+group=Tools/Additional
+license=BSD-2
+description="unix2dos"
+src="u/unix2dos/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+unix2dos is a program that converts text files in UNIX format to DOS format.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make prefix=/usr/local install
+}

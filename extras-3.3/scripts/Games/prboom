@@ -1,0 +1,69 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=prboom
+version=2.2.6
+group=Games
+license=GPLv2
+description="DOOM port"
+src="p/prboom/$name-$version.tar.gz"
+wadBaseDir="/usr/local/share/doom"
+
+showLongDescription()
+{
+    cat << "EOF"
+PrBoom, originally short for "Proff Boom", is a source port of Doom for Windows,
+Linux/POSIX, AmigaOS 4, OpenVMS and Mac OS X based initially on Boom.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Create desktop links
+
+    for dir in $desktopFolders
+    do
+        mkdir -p "$dir/Games"
+        cat > "$dir/Games/doom.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=prboom (Doom)
+Comment=Doom on prboom
+Exec=/usr/local/games/prboom -iwad $wadBaseDir/doom.wad
+EOF
+
+        cat > "$dir/Games/doom2.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=prboom (Doom 2)
+Comment=Doom 2 on prboom
+Exec=/usr/local/games/prboom -iwad $wadBaseDir/doom2.wad
+EOF
+
+        cat > "$dir/Games/plutonia.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=prboom (Plutonia)
+Comment=Plutonia on prboom
+Exec=/usr/local/games/prboom -iwad $wadBaseDir/plutonia.wad
+EOF
+
+        cat > "$dir/Games/tnt.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=prboom (TNT)
+Comment=TNT on prboom
+Exec=/usr/local/games/prboom -iwad $wadBaseDir/tnt.wad
+EOF
+    done
+}

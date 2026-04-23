@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdoc
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE documentation utility"
+src="k/kdoc/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+kdoc creates cross-referenced documentation for C++ and CORBA IDL libraries
+directly from the source. Documentation can be embedded in special doc
+comments in the source.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion \
+      --mandir=/opt/kde-$kdeVersion/share/man \
+      --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

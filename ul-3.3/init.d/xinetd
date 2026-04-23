@@ -1,0 +1,33 @@
+#!/bin/bash
+# Begin $rc_base/init.d/xinetd
+
+source /etc/sysconfig/rc
+source $rc_functions
+case "$1" in
+	start)
+		echo "Starting xinetd..."
+		loadproc /usr/sbin/xinetd
+		;;
+	stop)
+		echo "Stopping xinetd..."
+		killproc /usr/sbin/xinetd
+		;;
+	reload)
+		echo "Reloading xinetd..."
+		killall -HUP xinetd
+		;;
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+	status)
+		statusproc /usr/sbin/xinetd
+		;;
+	*)
+		echo "Usage: $0 {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/xinetd

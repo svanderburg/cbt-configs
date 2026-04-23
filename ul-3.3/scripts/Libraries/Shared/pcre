@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pcre
+version=3.9
+group=Libraries/Shared
+license=zlib
+description="Perl Compatible Regular Expressions library"
+src="p/pcre/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The PCRE library is a set of functions that implement regular expression pattern
+matching using the same syntax and semantics as Perl 5. PCRE has its own native
+API, as well as a set of wrapper functions that correspond to the POSIX regular
+expression API.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

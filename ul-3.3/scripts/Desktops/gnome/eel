@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=eel
+version=1.0.2
+group=Desktops/gnome
+license=LGPLv2.1
+description="Eazel Extensions library"
+src="e/eel/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The EEL package contains the Eazel Extensions Library.
+This is a collection of widgets and extensions to the GNOME platform.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

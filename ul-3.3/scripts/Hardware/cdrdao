@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cdrdao
+version=1.1.7
+group=Hardware
+license=GPLv2
+description="Tools for recording CDs disk at once"
+src="c/cdrdao/$name-$version.src.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The cdrdao package contains CD recording utilities useful to record discs in
+disk at once (DAO) mode.
+EOF
+}
+
+buildPhase()
+{
+    # Change pixmaps and desktop item paths so that they can be used from the GNOME program launcher
+    cp xdao/Makefile.in xdao/Makefile.in.orig
+    sed -e "s|PIXMAPS_DIR = \$(datadir)/pixmaps/gcdmaster|PIXMAPS_DIR = /opt/gnome-$gnomeVersion/share/pixmaps/gcdmaster|" \
+      -e "s|\$(datadir)/gnome/apps/Applications|/opt/gnome-$gnomeVersion/share/gnome/apps/Applications|g" \
+      xdao/Makefile.in.orig > xdao/Makefile.in
+
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if kde-config --version
+    then
+        cp -v /opt/gnome-$gnomeVersion/share/gnome/apps/Applications/gcdmaster.desktop /opt/kde-$kdeVersion/share/applnk/Multimedia
+    fi
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/sh-utils
+
+group=lfs-stage2
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    cd /usr/bin
+    mv basename date echo false hostname /bin
+    mv pwd sleep stty su test true uname /bin
+    mv chroot ../sbin
+    cd /bin
+    ln -sf test [
+
+    mkdir -p /usr/lib/ul-adduser
+    cat > /usr/lib/ul-adduser/false << "EOF"
+shellPath=/bin/false
+description="No shell"
+EOF
+}

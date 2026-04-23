@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+EDITOR="${EDITOR:-vi}"
+
+if [ ! -f /etc/lilo.conf ]
+then
+    echo "No lilo.conf exists, creating a template one!" >&2
+    read
+
+    rootDevice="$(mount | grep " on / " | cut -d ' ' -f1)"
+    bootDevice="$(mount | grep " on /boot " | cut -d ' ' -f1)"
+
+    if [ "$bootDevice" = "" ]
+    then
+        bootDevice="$rootDevice"
+    fi
+
+    cat > /etc/lilo.conf <<EOF
+boot = $bootDevice
+prompt
+timeout = 1200
+lba32
+
+image=/boot/lfskernel-2.4.23
+  label=LFS
+  root=$rootDevice
+  read-only
+EOF
+
+fi
+
+"$EDITOR" /etc/lilo.conf
+
+echo "Run \`lilo' on the command-line to make the configuration permanent!" >&2
+read

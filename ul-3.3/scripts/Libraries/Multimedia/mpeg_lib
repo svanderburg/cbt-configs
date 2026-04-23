@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mpeg_lib
+version=1.3.1
+group=Libraries/Multimedia
+license=BSD
+description="MPEG decoding library"
+src="m/mpeg_lib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+mpeglib is a mp3 and mpeg I video/audio library for linux.
+
+The library includeds three command line players, for mp3,wav,mpeg video.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

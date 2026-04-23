@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+name=gettext
+version=0.11.1
+description="GNU Gettext"
+license=GPLv2
+src="g/gettext/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+gettext is an internationalization and localization (i18n and l10n) system
+commonly used for writing multilingual programs on Unix-like computer operating
+systems.
+
+One of the main benefits of gettext is that it separates programming from
+translating.
+EOF
+}

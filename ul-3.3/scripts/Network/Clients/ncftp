@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ncftp
+version=3.1.5
+group=Network/Clients
+license=AL
+description="NCFTP client"
+src="n/ncftp/$name-$version-src.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+ncftp is an FTP client program and is a popular alternative to the standard FTP
+program, /usr/bin/ftp. NcFTP offers many ease-of-use and performance
+enhancements over the stock ftp client
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    cd libncftp
+    make shared
+}
+
+installPhase()
+{
+    cd libncftp
+    make soinstall
+    cd ..
+    make
+    make install
+}

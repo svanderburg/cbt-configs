@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=mozilla-desktop
+version=0.9.1
+group=Applications
+description="KDE menu links for Mozilla"
+license=GPLv2
+arch=noarch
+
+buildPhase()
+{
+    true
+}
+
+installPhase()
+{
+    # Copy and adjust desktop items from GNOME to KDE
+    mkdir -p /opt/kde/share/applnk/Internet
+    cd /opt/kde/share/applnk/Internet
+    sed "s|Icon=|Icon=/opt/gnome/share/pixmaps/|" /opt/gnome/share/gnome/apps/Internet/mozilla.desktop > mozilla.desktop
+    sed "s|Icon=|Icon=/opt/gnome/share/pixmaps/|" /opt/gnome/share/gnome/apps/Internet/mozilla-profile.desktop > mozilla-profile.desktop
+    sed "s|Icon=|Icon=/opt/gnome/share/pixmaps/|" /opt/gnome/share/gnome/apps/Internet/mozilla-ns-upgrade.desktop > mozilla-ns-upgrade.desktop
+}

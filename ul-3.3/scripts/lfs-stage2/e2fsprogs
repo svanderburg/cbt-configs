@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=e2fsprogs
+version=1.27
+group=lfs-stage2
+description="Ext2 filesystem programs"
+license=GPLv2
+src="e/e2fsprogs/$name-$version.tar.gz"
+workDir=$name-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+The e2fsprogs package provides the filesystem utilities for use with the ext2
+filesystem.
+EOF
+}
+
+buildPhase()
+{
+    mkdir ../$name-build
+    cd ../$name-build
+    ../$name-$version/configure --prefix=/usr --with-root-prefix="" \
+        --enable-elf-shlibs
+    make
+}
+
+installPhase()
+{
+    cd ../$name-build
+    make install
+    make install-libs
+    install-info /usr/share/info/libext2fs.info /usr/share/info/dir
+}

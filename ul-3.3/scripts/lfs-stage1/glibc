@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/glibc
+
+group=lfs-stage1
+workDir=$name-$version
+
+buildPhase()
+{
+    mv ../linuxthreads* .
+    mkdir ../$name-build
+    cd ../$name-build
+    CFLAGS="-O2 -pipe" ../$name-$version/configure --prefix=/stage1 \
+       --enable-add-ons --disable-profile \
+       --with-binutils=/stage1/bin --with-headers=/stage1/include \
+       --without-gd
+    make
+    # make check
+}
+
+installPhase()
+{
+    mkdir -p /stage1/etc
+    touch /stage1/etc/ld.so.conf
+
+    cd ../$name-build
+    make install
+    make localedata/install-locales
+}

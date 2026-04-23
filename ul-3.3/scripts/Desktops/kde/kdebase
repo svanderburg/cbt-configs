@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdebase
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE base"
+src="k/kdebase/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Provides a number of base libraries and programs to make a functional KDE
+desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --sysconfdir=/etc/opt/kde-$version --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    # Replace obsolete pam_pwdb.so module by pam_unix.so and remove pam_cracklib.so
+    sed -e 's/pam_pwdb.so/pam_unix.so/g' \
+      -e '/pam_cracklib.so/d' \
+      kde.pamd > /etc/pam.d/kde
+
+    make install
+    ln -sfn /etc/opt/kde-$version /etc/opt/kde
+
+    cat > /etc/X11/xinit/xinitrc.kde << "EOF"
+#!/bin/sh
+
+exec startkde
+EOF
+
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/kde << "EOF"
+description="K Desktop Environment"
+EOF
+
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/kde /usr/share/ul/ul-xsession/sessions
+}

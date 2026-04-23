@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pciutils
+version=2.1.11
+group=Hardware
+license=GPLv2
+description="PCI Utilities"
+src="p/pciutils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The PCI Utilities package contains a library for portable access to PCI bus
+configuration registers and several utilities based on this library.
+EOF
+}
+
+buildPhase()
+{
+    make PREFIX=/usr
+}
+
+installPhase()
+{
+    make PREFIX=/usr install
+}

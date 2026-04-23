@@ -1,0 +1,39 @@
+#!/bin/sh
+# Begin $rc_base/init.d/nfs
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+case "$1" in
+	start)
+		echo -n "Starting NFS"
+		loadproc /usr/sbin/rpc.mountd
+		loadproc /usr/sbin/rpc.nfsd 8
+		loadproc /usr/sbin/rpc.statd
+		;;
+
+	stop)
+		echo -n "Stopping NFS"
+		killproc /usr/sbin/rpc.nfsd
+		killproc /usr/sbin/rpc.mountd
+		;;
+
+	reload)
+		echo "Reloading NFS"
+		/usr/sbin/exportfs -ra
+		;;
+
+	restart)
+		$0 stop
+		/usr/bin/sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|reload|restart}"
+		exit 1
+		;;
+
+esac
+
+# End $rc_base/init.d/nfs

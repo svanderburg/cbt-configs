@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libexif
+version=0.5.3
+group=Libraries/Image
+license=GPLv2
+description="EXIF headers library"
+src="l/libexif/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libexif is a library for parsing, editing, and saving EXIF data. It is
+intended to replace lots of redundant implementations in command-line
+utilities and programs with GUIs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

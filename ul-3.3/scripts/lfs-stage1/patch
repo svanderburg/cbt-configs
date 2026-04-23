@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/patch
+
+group=lfs-stage1
+
+buildPhase()
+{
+    export CPPFLAGS=-D_GNU_SOURCE
+    ./configure --prefix=/stage1
+    unset CPPFLAGS
+    make
+}
+
+installPhase()
+{
+    make install
+}

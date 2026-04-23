@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=man
+version=1.5j
+group=lfs-stage2
+description="Man"
+license=GPLv2
+src="m/man/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A software documentation system commonly used on Unix and Unix-like operating
+systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure -default
+    make
+}
+
+installPhase()
+{
+    make install
+    mv /usr/share/misc/man.conf /etc
+}

@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=alsa-driver
+version=0.9.8
+group=Hardware
+license=GPLv2
+description="ALSA driver"
+src="a/alsa-driver/$name-$version.tar.bz2"
+kernelVersion="2.4.23"
+
+showLongDescription()
+{
+    cat << "EOF"
+The ALSA Driver package contains the ALSA sound drivers. These are the next
+generation of sound drivers for Linux.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+      --with-moddir=/lib/modules/$kernelVersion/kernel/drivers/sound \
+      --with-kernel=/lib/modules/$kernelVersion/build \
+      --with-sequencer=yes \
+      --with-oss=yes \
+      --with-isapnp=yes
+    make
+}
+
+installPhase()
+{
+    make install
+    ./snddevices
+    rm -f /etc/rc.d/init.d/alsasound
+
+    # Give sound devices public permissions so that ordinary users can use it
+    chmod 666 /dev/dsp? /dev/mixer? /dev/sequencer /dev/music
+    chmod 666 /dev/snd/*
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=libole2
+version=0.2.4
+group=Libraries/gnome
+license=GPLv2
+description="OLE library"
+src="l/libole2/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A library containing functionality to manipulate OLE2 Structured Storage files.
+It is used by Gnumeric from GNOME, AbiWord from AbiSuite and by other programs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

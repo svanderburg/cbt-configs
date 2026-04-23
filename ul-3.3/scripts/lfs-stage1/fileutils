@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/fileutils
+
+group=lfs-stage1
+
+buildPhase()
+{
+    cp lib/Makefile.in lib/Makefile.in.backup
+    sed -e 's/\(.*\)\(fopen-safer\.c \)\\/\1\2atexit.c \\/' \
+      -e 's/\(.*\)\(idcache\$U\.\$.*\)\\/\1\2atexit$U.$(OBJEXT) \\/' \
+    lib/Makefile.in.backup > lib/Makefile.in
+
+    ./configure --disable-nls \
+      --prefix=/stage1 --bindir=/stage1/bin
+    make
+}
+
+installPhase()
+{
+    make install
+}

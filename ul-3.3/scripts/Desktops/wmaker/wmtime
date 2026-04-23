@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=wmtime
+version=1.1
+group=Desktops/wmaker
+license=GPLv2
+description="wmtime applet"
+src="w/wmtime/$name-$version.tar.gz"
+workDir=$name-$version/wmtime
+
+showLongDescription()
+{
+    cat << "EOF"
+WMTime, guess what, displays the time and date and gives you some nice
+additional features too...
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

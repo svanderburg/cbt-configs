@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=unzip
+version=5.51
+group=Tools/Packers
+license=info-zip
+description="UnZip from Info-Zip"
+src="u/unzip/${name}551.tar.gz"
+patches=("u/unzip/$name-$version-fix_Makefile-1.patch" "u/unzip/$name-$version-fix_libz-1.patch" "u/unzip/$name-$version-dont_make_noise-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Tools for extracting and viewing files in .zip archives
+EOF
+}
+
+buildPhase()
+{
+    cp unix/Makefile .
+    make prefix=/usr linux
+    make prefix=/usr linux_shlibz
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make prefix=/usr install
+    cp -av libunzip.so* /usr/lib
+    install -m644 $cbtBaseDir/cbt/unpack-plugins/zip /usr/share/cbt/unpack-plugins
+}

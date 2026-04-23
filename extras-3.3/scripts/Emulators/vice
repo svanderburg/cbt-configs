@@ -1,0 +1,171 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=vice
+version=1.22
+license=GPLv2
+group=Emulators
+description="VICE emulator"
+src="v/vice/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The VICE package provides a collection of emulators for various 8-bit Commodore
+computer models. It emulates the C64, the C64DTV, the C128, the VIC20,
+practically all PET models, the PLUS4 and the CBM-II (aka C610/C510).
+EOF
+}
+
+buildPhase()
+{
+    unset CFLAGS || true # to prevent the compiler from segfaulting in the middle
+
+    # Xrandr support is broken with XFree86 4.2.1
+    cp configure configure.orig
+    sed "s|X11/extensions/Xrandr.h|noexistent.h|" configure.orig > configure
+
+    ./configure --prefix=/usr --enable-fullscreen --with-xaw3d
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Create desktop links
+
+    for dir in $desktopFolders
+    do
+        mkdir -p "$dir/Emulators"
+        cat > "$dir/Emulators/x64.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (x64)
+Comment=VICE: Commodore 64 Emulator
+Exec=/usr/bin/x64
+MimeType=application/x-c64-cartridge;application/x-c64-program;application/x-c64-datadisk;application/x-c64-rawdisk;application/x-c64-snapshot;application/x-t64
+EOF
+
+        cat > "$dir/Emulators/x128.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (x128)
+Comment=VICE: Commodore 128 Emulator
+Exec=/usr/bin/x128
+EOF
+
+        cat > "$dir/Emulators/xvic.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (xvic)
+Comment=VICE: Commodore VIC-20 Emulator
+Exec=/usr/bin/xvic
+EOF
+
+        cat > "$dir/Emulators/xplus4.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (xplus4)
+Comment=VICE: Commodore PLUS/4 Emulator
+Exec=/usr/bin/xplus4
+EOF
+
+        cat > "$dir/Emulators/xpet.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (xpet)
+Comment=VICE: Commodore PET Emulator
+Exec=/usr/bin/xpet
+EOF
+
+        cat > "$dir/Emulators/xcbm2.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (xcbm2)
+Comment=VICE: Commodore CBM-II Emulator
+Exec=/usr/bin/xcbm2
+EOF
+
+        cat > "$dir/Emulators/vsid.desktop" << "EOF"
+[Desktop Entry]
+Type=Application
+Name=VICE (vsid)
+Comment=VICE: SID Emulator
+Exec=/usr/bin/vsid
+MimeType=audio/x-sid
+EOF
+
+    done
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > c64-cartridge.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Commodore 64 cartridge
+MimeType=application/x-c64-cartridge
+Icon=binary
+Patterns=*.crt;*.CRT
+EOF
+
+        cat > c64-program.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Commodore 64 program
+MimeType=application/x-c64-program
+Icon=binary
+Patterns=*.prg;*.PRG
+EOF
+
+        cat > c64-datadisk.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Commodore 64 data disk
+MimeType=application/x-c64-datadisk
+Icon=binary
+Patterns=*.d64;*.D64
+EOF
+
+        cat > c64-rawdisk.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Commodore 64 raw disk
+MimeType=application/x-c64-rawdisk
+Icon=binary
+Patterns=*.g64;*.G64
+EOF
+
+        cat > c64-snapshot.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Commodore 64 snapshot file
+MimeType=application/x-c64-snapshot
+Icon=binary
+Patterns=*.s64;*.S64
+EOF
+
+        cat > c64-tape.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Commodore 64 tape file
+MimeType=application/x-t64
+Icon=binary
+Patterns=*.t64;*.T64
+EOF
+
+        cat > sid.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=SID audio file
+MimeType=audio/x-sid
+Icon=binary
+Patterns=*.sid;*.SID
+EOF
+    fi
+}

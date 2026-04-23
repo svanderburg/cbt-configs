@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libghttp
+version=1.0.9
+group=Libraries/gnome
+license=LGPLv2.1
+description="GNOME HTTP library"
+src="l/libghttp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libghttp package contains a GNOME HTTP client library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

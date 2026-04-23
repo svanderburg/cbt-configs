@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libdvdread
+version=0.9.4
+group=Libraries/Multimedia
+license=GPLv2
+description="DVD reader library"
+src="l/libdvdread/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libdvdread is a cross-platform library for simple navigation of DVDs.
+It supports multimedia DVDs: DVD-Video and DVD-Audio.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-libdvdcss
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xpdf
+version=0.92e
+group=Desktops/X11
+license=GPLv2
+description="X PDF"
+src="x/xpdf/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Xpdf is a viewer for Portable Document Format (PDF) files.
+Xpdf is designed to be small and efficient. It does not use the Motif
+or Xt libraries. It can use standard X fonts.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr/X11R6 --with-gzip
+    make
+}
+
+installPhase()
+{
+    make install
+}

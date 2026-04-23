@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libcapplet
+version=1.5.11
+group=Libraries/gnome
+license=GPLv2
+description="GNOME C applet library"
+src="l/libcapplet/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libcapplet package contains a control panel applet library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

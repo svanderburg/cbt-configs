@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+name=gcc
+version=2.95.3
+description="GNU Compiler Collection"
+license=GPLv2
+src="g/gcc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+Fortran, and Java well as libraries for these languages (libstdc++,...).
+
+GCC was originally written as the compiler for the GNU operating system.
+EOF
+}

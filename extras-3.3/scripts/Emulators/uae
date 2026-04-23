@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=uae
+version=0.8.22
+license=GPLv2
+group=Emulators
+description="Ultimate Amiga Emulator"
+src="u/uae/$name-$version.tar.gz"
+
+desktopName="UAE"
+category=Emulators
+exec=uae
+comment="Ultimate Amiga Emulator"
+
+showLongDescription()
+{
+    cat << "EOF"
+UAE is a computer emulator which emulates the hardware of Commodore
+International's Amiga range of computers. This version of UAE is the original
+core distribution.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    install -m755 src/uae /usr/local/bin/uae
+    install -m755 src/readdisk /usr/local/bin/readdisk
+}

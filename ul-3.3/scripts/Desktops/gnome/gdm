@@ -1,0 +1,72 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gdm
+version=2.2.5.4
+group=Desktops/gnome
+license=GPLv2
+description="GNOME Display Manager"
+src="g/gdm/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNOME Display Manager is a system service that is responsible for
+providing graphical log-ins and managing local and remote displays.
+EOF
+}
+
+preConfigurePhase()
+{
+    groupadd -g 21 gdm
+    useradd -u 21 -g gdm gdm
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --localstatedir=/var/lib \
+      --with-pam-prefix=/etc \
+      --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+    chown gdm:gdm /var/lib/gdm
+
+    # Fix pam.d configuration. The included configs use obsolete modules no longer included with PAM
+
+    cat > /etc/pam.d/gdm << "EOF"
+#%PAM-1.0
+auth       required	/lib/security/pam_unix.so shadow nullok
+auth       required	/lib/security/pam_nologin.so
+account    required	/lib/security/pam_unix.so
+password   required	/lib/security/pam_unix.so shadow nullok use_authtok
+session    required	/lib/security/pam_unix.so
+
+EOF
+
+    cat > /etc/pam.d/gdm-autologin << "EOF"
+#%PAM-1.0
+auth       required	/lib/security/pam_env.so
+auth       required	/lib/security/pam_nologin.so
+auth       required	/lib/security/pam_permit.so
+account    required	/lib/security/pam_unix.so
+password   required	/lib/security/pam_unix.so shadow nullok use_authtok
+session    required	/lib/security/pam_unix.so
+EOF
+
+    # Ensure that session scripts load the profile settings
+    cp /etc/opt/gnome/gdm/Sessions/Gnome /etc/opt/gnome/gdm/Sessions/Gnome.bak
+    sed 's|#!/bin/sh|#!/bin/bash --login|' /etc/opt/gnome/gdm/Sessions/Gnome.bak > /etc/opt/gnome/gdm/Sessions/Gnome
+    rm /etc/opt/gnome/gdm/Sessions/Gnome.bak
+
+    cp /etc/opt/gnome/gdm/Sessions/Xsession /etc/opt/gnome/gdm/Sessions/Xsession.bak
+    sed 's|#!/bin/sh|#!/bin/bash --login|' /etc/opt/gnome/gdm/Sessions/Xsession.bak > /etc/opt/gnome/gdm/Sessions/Xsession
+    rm /etc/opt/gnome/gdm/Sessions/Xsession.bak
+}

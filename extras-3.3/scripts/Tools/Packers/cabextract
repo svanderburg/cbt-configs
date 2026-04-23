@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=cabextract
+version=1.0
+group=Tools/Packers
+license=GPLv2
+description="CAB file extractor"
+src="c/cabextract/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+cabextract is Free Software for extracting Microsoft cabinet files, also called
+.CAB files.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kde-i18n-nl
+version=2.2.2
+group=Desktops/kde-i18n
+license=GPLv2
+description="KDE Dutch Internationalization"
+src="k/kde-i18n/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dutch localization settings for KDE
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

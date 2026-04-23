@@ -1,0 +1,58 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sendmail
+version=8.12.11
+group=Network/Servers
+license=sendmail
+description="SMTP server"
+src="s/sendmail/$name.$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Sendmail is a general purpose internetwork email routing facility that supports
+many kinds of mail-transfer and delivery methods, including the
+Simple Mail Transfer Protocol (SMTP) used for email transport over the Internet.
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 26 smmsp
+    groupadd -g 34 mail
+    useradd -u 26 -g smmsp -G mail smmsp
+    mkdir -p /var/spool/mqueue
+}
+
+buildPhase()
+{
+    cat > devtools/Site/site.config.m4 << "EOF"
+define(`confMANGRP',`root')
+define(`confMANOWN',`root')
+define(`confSBINGRP',`root')
+define(`confUBINGRP',`root')
+define(`confUBINOWN',`root')
+EOF
+    cd sendmail
+    sh Build
+    cd ../cf/cf
+    cp generic-linux.mc sendmail.mc
+}
+
+installPhase()
+{
+    cd cf/cf
+    mkdir -p /etc/mail
+    sh Build sendmail.mc
+    sh Build install-cf
+    cd ../../
+    sh Build install
+
+    install -m754 $cbtBaseDir/init.d/sendmail /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/sendmail /usr/share/ul/ul-init
+}

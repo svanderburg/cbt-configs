@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=which
+version=2.14
+group=lfs-stage2
+description="GNU Which"
+license=GPLv2
+src="w/which/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU which is a utility that is used to find which executable (or alias or shell
+function) is executed when entered on the shell prompt.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libmikmod
+version=3.1.12
+group=Libraries/Multimedia
+license=LGPLv2.1
+description="Mikmod library"
+src="l/libmikmod/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Mikmod is a module player and library supporting many formats, including mod,
+s3m, it, and xm.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

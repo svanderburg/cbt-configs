@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=man-pages
+version=1.48
+group=lfs-stage2
+description="Man pages"
+license=GPLv2
+src="m/man-pages/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of Linux manual pages for all chapters, except 1,6 and 8.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    make install
+}

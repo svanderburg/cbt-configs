@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-mime-data
+version=1.0.1
+group=Libraries/gnome
+license=LGPLv2.1
+description="GNOME MIME data"
+src="g/gnome-mime-data/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNOME MIME Data package contains the base set of file types and applications
+for GNOME.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

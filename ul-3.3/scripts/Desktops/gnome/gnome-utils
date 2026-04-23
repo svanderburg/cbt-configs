@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-utils
+version=1.4.1.2
+group=Desktops/gnome
+license=GPLv2
+description="GNOME utilities"
+src="g/gnome-utils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of miscellaneous utilities for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion \
+        --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+        --mandir=/opt/gnome-$gnomeVersion/share/man \
+        --localstatedir=/var/lib --enable-shared \
+        --with-messages=/var/log/sys.log
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lcms
+version=1.09
+group=Libraries/Image
+license=LGPLv2.1
+description="Little Color Monitoring System"
+src="l/lcms/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Little CMS or LCMS is an open-source color management system, released as a
+software library for use in other programs which will allow the use of
+International Color Consortium (ICC) profiles.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make install
+
+    # Create symlinks because some software expects headers to reside in a sub directory
+    mkdir /usr/include/lcms
+    cd /usr/include/lcms
+    ln -s ../lcms.h lcms.h
+    ln -s ../icc34.h icc34.h
+}

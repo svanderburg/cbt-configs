@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=dia
+version=0.88.1
+group=Applications
+description="Diagram editor"
+license=GPLv2
+src="d/dia/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dia is a GTK+ based diagram creation program.
+
+Dia is roughly inspired by the commercial Windows program 'Visio,' though more
+geared towards informal diagrams for casual use. It can be used to draw many
+different kinds of diagrams. It currently has special objects to help draw
+entity relationship diagrams, UML diagrams, flowcharts, network diagrams, and
+many other diagrams. It is also possible to add support for new shapes by
+writing simple XML files, using a subset of SVG to draw the shape.
+
+It can load and save diagrams to a custom XML format (gzipped by default, to
+save space), can export diagrams to a number of formats, including EPS, SVG,
+XFIG, WMF and PNG, and can print diagrams (including ones that span multiple
+pages).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Create a KDE desktop item from the GNOME desktop item
+    sed "s|Icon=|Icon=/opt/gnome-$gnomeVersion/share/pixmaps/|" dia.desktop > /opt/kde/share/applnk/Graphics/dia.desktop
+}

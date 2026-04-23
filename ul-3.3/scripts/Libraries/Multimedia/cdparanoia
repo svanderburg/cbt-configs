@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cdparanoia
+version=III_alpha9.8
+pkgVersion=III-alpha9.8
+group=Libraries/Multimedia
+license=BSD
+description="CD paranoia"
+src="c/cdparanoia/$name-$pkgVersion.src.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+cdparanoia retrieves audio tracks from CDDA capable CDROM drives. The data can
+be saved to a file or directed to standard output in WAV, AIFF, AIFF-C or raw
+format. Most ATAPI, SCSI and several proprietary CDROM drive makes are
+supported; cdparanoia can determine if the target drive is CDDA capable.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

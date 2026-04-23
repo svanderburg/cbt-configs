@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mc
+version=4.5.55
+group=Desktops/gnome
+license=GPLv2
+description="Midnight Commander"
+src="m/mc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains two file managers: an orthodox (twin panel) file manager
+for console applications and a simple graphical file manager for GNOME. Most of
+the engine is shared between these two file managers.
+EOF
+}
+
+buildPhase()
+{
+    sed 's|CODEPAGEDIR = $(LIBDIR)/codepages|CODEPAGEDIR = /usr/share/samba/codepages|' vfs/samba/Makefile.in > vfs/samba/Makefile.in.new
+    mv vfs/samba/Makefile.in.new vfs/samba/Makefile.in
+
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --with-ncurses --with-slang --with-gnome \
+      --with-gpm-mouse --with-subshell --with-vfs --with-x --disable-static \
+      --with-samba 
+    make
+}
+
+installPhase()
+{
+    make install
+}

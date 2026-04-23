@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libpng
+version=1.2.4
+group=Libraries/Image
+license=zlib
+description="PNG library"
+src="l/libpng/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libpng is the official PNG reference library. It supports almost all PNG
+features, is extensible, and has been extensively tested for over 30 years.
+EOF
+}
+
+buildPhase()
+{
+    sed -e 's|prefix=/usr/local|prefix=/usr|' \
+      -e 's|ZLIBLIB=../zlib|ZLIBLIB=/usr/lib|' \
+      -e 's|ZLIBINC=../zlib|ZLIBINC=/usr/include|' \
+      scripts/makefile.linux > Makefile
+    make
+}
+
+installPhase()
+{
+    make install
+}

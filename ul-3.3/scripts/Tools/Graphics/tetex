@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=tetex
+version=2.0.2
+group=Tools/Graphics
+license=tex
+description="TeTeX typesetting system"
+src=
+files=("t/tetex/$name-src-$version.tar.gz" "t/tetex/$name-texmf-$version.tar.gz" "t/tetex/$name-texmfsrc-$version.tar.gz")
+
+showLongDescription()
+{
+    cat << "EOF"
+teTeX is an implementation of Donald Knuth's TeX typesetting program. This
+package is able to create documents in a variety of formats. 
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    mkdir -p /usr/share/texmf
+    tar zxvf $sourcesDir/${files[0]}
+    cd $name-src-$version
+    gzip -dc $sourcesDir/${files[1]} | (umask 0; cd /usr/share/texmf; tar xfv -)
+    gzip -dc $sourcesDir/${files[2]} | (umask 0; cd /usr/share/texmf; tar xfv -)
+
+    ./configure --prefix=/usr \
+      --without-texinfo --with-system-ncurses --with-system-zlib \
+      --exec-prefix=/usr --bindir=/usr/bin
+    make world
+    texconfig dvips paper a4
+    texconfig font rw
+}

@@ -1,0 +1,89 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=tcsh
+version=6.12.00
+group=Tools/Shells
+license=BSD
+description="TENEX C shell"
+src="t/tcsh/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Tcsh is a version of the Berkeley C-Shell with the addition of a command line
+editor, command and file name completion, listing etc. and a bunch of small
+additions to the shell itself.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    cp tcsh.man /usr/share/man/man1/tcsh.1
+    ln -sf /usr/bin/tcsh /bin/csh
+
+    cat > /etc/csh.login << "EOF"
+# Begin /etc/csh.login
+
+foreach script (/etc/profile.d/*.csh)
+    source "$script"
+end
+
+# End /etc/csh.login
+EOF
+
+    cat > /etc/csh.cshrc << "EOF"
+# Begin /etc/cshrc
+
+# By default we want the umask to get set
+# Even for non-interactive and non-login shells
+
+if ( `id -gn` == `id -un` && `id -u` > 99 ) then
+    umask 002
+else
+    umask 022
+endif
+
+# Provides a colored /bin/ls command
+alias ls 'ls --color=auto'
+
+# Configure prompt
+set prompt = '[%n@%m %c]$ '
+
+# End /etc/cshrc
+EOF
+
+    install -m755 $cbtBaseDir/profile.d/00base.csh /etc/profile.d
+
+    if [ "$CFLAGS" != "" ]
+    then
+        echo "setenv CFLAGS \"$CFLAGS\"" > /etc/profile.d/01optimize.csh
+	chmod 755 /etc/profile.d/01optimize.csh
+    fi
+
+    if [ "$CXXFLAGS" != "" ]
+    then
+        echo "setenv CXXFLAGS \"$CXXFLAGS\"" >> /etc/profile.d/01optimize.csh
+	chmod 755 /etc/profile.d/01optimize.csh
+    fi
+
+    mkdir -p /usr/lib/ul-adduser
+    cat > /usr/lib/ul-adduser/tcsh << "EOF"
+shellPath=/usr/bin/tcsh
+description="TENEX C-SHell"
+EOF
+
+    cat > /usr/lib/ul-adduser/csh << "EOF"
+shellPath=/bin/csh
+description="Generic C-compatible shell"
+EOF
+}

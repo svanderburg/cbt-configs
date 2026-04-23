@@ -1,0 +1,70 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=docbook-dsssl
+version=1.78
+group=Libraries/Docbook
+license=MIT
+description="Docbook DSSSL stylesheets"
+src="d/docbook-dsssl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The docbook-dsssl package contains DSSSL stylesheets. These are used by
+openjade or other tools to transform SGML and XML DocBook files.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/dtds/decls
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/lib
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/common
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/html
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/print
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/test
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/images
+    install bin/collateindex.pl /usr/bin
+    cp catalog VERSION /usr/share/sgml/docbook/dsssl-stylesheets-$version
+    cp dtds/decls/*.dcl \
+        /usr/share/sgml/docbook/dsssl-stylesheets-$version/dtds/decls
+    cp lib/dblib.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/lib
+    cp common/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/common
+    cp common/*.ent /usr/share/sgml/docbook/dsssl-stylesheets-$version/common
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/dtds/decls
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/lib
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/common
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/html
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/print
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/test
+    mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-$version/images
+    install bin/collateindex.pl /usr/bin
+    cp catalog VERSION /usr/share/sgml/docbook/dsssl-stylesheets-$version
+    cp dtds/decls/*.dcl \
+        /usr/share/sgml/docbook/dsssl-stylesheets-$version/dtds/decls
+    cp lib/dblib.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/lib
+    cp common/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/common
+    cp common/*.ent /usr/share/sgml/docbook/dsssl-stylesheets-$version/common
+    cp html/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/html
+    cp lib/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/lib
+    cp print/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/print
+    cp images/*.gif /usr/share/sgml/docbook/dsssl-stylesheets-$version/images
+    cp html/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/html
+    cp lib/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/lib
+    cp print/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-$version/print
+    cp images/*.gif /usr/share/sgml/docbook/dsssl-stylesheets-$version/images
+}
+
+postConfigurePhase()
+{
+    install-catalog --add /etc/sgml/dsssl-docbook-stylesheets.cat /usr/share/sgml/docbook/dsssl-stylesheets-$version/catalog
+    install-catalog --add /etc/sgml/sgml-docbook.cat /etc/sgml/dsssl-docbook-stylesheets.cat
+}

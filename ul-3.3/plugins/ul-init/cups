@@ -1,0 +1,5 @@
+description="CUPS printing service"
+startSequenceNumber=25
+stopSequenceNumber=30
+startRunLevels="2 3 4 5"
+stopRunLevels="0 1 6"

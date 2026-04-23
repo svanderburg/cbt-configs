@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtkmm
+version=1.2.10
+group=Libraries/gnome
+license=LGPLv2.1
+description="C++ wrapper for GTK+"
+src="g/gtkmm/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Gtk-- is a C++ wrapper for GTK+ for creating graphical user interfaces.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion
+    make
+}
+
+installPhase()
+{
+    make install
+}

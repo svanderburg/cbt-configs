@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mesa
+version=5.0.2
+group=Libraries/X
+license=X11
+description="Mesa3D library"
+srcs=("m/MesaLib/MesaLib-$version.tar.bz2" "m/MesaDemos/MesaDemos-$version.tar.bz2")
+sourceRoot=Mesa-5.0.2
+
+showLongDescription()
+{
+    cat << "EOF"
+Mesa3D provides an open source implementation of OpenGL and translates these
+specifications to vendor-specific graphics hardware drivers. Mesa also contains
+an OpenGL-compatible implementation of a software renderer.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr/X11R6 --sysconfdir=/etc
+    make
+}
+
+installPhase()
+{
+    make install
+}

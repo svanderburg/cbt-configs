@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-user-docs
+version=1.4.1
+group=Desktops/gnome
+license=GPLv2
+description="GNOME user docs"
+src="g/gnome-user-docs/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of end user documentation for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --localstatedir=/var/lib --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

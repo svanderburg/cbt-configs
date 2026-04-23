@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=remove-stage1-symlink
+group=lfs-stage1
+description="Removes /stage1 symlink"
+
+execute()
+{
+    rm /stage1
+}

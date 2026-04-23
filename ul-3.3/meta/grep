@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=grep
+version=2.5
+description="GNU Grep"
+license=GPLv2
+src="g/grep/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Grep searches one or more input files for lines containing a match to a
+specified pattern. By default, Grep outputs the matching lines.
+EOF
+}

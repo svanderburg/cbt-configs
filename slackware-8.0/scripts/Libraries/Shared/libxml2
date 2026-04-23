@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=libxml2
+version=2.5.11
+group=Libraries/Shared
+license=MIT
+description="XML parser library"
+src="l/libxml2/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libxml2 is an XML toolkit implemented in C, originally developed for the GNOME
+Project.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make install
+}

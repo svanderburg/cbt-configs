@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=binutils
+version=2.12
+description="GNU Binutils"
+license=GPLv2
+src="b/binutils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Binutils are a collection of binary tools. The main ones are the GNU
+assembler and GNU linker.
+EOF
+}

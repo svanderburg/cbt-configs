@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtkhtml
+version=0.8.3
+group=Libraries/gnome
+license=LGPLv2.1
+description="GTK HTML extension library"
+src="g/gtkhtml/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GtkHTML is a lightweight HTML rendering/printing/editing engine.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include/libcapplet-1.4' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

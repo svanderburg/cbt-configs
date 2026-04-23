@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/util-linux
+
+group=lfs-stage1
+
+buildPhase()
+{
+    cp hwclock/hwclock.c hwclock/hwclock.c.backup &&
+    sed 's%etc/adjtime%var/lib/hwclock/adjtime%' \
+      hwclock/hwclock.c.backup > hwclock/hwclock.c &&
+
+    ./configure
+    make -C lib
+    make -C mount mount umount
+    make -C text-utils more
+    make -C getopt-1.1.2 # Not covered in the instructions, but the cbt tools need it
+}
+
+installPhase()
+{
+    cp mount/mount mount/umount text-utils/more /stage1/bin
+    cp getopt-1.1.2/getopt /stage1/bin # Not covered in the instructions
+}

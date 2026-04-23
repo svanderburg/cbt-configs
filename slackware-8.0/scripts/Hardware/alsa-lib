@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=alsa-lib
+version=0.9.8
+license=GPLv2
+group=Hardware
+description="ALSA libraries"
+src="a/alsa-lib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The ALSA Library package contains the ALSA library. This is used by programs
+(including ALSA Utilities) requiring access to the ALSA sound interface.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

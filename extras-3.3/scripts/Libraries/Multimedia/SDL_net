@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=SDL_net
+version=1.2.5
+license=LGPLv2
+group=Libraries/Multimedia
+description="SDL Network"
+src="s/SDL_net/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is an example portable network library for use with SDL.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=guile
+version=1.6.1
+group=Programming
+license=GPLv2
+description="Scheme language interpreter"
+src="g/guile/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Ubiquitous Intelligent Language for Extensions (GNU Guile) is the
+preferred extension language system for the GNU Project and features an
+implementation of the programming language Scheme.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

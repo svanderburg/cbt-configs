@@ -1,0 +1,5 @@
+description="Display manager"
+startSequenceNumber=99
+stopSequenceNumber=0
+startRunLevels="5"
+stopRunLevels="0 1 2 3 4 6"

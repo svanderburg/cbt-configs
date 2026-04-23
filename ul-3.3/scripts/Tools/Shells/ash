@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ash
+version=0.4.0
+group=Tools/Shells
+license=BSD-4
+description="Almquist SHell"
+src="a/ash/$name-$version.tar.gz"
+patches=("a/ash/$name-$version-cumulative_fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+ash is a shell that is the most compliant with the Bourne Shell (not to be
+confused with bash: the Bourne Again SHell) without any extra features.
+
+Bourne Shell is available of most commercial UNIX systems. ash can be useful
+for testing scripts to be sh-compliant. It can also be used as a lightweight
+shell as it has a small memory and storage footprint compared to most other
+sh-compliant shells.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -m755 sh /bin/ash
+    install -m644 sh.1 /usr/share/man/man1/ash.1
+
+    mkdir -p /usr/lib/ul-adduser
+    cat > /usr/lib/ul-adduser/ash << "EOF"
+shellPath=/bin/ash
+description="Almquist SHell"
+EOF
+}

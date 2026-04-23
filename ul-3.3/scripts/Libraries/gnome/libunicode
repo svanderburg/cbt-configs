@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libunicode
+version=0.4
+group=Libraries/gnome
+license=LGPLv2.1
+description="Unicode library"
+src="l/libunicode/$name-$version.gnome.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libunicode is a library for manipulating Unicode characters and
+strings.  It understands both the UTF-8 and UCS-2 encodings, and has a
+framework for adding support for new encodings.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=gnuboy
+version=1.0.3
+license=GPLv2
+group=Emulators
+description="Gameboy emulator"
+src="g/gnuboy/$name-$version.tar.gz"
+
+desktopName="SDL gnuboy"
+category=Emulators
+exec=sdlgnuboy
+comment="Gameboy Emulator"
+mimeType="application/x-gameboy-rom"
+noDisplay=true
+
+showLongDescription()
+{
+    cat << "EOF"
+gnuboy is one of the fastest if not the fastest GB/GBC emulator available.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > gb.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Gameboy ROM
+MimeType=application/x-gameboy-rom
+Icon=binary
+Patterns=*.gb;*.GB;*.gbc;*.GBC
+EOF
+    fi
+}

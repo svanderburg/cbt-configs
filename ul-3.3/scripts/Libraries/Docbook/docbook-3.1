@@ -1,0 +1,75 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=docbook
+version=3.1
+shortVersion=31
+group=Libraries/Docbook
+license=MIT
+description="Docbook SGML DTD 3.1"
+src="d/docbook/docbk${shortVersion}.zip"
+workDir=docbook
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains document type definitions for verification of SGML data
+files against version 3.1 of the DocBook rule set.
+EOF
+}
+
+unpackPhase()
+{
+    mkdir docbook
+    cd docbook
+    unzip "$sourcesDir/$src"
+    cd ..
+}
+
+buildPhase()
+{
+    cp docbook.cat docbook.cat.orig
+    sed -e '/ISO 8879/d' docbook.cat.orig > docbook.cat
+    cp docbook.cat docbook.cat.orig
+    sed -e '/gml/d' docbook.cat.orig > docbook.cat
+    cp docbook.cat docbook.cat.orig
+    sed -e 's|DTDDECL "-//OASIS//DTD DocBook V3.1//EN"|SGMLDECL|g' \
+      docbook.cat.orig > docbook.cat
+}
+
+installPhase()
+{
+    install -d /usr/share/sgml/docbook/sgml-dtd-$version
+
+    chown -R root:root .
+    chmod -R 755 .
+
+    install docbook.cat /usr/share/sgml/docbook/sgml-dtd-$version/catalog
+    cp -af *.dtd *.mod *.dcl /usr/share/sgml/docbook/sgml-dtd-$version
+}
+
+postConfigurePhase()
+{
+    install-catalog --add /etc/sgml/sgml-docbook-dtd-$version.cat \
+      /usr/share/sgml/docbook/sgml-dtd-$version/catalog
+    install-catalog --add /etc/sgml/sgml-docbook-dtd-$version.cat \
+      /etc/sgml/sgml-docbook.cat
+
+    cat >> /usr/share/sgml/docbook/sgml-dtd-$version/catalog << "EOF"
+ -- Begin GNOME addition to catalog --
+
+PUBLIC "-//GNOME//DTD DocBook PNG Variant V1.1//EN" "png-support-3.1.dtd"
+
+ -- End GNOME addition to catalog --
+EOF
+
+    cat >> /usr/share/sgml/docbook/sgml-dtd-$version/catalog << "EOF"
+ -- Begin Single Major Version catalog changes --
+
+PUBLIC "//-Davenport//DTD DocBook V3.0//EN" "docbook.dtd"
+
+ -- End Single Major Version catalog changes --
+EOF
+}

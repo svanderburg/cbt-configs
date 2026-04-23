@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gimp
+version=1.2.3
+group=Applications
+license=GPLv2
+description="GNU Image Manipulation Program"
+src="g/gimp/$name-$version.tar.gz"
+
+desktopName="GIMP"
+category=Graphics
+exec=/opt/gnome/bin/gimp
+comment="GNU Image Manipulation Program"
+icon="gnome-gimp.png"
+
+showLongDescription()
+{
+    cat << "EOF"
+GIMP is a cross-platform image editor available for GNU/Linux, macOS, Windows
+and more operating systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man
+    make
+}
+
+installPhase()
+{
+    make install
+}

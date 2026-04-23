@@ -1,0 +1,5 @@
+description="OpenSSH server"
+startSequenceNumber=30
+stopSequenceNumber=30
+startRunLevels="3 4 5"
+stopRunLevels="0 1 2 6"

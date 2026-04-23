@@ -1,0 +1,52 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=stella
+version=1.2
+license=GPLv2
+group=Emulators
+description="A multi-platform Atari 2600 VCS emulator"
+src="s/stella/$name-$version-src.tar.gz"
+workDir="$name-$version/src/build"
+
+desktopName="Stella"
+category=Emulators
+exec="stella -fullscreen"
+comment="Atari 2600 VCS emulator"
+mimeType="application/x-atari-2600-rom"
+noDisplay=true
+
+showLongDescription()
+{
+    cat << "EOF"
+Stella is a multi-platform Atari 2600 VCS emulator which allows you to play all
+of your favorite Atari 2600 games on your PC.
+EOF
+}
+
+buildPhase()
+{
+    make linux-sdl
+}
+
+installPhase()
+{
+    install -m755 stella.sdl /usr/local/bin/stella
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > atari2600.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Atari 2600 VCS ROM
+MimeType=application/x-atari-2600-rom
+Icon=binary
+Patterns=*.a26;*.A26
+EOF
+    fi
+}

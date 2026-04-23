@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=create-tty-devs
+group=lfs-stage1
+description="Creates /dev/tty files"
+
+execute()
+{
+    mknod $LFS/dev/tty0 c 4 0
+    mknod $LFS/dev/tty1 c 4 1
+    mknod $LFS/dev/tty2 c 4 2
+}

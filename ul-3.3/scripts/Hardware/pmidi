@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pmidi
+version=1.5.5
+group=Hardware
+license=GPLv2
+description="PMIDI player"
+src="p/pmidi/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+PMIDI is a command-line MIDI player for ALSA.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

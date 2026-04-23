@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+echo "Executing stage 3"
+
+cd /usr/src/ul-3.3
+cbt-run-seq sequences/lfs-stage3

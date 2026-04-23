@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sawfish
+version=1.0.1
+group=Desktops/gnome
+license=GPLv2
+description="Sawfish window manager"
+src="s/sawfish/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Sawfish is a window manager for the X Window System and one of the supported
+window managers for the GNOME desktop. It aims to manage windows in the most
+flexible and attractive manner possible.
+
+Sawfish uses a Lisp-like scripting language, rep, for all of its code and
+configuration, making it particularly easy to customize, or program many kinds
+of behavior, responding to window creation, deletion, or any other changes.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --libexecdir=/opt/gnome-$gnomeVersion/sbin \
+      --infodir=/opt/gnome-$gnomeVersion/share/info \
+      --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

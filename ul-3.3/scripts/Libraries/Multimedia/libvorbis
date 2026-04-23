@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libvorbis
+version=1.0
+group=Libraries/Multimedia
+license=BSD
+description="Vorbis library"
+src="l/libvorbis/$name-$version.tar.gz"
+patches=("l/libvorbis/vorbisrc3.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free,
+general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz,
+16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to
+128 kbps/channel
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

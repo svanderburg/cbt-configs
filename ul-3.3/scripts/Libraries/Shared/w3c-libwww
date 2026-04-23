@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=w3c-libwww
+version=5.3.2
+group=Libraries/Shared
+license=w3c
+description="W3C libwww library"
+src="w/w3c-libwww/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Libwww is a highly modular, general-purpose client side Web API written in C for
+Unix and Windows (Win32). It's well suited for both small and large
+applications, like browser/editors, robots, batch tools, etc. Pluggable modules
+provided with libwww include complete HTTP/1.1 (with caching, pipelining, PUT,
+POST, Digest Authentication, deflate, etc), MySQL logging, FTP, HTML/4, XML
+(expat), RDF (SiRPAC), WebDAV, and much more.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-zlib --with-md5 --with-ssl
+    make
+}
+
+installPhase()
+{
+    make install
+}

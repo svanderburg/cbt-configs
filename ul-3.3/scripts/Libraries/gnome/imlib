@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=imlib
+version=1.9.11
+group=Libraries/gnome
+license=LGPLv2.1
+description="GNOME Image Library"
+src="i/imlib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Imlib package contains image libraries. These are useful for loading,
+rendering and dithering a wide variety of image data formats.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

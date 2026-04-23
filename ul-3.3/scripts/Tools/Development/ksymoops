@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ksymoops
+version=2.4.9
+group=Tools/Development
+license=GPLv2
+description="Kernel crash diagnostic tool"
+src="k/ksymoops/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+ksymoops reads a Linux kernel Oops file and makes the best stab at
+converting the code to instructions and mapping addresses to kernel
+symbols.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

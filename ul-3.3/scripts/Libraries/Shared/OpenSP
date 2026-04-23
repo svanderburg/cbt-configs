@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=OpenSP
+version=1.5
+group=Libraries/Shared
+license=MIT
+description="C++ library for managing SGML and XML files"
+src="o/OpenSP/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A free, object-oriented toolkit for SGML and XML parsing, and entity management.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --disable-static --enable-http \
+      --enable-default-catalog=/etc/sgml/catalog \
+      --enable-default-search-path=/usr/share/sgml --enable-xml-messages
+    make pkgdatadir=/usr/share/sgml/$name-$version
+}
+
+installPhase()
+{
+    make pkgdatadir=/usr/share/sgml/$name-$version install
+
+    ln -sf onsgmls /usr/bin/nsgmls
+    ln -sf osgmlnorm /usr/bin/sgmlnorm
+    ln -sf ospam /usr/bin/spam
+    ln -sf ospcat /usr/bin/spcat
+    ln -sf ospent /usr/bin/spent
+    ln -sf osx /usr/bin/sx
+    ln -sf osx /usr/bin/sgml2xml
+    ln -sf libosp.so /usr/lib/libsp.so
+
+    install-catalog --add /etc/sgml/$name-$version.cat \
+      /usr/share/sgml/$name-$version/catalog
+    install-catalog --add /etc/sgml/sgml-docbook.cat \
+      /etc/sgml/$name-$version.cat
+}

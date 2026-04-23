@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nautilus
+version=1.0.6
+group=Desktops/gnome
+license=GPLv2
+description="File manager for GNOME"
+src="n/nautilus/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Next generation shell and file manager for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --localstatedir=/var/lib \
+      --enable-eazel-services \
+      --with-mozilla-lib-place=/opt/mozilla/lib \
+      --with-mozilla-include-place=/opt/mozilla/include
+    make
+}
+
+installPhase()
+{
+    make install
+}

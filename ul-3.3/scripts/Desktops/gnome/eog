@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=eog
+version=0.6
+group=Desktops/gnome
+license=GPLv2
+description="Eye of GNOME"
+src="e/eog/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Eye of GNOME is an image viewer program. It is meant to be a fast and
+functional image viewer as well as an image cataloging program.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

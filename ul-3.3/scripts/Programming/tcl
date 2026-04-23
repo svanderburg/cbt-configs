@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=tcl
+version=8.4.4
+group=Programming
+license=tcl
+description="Tool Command Language"
+src="t/tcl/${name}${version}-src.tar.gz"
+workDir="${name}${version}/unix"
+
+showLongDescription()
+{
+    cat << "EOF"
+Tcl (Tool Command Language) is a very powerful but easy to learn dynamic
+programming language, suitable for a very wide range of uses, including web and
+desktop applications, networking, administration, testing and many more.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    V=`echo $version | cut -d "." -f 1,2`
+    DIR=$PWD
+    cp tclConfig.sh tclConfig.sh.orig
+    sed -e "s:${DIR}/unix:/usr/lib:" \
+      -e "s:${DIR}:/usr/include/tcl${V}:" \
+      -e "s,^TCL_LIB_FILE='libtcl${V}..TCL_DBGX..so',TCL_LIB_FILE=\"libtcl${V}\$\{TCL_DBGX\}.so\"," \
+      tclConfig.sh.orig > tclConfig.sh
+    make install
+    install -d /usr/include/tcl${V}/unix
+    install -m644 *.h /usr/include/tcl${V}/unix/
+    install -d /usr/include/tcl${V}/generic
+    install -c -m644 ../generic/*.h /usr/include/tcl${V}/generic/
+    rm -f /usr/include/tcl${V}/generic/{tcl,tclDecls,tclPlatDecls}.h
+    ln -nsf /usr/include/tcl${V} /usr/lib/tcl${V}/include
+    ln -sf libtcl${V}.so /usr/lib/libtcl.so
+    ln -sf tclsh${V} /usr/bin/tclsh
+}

@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+name=perl
+version=5.6.1
+description="Perl"
+license=AL/GPLv1+
+src="p/perl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Perl is a high-level, general-purpose, interpreted, dynamic programming
+language. Though Perl is not officially an acronym, there are various
+backronyms in use, including "Practical Extraction and Reporting Language".
+EOF
+}

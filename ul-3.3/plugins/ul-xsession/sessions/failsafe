@@ -1,0 +1,4 @@
+#!/bin/bash --login
+source /usr/share/ul/ul-xsession/common
+exec xterm -geometry 80x24-0-0
+

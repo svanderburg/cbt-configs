@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=ddd
+version=3.3.1
+group=Tools/Development
+license=GPLv2
+description="Data Display Debugger"
+src="d/ddd/$name-$version.tar.gz"
+
+desktopName="DDD"
+category=Development
+exec=ddd
+comment="Data Display Debugger"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU DDD is a graphical front end for the command-line debugger GDB. Besides
+"usual" frontend features such as viewing source texts, DDD has become famous
+through its interactive graphical data display, where data structures are
+displayed as graphs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

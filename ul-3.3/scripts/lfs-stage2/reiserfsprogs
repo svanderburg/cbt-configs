@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=reiserfsprogs
+version=3.x.1b
+group=lfs-stage2
+description="Reiser filesystem programs"
+license=GPLv2
+src="r/reiserfsprogs/$name-$version.tar.gz"
+workDir=$name-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+The reiserfsprogs package contains various utilities for use with the Reiser
+file system
+EOF
+}
+
+buildPhase()
+{
+    ./configure --mandir=/usr/share/man
+    make
+}
+
+installPhase()
+{
+    make install
+}

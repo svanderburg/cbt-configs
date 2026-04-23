@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=binfmt_misc-java
+group=Services
+license=GPLv2
+description="Java classes, JARs and applet binary support in Linux"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains tools to allow Java class files, JARs and Applets to be
+used as executable binaries in Linux by using the binfmt_misc binary loader.
+EOF
+}
+
+unpackPhase()
+{
+    echo
+}
+
+buildPhase()
+{
+    cp $cbtBaseDir/binfmt_misc-java/javaclassname.c .
+    gcc $CFLAGS javaclassname.c -o javaclassname
+}
+
+installPhase()
+{
+    install -m755 javaclassname /usr/bin
+    cd $cbtBaseDir/binfmt_misc-java
+    install -m755 javawrapper jarwrapper /usr/bin
+}
+
+postConfigurePhase()
+{
+    # Add Java binaries support to the binfmt_misc loader
+    cat >> /etc/sysconfig/binfmt_misc << "EOF"
+:Java:M::\xca\xfe\xba\xbe::/usr/bin/javawrapper:
+:ExecutableJAR:E::jar::/usr/bin/jarwrapper:
+:Applet:M::<!--applet::/opt/j2sdk/bin/appletviewer:
+EOF
+}

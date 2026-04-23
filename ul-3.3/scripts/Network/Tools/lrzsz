@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lrzsz
+version=0.12.20
+group=Network/Tools
+license=GPLv2
+description="X/Y/ZMODEM transfer utility"
+src="l/lrzsz/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+lrzsz is a unix communication package providing the XMODEM, YMODEM ZMODEM file
+transfer protocols.
+EOF
+}
+
+buildPhase()
+{
+    cp src/lrz.c src/lrz.c.bak
+    sed 's|extern char \*strstr|//extern char *strstr|' src/lrz.c.bak > src/lrz.c
+    cp src/lsz.c src/lsz.c.bak
+    sed 's|extern char \*strstr|//extern char *strstr|' src/lsz.c.bak > src/lsz.c
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/findutils
+
+patches=("f/findutils/$name-$version.patch.bz2")
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure --prefix=/stage1 --disable-nls
+    make localstatedir=/var/lib/misc
+}
+
+installPhase()
+{
+    make localstatedir=/var/lib/misc libexecdir=/stage1/bin install
+}

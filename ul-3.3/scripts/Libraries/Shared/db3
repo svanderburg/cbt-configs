@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=db3
+majorVersion=3.3
+version=3.3.11
+group=Libraries/Shared
+license=BSD-3
+description="Berkeley Database version 3.3"
+src="d/db/db-$version.tar.gz"
+workDir=db-$version/build_unix
+
+showLongDescription()
+{
+    cat << "EOF"
+Berkeley DB (BDB) is an embedded database software library for key/value data.
+Berkeley DB is written in C with API bindings for many other programming
+languages. BDB stores arbitrary key/data pairs as byte arrays and supports
+multiple data items for a single key.
+EOF
+}
+
+buildPhase()
+{
+    ../dist/configure --prefix=/opt/db-$majorVersion --enable-compat185
+    make
+}
+
+installPhase()
+{
+    chown -R root:root ../*
+    make docdir=/opt/db-$majorVersion/doc/Berkeley-DB install
+    cd /opt/db-$majorVersion/lib
+    rm -f libdb.so
+    for i in $(ls); do mv $i /usr/lib; ln -sf /usr/lib/$i; done
+    # Re-add symlink so that software that relies on generic libdb.so can detect this version of Berkeley DB (3.3)
+    ln -s libdb-$majorVersion.so libdb.so
+    cd /opt/db-$majorVersion/include
+    sed 's/^DB185/DB/' db_185.h > db_185.h.new
+    mv db_185.h.new db_185.h
+    ln -nsf /opt/db-$majorVersion/include /usr/include/db3
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=curl
+version=7.9.8
+group=Network/Tools
+license=MIT
+description="Network utility program and library"
+src="c/curl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+curl is a free and open source CLI app for uploading and downloading individual
+files. It can download a URL from a web server over HTTP, and supports a variety
+of other network protocols, URI schemes, multiple versions of HTTP, and
+proxying. The project consists of a library (libcurl) and command-line tool
+(curl), which have been widely ported to different computing platforms.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

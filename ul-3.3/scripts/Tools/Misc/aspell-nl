@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=aspell-nl
+version=0.50_1
+pkgVersion=0.50-1
+group=Tools/Misc
+license=GPLv2
+description="Dutch dictionary for aspell"
+src="a/aspell/$name-$pkgVersion.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dutch dictionary for aspell
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

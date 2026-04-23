@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=j2sdk
+version=1.4.2_19
+version2=1_4_2_19
+group=Programming
+license=sun
+description="Java development kit"
+src="j/j2sdk/j2sdk-$version2-linux-i586.bin"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the Java Development Kit for Java version 1.4.2. It contains a copy
+of the Java Runtime Environment and a collection of development tools.
+EOF
+}
+
+unpackPhase()
+{
+    mkdir bin
+    ln -s /bin/cat bin/more
+    export PATH=$PWD/bin:$PATH
+    yes | bash $sourcesDir/$src
+    rm bin/more
+    rmdir bin
+}
+
+buildPhase()
+{
+    true
+}
+
+installPhase()
+{
+    cp -av ../$name$version /opt
+    chown -R root:root /opt/$name$version
+    ln -s $name$version /opt/$name
+    install -m755 $cbtBaseDir/profile.d/04j2sdk.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/04j2sdk.csh /etc/profile.d
+    fi
+}

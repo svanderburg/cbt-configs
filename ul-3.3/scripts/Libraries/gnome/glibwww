@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=glibwww
+version=0.2
+group=Libraries/gnome
+license=GPLv2
+description="GLib www extension library"
+src="g/glibwww/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides event register/unregister functions for GLib to integrate
+w3c-libwww in any GTK+ or GNOME program.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

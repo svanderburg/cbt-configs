@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=MPlayer
+version=0.93
+group=Applications
+license=GPLv2
+description="MPlayer"
+srcs=("m/MPlayer/$name-$version.tar.bz2" "f/font-arial-iso/font-arial-iso-8859-1.tar.bz2")
+files=("d/default/default-1.7.tar.bz2")
+workDir="$name-$version"
+
+desktopName="MPlayer"
+category="Multimedia"
+exec=gmplayer
+comment="Media player"
+mimeType="video/mpeg;video/x-msvideo;video/quicktime;video/x-flic;"
+
+showLongDescription()
+{
+    cat << "EOF"
+MPlayer is a free and open-source media player software application.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+      --enable-largefiles \
+      --enable-gui \
+      --enable-menu \
+      --enable-shared-pp \
+      --disable-mpdvdkit \
+      --enable-dvdnav
+    make
+}
+
+installPhase()
+{
+    make install
+    install -d /usr/share/mplayer/font
+    mv ../font-arial-* ../README-arial* /usr/share/mplayer/font
+    chown -R root:root /usr/share/mplayer/font
+    for i in /usr/share/mplayer/font/font-arial-14-iso-8859-1/*
+    do
+        ln -s $i /usr/share/mplayer/font
+    done
+    install -d /usr/share/mplayer/Skin
+    cd /usr/share/mplayer/Skin
+    bzip2 -dc $sourcesDir/${files[0]} | tar xfv -
+    chown -R root:root /usr/share/mplayer/Skin
+}

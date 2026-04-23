@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=hdparm
+version=5.3
+group=Hardware
+license=PD
+description="Utility for controlling ATA/IDE controllers and drives"
+src="h/hdparm/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+hdparm provides a command line interface to various kernel interfaces supported
+by the Linux SATA/PATA/SAS "libata" subsystem and the older IDE driver
+subsystem.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

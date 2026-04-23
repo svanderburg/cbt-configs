@@ -1,0 +1,89 @@
+#!/bin/bash -e
+
+# Configure KDM
+
+if [ -x /opt/kde/bin/kdm ]
+then    
+    # KDE should always be first
+    sessionTypes="kde"
+
+    # Add remaining window manager sessions
+    for sessionTypeFile in /usr/share/ul/ul-xsession/sessions/*
+    do
+        sessionType="$(basename "$sessionTypeFile")"
+	
+	if [ "$sessionType" != "kde" ]
+	then
+            sessionTypes="${sessionTypes},${sessionType}"
+	fi
+    done
+
+    cp /opt/kde/share/config/kdm/kdmrc /opt/kde/share/config/kdm/kdmrc.bak
+    sed -e "s/SessionTypes=.*/SessionTypes=$sessionTypes/" \
+      -e "s|Session=.*|Session=/usr/share/ul/ul-xsession/Xsession|" \
+      /opt/kde/share/config/kdm/kdmrc.bak > /opt/kde/share/config/kdm/kdmrc
+    rm /opt/kde/share/config/kdm/kdmrc.bak
+fi
+
+# Configure GDM
+
+if [ -x /opt/gnome/bin/gdm ]
+then
+    # Add remaining window manager sessions
+    for sessionTypeFile in /usr/share/ul/ul-xsession/sessions/*
+    do
+        sessionType="$(basename "$sessionTypeFile")"
+
+        set +e
+        descriptionLine="$(grep 'Description: ' $sessionTypeFile)"
+	set -e
+	
+	if [ "$descriptionLine" = "" ]
+	then
+	    description="$sessionType"
+	else
+	    description="${descriptionLine#*: }"
+	fi
+	
+	if [ "$sessionType" != "gnome" ] && [ "$sessionType" != "xsession" ]
+	then
+	    cp "$sessionTypeFile" "/etc/opt/gnome/gdm/Sessions/$description"
+	fi
+    done
+fi
+
+# Configure WDM
+
+if [ -x /usr/bin/wdm ]
+then
+    # WindowMaker should always be first
+    wmTypes="WindowMaker"
+    
+    # Add remaining window manager sessions
+    for sessionTypeFile in /usr/share/ul/ul-xsession/sessions/*
+    do
+        wmType="$(basename "$sessionTypeFile")"
+
+        set +e
+        descriptionLine="$(grep 'Description: ' $sessionTypeFile)"
+	set -e
+
+	if [ "$descriptionLine" = "" ]
+	then
+	    description="$wmType"
+	else
+	    description="${descriptionLine#*: }"
+	fi
+	
+	if [ "$wmType" != "windowmaker" ] && [ "$wmType" != "failsafe" ]
+	then
+            wmTypes="${wmTypes}:${description}"
+	fi
+    done
+    
+    cp /etc/wdm/wdm-config /etc/wdm/wdm-config.bak
+    sed -e "s|DisplayManager\*session:         .*|DisplayManager\*session:         /usr/share/ul/ul-xsession/Xsession|" \
+      -e "s|DisplayManager\*wdmWm:           .*|DisplayManager\*wdmWm:           $wmTypes|" \
+      /etc/wdm/wdm-config.bak > /etc/wdm/wdm-config
+    rm /etc/wdm/wdm-config.bak
+fi

@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/scripts/lfs-stage2/mktemp
+source $cbtFunctionsDir/deployStage3SourcePackage
+
+group=Tools/Additional

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=Parse-RecDescent
+version=1.80
+group=Libraries/Perl
+license=AL
+description="Recursive Descent parser generator for Perl"
+src="p/Parse-RecDescent/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Parse::RecDescent incrementally generates top-down recursive-descent text
+parsers from simple yacc-like grammar specifications.
+EOF
+}
+
+buildPhase()
+{
+    perl Makefile.PL
+    make
+}
+
+installPhase()
+{
+    make install
+}

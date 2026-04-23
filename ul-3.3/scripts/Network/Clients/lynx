@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lynx
+version=2.8.4
+group=Network/Clients
+license=GPLv2
+description="Lynx browser"
+src="l/lynx/${name}${version}rel.1.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Lynx is a customizable text-based web browser for use on cursor-addressable
+character cell terminals.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libdir=/etc --with-ssl --with-zlib
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make install
+    make DOCDIR=/usr/share/doc/$name-$version/lynx_doc HELPDIR=/usr/share/doc/$name-$version/lynx_help install-doc
+    make DOCDIR=/usr/share/doc/$name-$version/lynx_doc HELPDIR=/usr/share/doc/$name-$version/lynx_help install-help
+    sed s/"t\/etc"/"t\/usr\/share\/doc\/lynx\-2\.8\.4"/ /etc/lynx.cfg > /etc/lynx.bak
+    mv /etc/lynx.bak /etc/lynx.cfg
+}

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cyrus-sasl
+version=1.5.27
+group=Libraries/Shared
+license=BSD
+description="Simple Authentication and Security Layer"
+src="c/cyrus-sasl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Cyrus SASL is an implementation of SASL that makes it easy for application
+developers to integrate authentication mechanisms into their application in a
+generic way.
+EOF
+}
+
+buildPhase()
+{
+    CFLAGS='-I/opt/db-3.3/include' LIBS='-L/opt/db-3.3/lib' \
+      ./configure --prefix=/usr --sysconfdir=/etc \
+      --with-dbpath=/var/lib/sasl/sasldb2 \
+      --with-saslauthd=/var/run --disable-krb4
+    sed "s|\$(LDFLAGS) -o $@|\$(LDFLAGS) -lpam -lcrypt -o $@|" saslauthd/Makefile > saslauthd/Makefile.new
+    mv saslauthd/Makefile.new saslauthd/Makefile
+    make
+}
+
+installPhase()
+{
+    make install
+    install -v -d -m700 /var/lib/sasl
+}

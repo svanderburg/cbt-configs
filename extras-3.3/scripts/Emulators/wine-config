@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/extra-settings
+
+name=wine-config
+group=Emulators
+description="Global configuration settings for WINE"
+
+execute()
+{
+    echo "/opt/wine/lib" >> /etc/ld.so.conf
+    ldconfig
+}

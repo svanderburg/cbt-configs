@@ -1,0 +1,63 @@
+#!/bin/bash -e
+
+optional="false"
+
+scripts="\
+Tools/Additional/checkinstall \
+Tools/Base/linux-headers \
+Tools/Base/man-pages \
+Tools/Base/glibc \
+Tools/Base/binutils \
+Tools/Base/gcc \
+Tools/Base/findutils \
+Tools/Base/gawk \
+Tools/Base/ncurses \
+Tools/Base/vim \
+Tools/Base/bison \
+Tools/Base/less \
+Tools/Base/groff \
+Tools/Base/man \
+Tools/Base/perl \
+Tools/Base/m4 \
+Tools/Base/texinfo \
+Tools/Base/autoconf \
+Tools/Base/automake \
+Tools/Base/bash \
+Tools/Base/flex \
+Tools/Base/file \
+Tools/Base/libtool \
+Tools/Base/bin86 \
+Tools/Base/bzip2 \
+Tools/Base/ed \
+Tools/Base/gettext \
+Tools/Base/kbd \
+Tools/Base/diffutils \
+Tools/Base/e2fsprogs \
+Tools/Base/fileutils \
+Tools/Base/grep \
+Tools/Base/gzip \
+Tools/Base/lilo \
+Tools/Base/make \
+Tools/Base/modutils \
+Tools/Base/netkit-base \
+Tools/Base/patch \
+Tools/Base/procinfo \
+Tools/Base/procps \
+Tools/Base/psmisc \
+Tools/Base/reiserfsprogs \
+Tools/Base/sed \
+Tools/Base/sh-utils \
+Tools/Base/net-tools \
+Tools/Base/Linux-PAM \
+Tools/Base/shadow \
+Tools/Base/sysklogd \
+Tools/Base/sysvinit \
+Tools/Base/tar \
+Tools/Base/textutils \
+Tools/Base/util-linux \
+Tools/Base/lfs-bootscripts \
+Tools/Additional/dialog \
+Tools/Additional/pkgtools \
+Tools/Additional/which \
+Tools/Additional/mktemp \
+"

@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/extra-settings
+
+name=corefonts
+group=Libraries/Fonts
+description="Microsoft Corefonts"
+license=freeware
+files=("c/corefonts/andale32.exe" "c/corefonts/arial32.exe" "c/corefonts/arialb32.exe" "c/corefonts/comic32.exe" "c/corefonts/courie32.exe" "c/corefonts/georgi32.exe" "c/corefonts/impact32.exe" "c/corefonts/times32.exe" "c/corefonts/trebuc32.exe" "c/corefonts/verdan32.exe" "c/corefonts/webdin32.exe")
+
+showLongDescription()
+{
+    cat << "EOF"
+A standard pack of TrueType (TTF) fonts for the World Wide Web distributed by
+Microsoft.
+EOF
+}
+
+installPhase()
+{
+    for file in ${files[@]}
+    do
+        cabextract "$sourcesDir/$file"
+    done
+
+    mkdir -p /usr/X11R6/lib/X11/fonts/ttf
+    cp -v *.ttf *.TTF /usr/X11R6/lib/X11/fonts/ttf
+    cd /usr/X11R6/lib/X11/fonts/ttf
+    ttmkfdir -o fonts.scale
+    mkfontdir
+}

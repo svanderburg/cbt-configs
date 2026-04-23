@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=ed
+version=0.2
+group=lfs-stage2
+description="GNU Ed"
+license=GPLv2
+src="e/ed/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU ed is a line-oriented text editor. It is used to create, display, modify
+andotherwise manipulate text files, both interactively and via shell scripts.
+A restricted version of ed, red, can only edit files in the current directory
+and cannot execute shell commands.
+
+Ed is the 'standard' text editor in the sense that it is the original editor
+for Unix, and thus widely available. For most purposes, however, it is
+superseded by full-screen editors. 
+EOF
+}
+
+buildPhase()
+{
+    mv buf.c buf.c.backup # was cp
+    sed 's/int u/int u, sfd/' buf.c.backup | \
+      sed '/.*\*mktemp.*/d' | \
+      sed 's/.*if (mktemp.*/  sfd = mkstemp(sfn);\
+      if ((sfd == -1) || (sfp = fopen (sfn, "w+")) == NULL)/' > buf.c
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    mv /usr/bin/ed /usr/bin/red /bin
+}

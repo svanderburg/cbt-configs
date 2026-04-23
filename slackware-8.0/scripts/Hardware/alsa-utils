@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=alsa-utils
+version=0.9.8
+license=GPLv2
+group=Hardware
+description="ALSA utilities"
+src="a/alsa-utils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The alsa-utils package contains various utilities which are useful for
+controlling your sound card.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

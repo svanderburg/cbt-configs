@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=procps
+version=2.0.7
+group=lfs-stage2
+description="Procps"
+license=GPLv2
+src="p/procps/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The procps package provides programs to monitor and halt system processes.
+procps gathers information about processes via the /proc directory.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make XSCPT='' install
+    mv /usr/bin/kill /bin
+}

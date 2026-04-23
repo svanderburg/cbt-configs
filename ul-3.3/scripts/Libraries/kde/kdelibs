@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdelibs
+version=2.2.2
+group=Libraries/kde
+license=GPLv2
+description="KDE libraries"
+src="k/kdelibs/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package includes libraries that are central to the development and
+execution of a KDE program
+EOF
+}
+
+buildPhase()
+{
+    # Hack that bypasses the ALSA check. libkmid is only compatible with ALSA
+    # 0.5, but this distribution only provides ALSA 0.9. By default, if ALSA is
+    # enabled in the kernel, kmid expects that ALSA functionality to be present
+    # into the library, otherwise kmid fails with an error at startup.
+    #
+    # This hack bypasses the ALSA check and forces libkmid to use OSS
+    # functionality. By using the OSS compatibility layer of ALSA, MIDI
+    # functionality should still work.
+
+    cp libkmid/deviceman.cc libkmid/deviceman.cc.orig
+    sed 's|checkAlsa();|alsa=false;|' libkmid/deviceman.cc.orig > libkmid/deviceman.cc
+
+    if which alsactl
+    then
+        extraArgs="--with-alsa"
+    fi
+
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+    ln -sfn /opt/kde-$version /opt/kde
+
+    install -m755 $cbtBaseDir/profile.d/22kde.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/22kde.csh /etc/profile.d
+    fi
+}

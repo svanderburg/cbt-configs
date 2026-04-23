@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=generator
+version=0.35
+group=Emulators
+license=GPLv2
+description="Sega Genesis emulator"
+src="g/generator/$name-$version.tar.gz"
+
+desktopName="Generator"
+category=Emulators
+exec=/usr/local/bin/generator-gtk
+comment="Sega Genesis emulator"
+mimeType="application/x-genesis-rom"
+
+showLongDescription()
+{
+    cat << "EOF"
+Generator is an open source emulator by designed to emulate the Sega Mega Drive
+console. Generator uses its own custom 68000 processor emulation which is and
+uses compilation techniques such as block-marking, flag calculation removal,
+operand pre-calculation, endian pre-conversion, etc.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --with-gtk --with-raze
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > genesis.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Sega Genesis/Mega Drive ROM
+MimeType=application/x-genesis-rom
+Icon=binary
+Patterns=*.smd;*.SMD
+EOF
+    fi
+}

@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=gimp-desktop
+version=1.2.1
+group=Applications
+description="KDE menu link for the GIMP"
+license=GPLv2
+arch=noarch
+
+buildPhase()
+{
+    true
+}
+
+installPhase()
+{
+    # Copy desktop item from GNOME to KDE
+    mkdir -p /opt/kde/share/applnk/Graphics
+    cp -v /opt/gnome/share/gnome/apps/Graphics/GIMP.desktop /opt/kde/share/applnk/Graphics
+}

@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=tilp
+version=6.09
+group=Applications
+description="TI Linking Program"
+license=GPLv2
+src="t/tilp/$name-$version.tar.gz"
+
+desktopName="TiLP"
+category=System
+exec=tilp
+comment="TI Linking Program"
+icon=/usr/share/tilp/pixmaps/Application.xpm
+
+showLongDescription()
+{
+    cat << "EOF"
+TiLP is a linking program for Texas Instruments' graphing calculators. TiLP
+works on several platforms (UNIX, Windows, Macintosh). It can handle any TI
+calculator (from TI73 to V200) with any link cable. TiLP has all the functions
+of a linking program and even more.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

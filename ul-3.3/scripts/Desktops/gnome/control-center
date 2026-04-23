@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=control-center
+version=1.4.0.3
+group=Desktops/gnome
+license=GPLv2
+description="Control center"
+src="c/control-center/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Control Center package contains the GNOME settings managers.
+EOF
+}
+
+buildPhase()
+{
+    cd man
+    touch background-properties-capplet.1 file-types-capplet.1 gnomecc.1 gnome-edit-properties-capplet.1 keyboard-properties.1 mouse-properties-capplet.1 screensaver-properties-capplet.1 sound-properties.1 theme-selector-capplet.1 ui-properties.1 url-properties.1 wm-properties-capplet.1
+    cd ..
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --localstatedir=/var/lib --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

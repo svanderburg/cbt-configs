@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=netkit-base
+version=0.17
+group=lfs-stage2
+description="Netkit base"
+license=BSD
+src="n/netkit-base/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A package containing basic network utilities: ping and inetd
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+    cd etc.sample
+    cp services protocols /etc
+}

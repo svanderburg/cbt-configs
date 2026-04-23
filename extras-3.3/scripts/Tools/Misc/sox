@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=sox
+version=12.17.3
+group=Tools/Misc
+license=LGPLv2.1
+description="Sound eXchange program"
+src="s/sox/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+SoX (also known as Sound eXchange) translates sound files between different
+file formats, and optionally applies various sound effects. SoX is intended as
+the Swiss Army knife of sound processing tools. It doesn't do anything very
+well, but sooner or later it comes in very handy.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=automake
+version=1.6
+group=lfs-stage2
+description="GNU Automake"
+license=GPLv2
+src="a/automake/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Automake is a tool for automatically generating Makefile.in files compliant
+with the GNU Coding Standards. Automake requires the use of GNU Autoconf.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+}
+
+installPhase()
+{
+    make install
+
+    # Some packages want a generic directory
+    ln -sfn /usr/share/automake-1.6 /usr/share/automake
+}

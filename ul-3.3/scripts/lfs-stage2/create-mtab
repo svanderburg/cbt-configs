@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=create-mtab
+group=lfs-stage2
+description="Creates a new mtab file"
+
+execute()
+{
+    touch /etc/mtab
+    chown root:root /etc/mtab
+    chmod 644 /etc/mtab
+}

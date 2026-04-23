@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnupg
+version=1.2.1
+group=Tools/Misc
+license=GPLv2
+description="GNU Privacy Guard"
+src="g/gnupg/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GnuPG is a complete and free implementation of the OpenPGP standard as defined
+by RFC4880 (also known as PGP). GnuPG allows you to encrypt and sign your data
+and communications; it features a versatile key management system, along with
+access modules for all kinds of public key directories.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/lib
+    make
+}
+
+installPhase()
+{
+    make install
+    ln -s /usr/bin/gpg /usr/bin/gpgm
+}

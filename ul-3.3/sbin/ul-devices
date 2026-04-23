@@ -1,0 +1,115 @@
+#!/bin/bash -e
+
+configureMouse()
+{
+    set +e
+    local mouseDevice=$(dialog --backtitle "UL" \
+      --title "Default mouse device" \
+      --menu "Select mouse device" 20 40 10 \
+      "/dev/psaux" "PS/2 mouse" \
+      "/dev/ttyS0" "Serial mouse (COM1:)" \
+      "/dev/ttyS1" "Serial mouse (COM2:)" \
+      "/dev/ttyS2" "Serial mouse (COM3:)" \
+      "/dev/ttyS3" "Serial mouse (COM4:)" \
+      "(other)"    "Other device file" \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+    
+    if [ $exitStatus -ne 0 ] || [ "$mouseDevice" = "" ]
+    then
+        return
+    fi
+    
+    if [ "$mouseDevice" = "(other)" ]
+    then
+        set +e
+        mouseDevice=$(dialog --backtitle "UL" \
+            --title "Default mouse device" \
+            --inputbox "Enter your mouse device file" 8 40 "/dev/null" \
+            2>&1 1>&3)
+        exitStatus=$?
+        set -e
+
+        if [ $exitStatus -ne 0 ]
+        then
+            return
+        fi
+    fi
+    
+    ln -sfn "$mouseDevice" /dev/mouse
+}
+
+configureDrive()
+{
+    local storageType="$1"
+
+    set +e
+    local storageDevice=$(dialog --backtitle "UL" \
+      --title "Default $storageType device" \
+      --menu "Select storage device" 20 50 10 \
+      "/dev/hda"   "Primary master IDE device" \
+      "/dev/hdb"   "Primary slave IDE device" \
+      "/dev/hdc"   "Secondary master IDE device" \
+      "/dev/hdd"   "Secondary slave IDE device" \
+      "(other)"    "Other device file" \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+    
+    if [ $exitStatus -ne 0 ] || [ "$storageDevice" = "" ]
+    then
+        return
+    fi
+    
+    if [ "$storageDevice" = "(other)" ]
+    then
+        set +e
+        storageDevice=$(dialog --backtitle "UL" \
+            --title "Default $storageType device" \
+            --inputbox "Enter your $storageType device file" 8 40 "/dev/null" \
+            2>&1 1>&3)
+        exitStatus=$?
+        set -e
+
+        if [ $exitStatus -ne 0 ]
+        then
+            return
+        fi
+    fi
+    
+    ln -sfn "$storageDevice" /dev/$storageType
+}
+
+exec 3>&1
+
+while true
+do
+    set +e
+    deviceType=$(dialog --backtitle "UL" \
+      --title "Device to configure" \
+      --menu "Select device type" 20 50 10 \
+      "mouse" "Configure default mouse device" \
+      "cdrom" "Configure default CD-ROM device" \
+      "dvd"   "Configure default DVD device" \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ $exitStatus -ne 0 ]
+    then
+        exit
+    fi
+
+    case "$deviceType" in
+        mouse)
+            configureMouse
+            ;;
+        cdrom)
+            configureDrive "cdrom"
+            ;;
+        dvd)
+            configureDrive "dvd"
+            ;;
+    esac
+done

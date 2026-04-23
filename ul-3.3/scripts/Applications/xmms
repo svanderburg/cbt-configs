@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xmms
+version=1.2.10
+group=Applications
+license=GPLv2
+description="X Multimedia System"
+src="x/xmms/$name-$version.tar.bz2"
+
+desktopName="XMMS"
+category="Multimedia"
+comment="X MultiMedia System"
+exec="/opt/gnome/bin/xmms"
+icon="xmms"
+mimeType="audio/x-mp3;audio/x-mod;audio/x-wav;audio/x-flac;audio/x-mpegurl;audio/x-mpegurl;audio/x-scpls;audio/vorbis;audio/x-ms-wma"
+
+showLongDescription()
+{
+    cat << "EOF"
+X Multimedia System (XMMS) is an audio player for Unix-like systems.
+It uses a GUI that closely resembles WinAmp.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --enable-one-plugin-dir
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=alsa-oss
+version=0.9.8
+group=Hardware
+license=GPLv2
+description="ALSA OSS"
+src="a/alsa-oss/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The alsa-oss package contains the ALSA OSS compatibility library. This is used
+by programs which wish to use the ALSA OSS sound interface.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

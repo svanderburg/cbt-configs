@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/binutils
+
+group=lfs-stage1
+workDir=$name-$version
+
+buildPhase()
+{
+    mkdir ../$name-build
+    cd ../$name-build
+    CFLAGS="-O2 -pipe" ../$name-$version/configure --prefix=/stage1 \
+       --disable-nls
+    make LDFLAGS="-all-static -s"
+}
+
+installPhase()
+{
+    cd ../$name-build
+
+    make install
+
+    # Build a ld for later use
+    cd ld
+    make clean
+    make LIB_PATH=/stage1/lib
+
+    # Move the extract folder so that it will be retained
+    cd ..
+    mv ../$name-$version $LFS/usr/src
+    mv ../$name-build $LFS/usr/src
+}

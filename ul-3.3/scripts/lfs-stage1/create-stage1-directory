@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=create-stage1-directory
+group=lfs-stage1
+description="Creates stage1 directory and symlink"
+
+execute()
+{
+    mkdir $LFS/stage1
+    chown lfs $LFS/stage1
+    ln -s $LFS/stage1 /
+}

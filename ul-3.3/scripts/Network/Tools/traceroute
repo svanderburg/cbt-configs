@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=traceroute
+version=1.4a12
+group=Network/Tools
+license=BSD
+description="Traceroute tool"
+src="t/traceroute/$name.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+traceroute tracks the route packets taken from an IP network on
+their way to a given host. It utilizes the IP protocol's time to
+live (TTL) field and attempts to elicit an ICMP TIME_EXCEEDED
+response from each gateway along the path to the host.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    chmod 644 Makefile.in
+    cp Makefile.in Makefile.in.bak
+    sed 's/-o bin/-o root/' Makefile.in.bak > Makefile.in
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    make install-man
+    chmod 0755 /usr/sbin/traceroute
+}

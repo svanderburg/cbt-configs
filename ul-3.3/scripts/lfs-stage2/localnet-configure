@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=localnet-configure
+group=lfs-stage2
+description="Configures the hostname"
+
+execute()
+{
+    echo "HOSTNAME=lfs" > /etc/sysconfig/network
+}

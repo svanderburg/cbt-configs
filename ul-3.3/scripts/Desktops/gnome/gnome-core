@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-core
+version=1.4.0.6
+group=Desktops/gnome
+license=GPLv2
+description="GNOME core"
+src="g/gnome-core/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains core components for the GNOME desktop: the panel, menu
+system, session manager, help system, terminal, some essential applets and other
+basic tools.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+        --mandir=/opt/gnome-$gnomeVersion/share/man \
+        --localstatedir=/var/lib --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+
+    cat > /etc/X11/xinit/xinitrc.gnome << "EOF"
+#!/bin/sh
+
+exec gnome-session
+EOF
+
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/gnome << "EOF"
+description="GNU Network Object Model Enviroment"
+EOF
+
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/gnome /usr/share/ul/ul-xsession/sessions
+}

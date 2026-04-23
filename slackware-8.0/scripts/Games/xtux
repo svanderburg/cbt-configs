@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtCommonDir/desktopItemFunctions
+source $cbtBaseDir/settings/slackware-8.0
+
+name=xtux
+version=20030306
+group=Games
+license=GPLv2
+description="XTux"
+src="x/xtux/$name-src-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+XTux is a multiplayer Gauntlet-style arcade game for X-windows featuring
+open-source mascots.
+EOF
+}
+
+buildPhase()
+{
+    make DATADIR=/usr/local/share/xtux
+}
+
+installPhase()
+{
+    chown -R root:root *
+    install -m755 -d /usr/local/share/xtux
+    cp -av data/* /usr/local/share/xtux
+    install -m755 xtux tux_serv /usr/local/bin
+
+    desktopFileName="xtux-client"
+    desktopName="XTux client"
+    category=Games
+    exec=/usr/local/bin/xtux
+    comment="XTux client"
+    installDesktopItemsPhase
+
+    desktopFileName="xtux-server"
+    desktopName="XTux server"
+    category=Games
+    exec=/usr/local/bin/tux_serv
+    comment="XTux server"
+    terminal=1
+    installDesktopItemsPhase
+}

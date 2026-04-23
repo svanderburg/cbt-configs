@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=valgrind
+version=1.9.6
+group=Tools/Development
+license=GPLv2
+description="Valgrind"
+src="v/valgrind/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Valgrind is a programming tool for memory debugging, memory leak detection, and
+profiling.
+EOF
+}
+
+buildPhase()
+{
+    # Compiler optimizations cause failures in the build process
+    unset CFLAGS || true
+
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}
+

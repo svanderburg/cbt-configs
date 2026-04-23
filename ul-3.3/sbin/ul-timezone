@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+clear
+selectedTZ="$(tzselect)"
+cd /etc
+ln -sf ../usr/share/zoneinfo/$selectedTZ localtime

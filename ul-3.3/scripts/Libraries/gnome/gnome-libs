@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-libs
+version=1.4.1.4
+group=Libraries/gnome
+license=LGPLv2.1
+description="GNOME libraries"
+src="g/gnome-libs/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-libs contains various libraries (libgnome, libgnomeui, gtk-xmhtml, zvt,
+vfs) that serve as foundations for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+      --localstatedir=/var/lib \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --enable-shared --enable-prefer-db1
+    make
+}
+
+installPhase()
+{
+    make install
+}

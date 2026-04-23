@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/extra-settings
+
+name=abiword-fonts
+group=Desktops/gnome
+description="Symlinks all pfa+pfb fonts to AbiWord"
+
+execute()
+{
+    mkdir -p /opt/gnome/share/AbiSuite/fonts
+    cd /opt/gnome/share/AbiSuite/fonts
+
+    if [ -d /usr/X11R6/lib/X11/fonts/Type1 ]
+    then
+        for font in /usr/X11R6/lib/X11/fonts/Type1/*
+        do
+            ln -sf "$font"
+        done
+    fi
+
+    mkfontdir
+}

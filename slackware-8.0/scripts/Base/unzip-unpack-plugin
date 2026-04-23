@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=unzip-unpack-plugin
+group=Base
+description="Unzip unpack plugin for CBT"
+noCheckInstall=true
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains a CBT plugins making it possible for the
+deploySourcePackage function to automatically unpack zip files.
+EOF
+}
+
+installPhase()
+{
+    mkdir -p /usr/local/share/cbt/unpack-plugins
+    install -m644 $cbtBaseDir/cbt/unpack-plugins/zip /usr/local/share/cbt/unpack-plugins
+}

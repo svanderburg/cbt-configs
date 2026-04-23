@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ggv
+version=1.0.2
+group=Desktops/gnome
+license=GPLv2
+description="PostScript viewer"
+src="g/ggv/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+A simple document viewer for the GNOME desktop environment, primarily used to
+preview PostScript (PS) and PDF files by acting as a front-end for Ghostscript.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include -I/opt/gnome/include/gdk-pixbuf-1.0' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --localstatedir=/var/lib --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

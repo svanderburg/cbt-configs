@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=giflib
+version=4.1.0
+group=Libraries/Image
+license=MIT
+description="GIF library"
+src="g/giflib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The giflib package contains libraries for reading and writing GIFs as well as
+programs for converting and working with GIF files.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Add symlinks to provide libungif compatibility
+    cd /usr/lib
+    ln -s libgif.a libungif.a
+    ln -s libgif.la libungif.la
+    ln -s libgif.so libungif.so
+    ln -s libgif.so.4 libungif.so.4
+    ln -s libgif.so.4.1.0 libungif.so.4.1.0
+}

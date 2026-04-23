@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=koffice
+version=1.1.1
+group=Desktops/kde
+license=GPLv2
+description="KOffice suite"
+src="k/koffice/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+KOffice is a free and open source office and graphics suite developed by KDE
+for Unix-like and Windows systems. KOffice contains a word processor (KWord), a
+spreadsheet (KSpread), a presentation program (KPresenter), and a number of
+other components that varied over the course of its development.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

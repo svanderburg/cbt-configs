@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopItem
+source $cbtBaseDir/settings/slackware-8.0
+
+name=xmms-desktop
+version=1.2.5
+group="Applications"
+license=GPLv2
+description="XMMS menu links for KDE/GNOME"
+
+desktopFileName="xmms"
+desktopName="XMMS"
+category="Multimedia"
+comment="X MultiMedia System"
+exec="/opt/gnome/bin/xmms"
+icon="xmms"
+mimeType="audio/mpeg;audio/mpeg3;audio/x-mpeg-3;audio/wav;audio/wave;audio/x-wav"

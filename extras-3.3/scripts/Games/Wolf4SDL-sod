@@ -1,0 +1,57 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=Wolf4SDL-sod
+version=1.7
+group=Games
+license="id-software"
+description="Wolf4SDL for Spear of Destiny"
+src="w/Wolf4SDL/Wolf4SDL-$version-src.zip"
+
+desktopName="Spear of Destiny"
+category=Games
+exec=/usr/local/bin/run-sod
+comment="Spear of Destiny"
+
+showLongDescription()
+{
+    cat << "EOF"
+Wolf4SDL is an open-source port of id Software's classic first-person shooter
+Wolfenstein 3D to the cross-platform multimedia library "Simple DirectMedia
+Layer (SDL)". It is meant to keep the original feel while taking advantage of
+some improvements.
+
+This package is compiled for the Spear of Destiny game.
+EOF
+}
+
+buildPhase()
+{
+    sed 's|#define logerror(...)|#define logerror(ARGS...)|' fmopl.cpp > fmopl.cpp.new
+    mv fmopl.cpp.new fmopl.cpp
+    tr -d '\r' < foreign.h > foreign.h.new
+    mv foreign.h.new foreign.h
+    tr -d '\r' < id_in.h > id_in.h.new
+    mv id_in.h.new id_in.h
+    tr -d '\r' < wl_state.cpp > wl_state.cpp.new
+    mv wl_state.cpp.new wl_state.cpp
+
+    # Modification to make an executable that works with SOD
+    tr -d '\r' < version.h > version.h.new
+    sed 's|^//#define SPEAR$|#define SPEAR|' version.h.new > version.h
+    make
+}
+
+installPhase()
+{
+    cp -v wolf3d /usr/local/bin/sod
+    cat > /usr/local/bin/run-sod << "EOF"
+#!/bin/bash -e
+
+cd /usr/local/share/sod
+exec /usr/local/bin/sod "$@"
+EOF
+    chmod 755 /usr/local/bin/run-sod
+}

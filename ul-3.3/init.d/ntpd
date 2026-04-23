@@ -1,0 +1,27 @@
+#!/bin/bash
+# Begin $rc_base/init.d/ntp
+source /etc/sysconfig/rc
+source $rc_functions
+case "$1" in
+        start)
+                echo "Starting ntpd..."
+                loadproc ntpd
+                ;;
+        stop)
+                echo "Stopping ntpd..."
+                killproc ntpd
+                ;;
+        restart)
+                $0 stop
+                sleep 1
+                $0 start
+                ;;
+        status)
+                statusproc ntpd
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                exit 1
+                ;;
+esac
+# End $rc_base/init.d/ntp

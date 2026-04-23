@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/fileutils
+
+group=lfs-stage2
+
+buildPhase()
+{
+    ./configure --prefix=/usr --bindir=/bin
+    make
+}
+
+installPhase()
+{
+    make install
+    cd /usr/bin
+    ln -sf ../../bin/install
+}

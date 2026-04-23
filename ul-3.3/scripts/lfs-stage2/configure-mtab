@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=configure-mtab
+group=lfs-stage2
+description="Creates a writable mtab"
+
+execute()
+{
+    mkdir -p /var/lib/misc
+    touch /var/lib/misc/mtab
+    ln -sf ../var/lib/misc/mtab /etc/mtab
+}

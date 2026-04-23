@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=modules
+group=Services
+description="Kernel module loading script"
+
+showLongDescription()
+{
+    cat << "EOF"
+A script that loads a specified list of kernel modules at boot up.
+EOF
+}
+
+installPhase()
+{
+    install -m754 $cbtBaseDir/init.d/modules /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/modules /usr/share/ul/ul-init
+
+    cat > /etc/sysconfig/modules << "EOF"
+# Begin /etc/sysconfig/modules
+
+# The syntax of this file is as follows: <module> [<arg1> <arg2> ...]
+#
+# Each module should be on it's own line, and any options that you want
+# passed to the module should follow it. The line deliminator is either
+# a space or a tab
+
+# End /etc/sysconfig/modules
+EOF
+}

@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+sourcesDir=/mnt/source
+
+set +h
+umask 022
+
+gnomeVersion=1.4.1
+kdeVersion=2.2.2
+desktopFolders="/opt/kde/share/applnk /opt/gnome/share/gnome/apps"

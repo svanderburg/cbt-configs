@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=m4
+version=1.4
+group=lfs-stage2
+description="GNU M4"
+license=GPLv2
+src="m/m4/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU M4 is an implementation of the traditional Unix macro processor. It is
+mostly SVR4 compatible although it has some extensions (for example, handling
+more than 9 positional parameters to macros).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

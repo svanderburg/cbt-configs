@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/linux-headers
+
+group=lfs-stage1
+
+buildPhase()
+{
+    make mrproper
+    make include/linux/version.h
+    make symlinks
+}
+
+installPhase()
+{
+    cp -HR include/asm /stage1/include
+    cp -R include/asm-generic /stage1/include
+    cp -R include/linux /stage1/include
+    touch /stage1/include/linux/autoconf.h
+}

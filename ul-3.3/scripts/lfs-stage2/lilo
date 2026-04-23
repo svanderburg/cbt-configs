@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=lilo
+version=22.2
+group=lfs-stage2
+description="LILO bootloader"
+license=BSD
+src="l/lilo/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+LILO (Linux Loader) is a bootloader for Linux.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

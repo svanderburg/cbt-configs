@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=gnome-extraconfig
+group=Base
+description="Extra settings for GNOME integration"
+
+showLongDescription()
+{
+    cat << "EOF"
+This bundled profile.d script provides extra settings for GNOME so that
+dependencies can integrate with it, such as pkg-config settings.
+EOF
+}
+
+installPhase()
+{
+    install -m755 $cbtBaseDir/profile.d/gnome2.sh /etc/profile.d
+}

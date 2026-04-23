@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=hexedit
+version=1.2.3
+group=Tools/Development
+license=GPLv2
+description="Hex editor"
+src="h/hexedit/$name-$version.src.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+hexedit is an editor that shows a file both in ASCII and hexadecimal. The file
+can be a device as the file is read a piece at a time. You can modify the file
+and search through it.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

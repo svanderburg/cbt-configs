@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=umodpack
+version=0.5b16_allinone
+pkgVersion=0.5b16-allinone
+license=GPLv2
+group=Games
+description="UT Mod administration tool"
+src="u/umodpack/$name-$pkgVersion.tar.gz"
+
+desktopName="utmodpack"
+category=Games
+exec=/usr/bin/xumod
+comment="UT mod administration tool"
+
+showLongDescription()
+{
+    cat << "EOF"
+Umodpack is crossplatform tool for managing umod packages for Unreal games.
+It can install, deinstall and extract files from umod file. Umodpack includes
+command line tool and GUI.
+EOF
+}
+
+buildPhase()
+{
+    perl Makefile.PL
+    make
+}
+
+installPhase()
+{
+    make install
+}

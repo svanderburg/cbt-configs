@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdevelop
+version=2.0.2
+group=Desktops/kde
+license=GPLv2
+description="KDE development IDE"
+src="k/kdevelop/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+KDevelop is a free and open-source integrated development environment (IDE) for
+Unix-like computer operating systems and Windows. It provides editing,
+navigation and debugging features for several programming languages, and
+integration with build automation and version-control systems, using a
+plugin-based architecture.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=Wolf4SDL
+version=1.7
+license="id-software"
+group=Games
+description="Wolf4SDL"
+src="w/Wolf4SDL/$name-$version-src.zip"
+
+desktopName="Wolfenstein 3D"
+category=Games
+exec=/usr/local/bin/run-wolf3d
+comment="Wolfenstein 3D"
+
+showLongDescription()
+{
+    cat << "EOF"
+Wolf4SDL is an open-source port of id Software's classic first-person shooter
+Wolfenstein 3D to the cross-platform multimedia library "Simple DirectMedia
+Layer (SDL)". It is meant to keep the original feel while taking advantage of
+some improvements.
+
+This package is compiled for the original game.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    sed 's|#define logerror(...)|#define logerror(ARGS...)|' fmopl.cpp > fmopl.cpp.new
+    mv fmopl.cpp.new fmopl.cpp
+    tr -d '\r' < foreign.h > foreign.h.new
+    mv foreign.h.new foreign.h
+    tr -d '\r' < id_in.h > id_in.h.new
+    mv id_in.h.new id_in.h
+    tr -d '\r' < wl_state.cpp > wl_state.cpp.new
+    mv wl_state.cpp.new wl_state.cpp
+    make
+}
+
+installPhase()
+{
+    make install
+    cat > /usr/local/bin/run-wolf3d << "EOF"
+#!/bin/bash -e
+
+cd /usr/local/share/wolf3d
+exec /usr/local/bin/wolf3d "$@"
+EOF
+    chmod 755 /usr/local/bin/run-wolf3d
+}

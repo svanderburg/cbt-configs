@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=linux
+version=2.4.23
+license=GPLv2
+group=Base
+description="Linux kernel"
+src="l/linux/$name-$version.tar.bz2"
+buildAsRoot=true
+
+showLongDescription()
+{
+    cat << "EOF"
+The Linux kernel is at the core of every Linux system. It's what makes Linux
+tick. When a computer is turned on and boots a Linux system, the very first
+piece of Linux software that gets loaded is the kernel.
+
+The kernel initializes the system's hardware components such as serial ports,
+parallel ports, sound cards, network cards, IDE controllers, SCSI controllers
+and a lot more. In a nutshell, the kernel makes the hardware available so that
+the software can run.
+EOF
+}
+
+preUnpack()
+{
+    cd /usr/src
+}
+
+openWorkDirPhase()
+{
+    chown -R root:root /usr/src/$name-$version
+    cd /usr/src/$name-$version
+}
+
+buildPhase()
+{
+    make mrproper
+    cp /etc/cbt/linux-config .config
+    yes "" | make config
+    make dep
+    make bzImage
+    make modules
+}
+
+installPhase()
+{
+    make modules_install
+    cp -v arch/i386/boot/bzImage /boot/vmlinuz-$version
+    cp -v System.map /boot/System.map-$version
+    cp -v .config /boot/config-$version
+}

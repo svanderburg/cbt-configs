@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=sysvinit
+version=2.84
+group=lfs-stage2
+description="sysvinit"
+license=GPLv2
+src="s/sysvinit/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This System V style init is used by a variety of operating systems, particularly
+GNU/Linux distributions, which initializes and shuts down the system and well as
+managing runlevels.
+EOF
+}
+
+buildPhase()
+{
+    cp src/init.c src/init.c.backup
+    sed 's/\(.*\)\(Sending processes\)\(.*\)/\1\2 started by init\3/' \
+      src/init.c.backup > src/init.c
+    make -C src
+}
+
+installPhase()
+{
+    make -C src install
+}

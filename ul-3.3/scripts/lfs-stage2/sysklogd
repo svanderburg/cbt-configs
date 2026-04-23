@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=sysklogd
+version=1.4.1
+group=lfs-stage2
+description="sysklogd"
+license=GPLv2
+src="s/sysklogd/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Sysklogd package contains programs for logging system messages, such as
+those emitted by the kernel when unusual things happen
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

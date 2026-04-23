@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=procinfo
+version=18
+group=lfs-stage2
+description="Procinfo"
+license=GPLv2
+src="p/procinfo/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+procinfo gathers some system data from the /proc directory and prints it nicely
+formatted on the standard output device.
+EOF
+}
+
+buildPhase()
+{
+    make LDLIBS=-lncurses
+}
+
+installPhase()
+{
+    make install
+}

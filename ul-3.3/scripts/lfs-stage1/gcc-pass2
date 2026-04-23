@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/gcc
+
+group=lfs-stage1
+patches=("g/gcc/$name-$version-2.patch.bz2" "g/gcc/$name-$version-no_fixinc-1.patch" "g/gcc/$name-$version-specs-1.patch")
+workDir=$name-$version
+
+buildPhase()
+{
+    mkdir ../$name-build
+    cd ../$name-build
+    CFLAGS="-O2 -pipe" CXXFLAGS="-O2 -pipe" ../$name-$version/configure \
+       --prefix=/stage1 --with-local-prefix=/stage1 --enable-languages=c,c++ \
+       --enable-shared --enable-threads=posix --enable-__cxa_atexit \
+       --enable-clocale=gnu
+    make LDFLAGS="-s"
+    # make -k check
+}
+
+installPhase()
+{
+    chown -R root:root *
+    cd ../$name-build
+    chown -R root:root *
+    make install
+}

@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=rsync
+version=2.5.7
+group=Network/Servers-Clients
+license=GPLv2
+description="rsync"
+src="r/rsync/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+rsync is a replacement for rcp that has many more features. It uses the "rsync
+algorithm" which provides a very fast method for bringing remote files into
+sync. It does this by sending just the differences in the files accross the
+link, without requiring that both sets of files are present at one of the ends
+of the link beforehand.
+EOF
+}
+
+preConfigurePhase()
+{
+    groupadd -g 47 rsync
+    useradd -u 47 -g rsync rsync
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+
+    install -m754 $cbtBaseDir/init.d/rsync /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/rsync /usr/share/ul/ul-init
+}

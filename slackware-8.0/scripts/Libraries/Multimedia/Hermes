@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=Hermes
+version=1.3.3
+group=Libraries/Multimedia
+license=GPLv2
+description="Hermes"
+src="h/Hermes/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Hermes is a library whose only purpose is to convert graphic data from one pixel
+format to another in the fastest possible way.
+EOF
+}
+
+buildPhase()
+{
+    autoreconf -f -v -i
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=psutils
+version=p17
+group=Tools/Graphics
+license=psutils
+description="PostScript utilities"
+src="p/psutils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+PSUtils is a suite of utilities for manipulating PDF and PostScript documents.
+You can select and rearrange pages, including arrangement into signatures for
+booklet printing, combine multple pages into a single page for n-up printing,
+and resize, flip and rotate pages.
+EOF
+}
+
+buildPhase()
+{
+    sed 's|/usr/local|/usr|g' Makefile.unix > Makefile
+    make
+}
+
+installPhase()
+{
+    make install
+}

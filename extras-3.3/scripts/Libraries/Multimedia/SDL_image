@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=SDL_image
+version=1.2.4
+group=Libraries/Multimedia
+license=LGPLv2
+description="SDL image"
+src="s/SDL_image/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is a simple library to load images of various formats as SDL surfaces.
+This library supports BMP, PNM (PPM/PGM/PBM), XPM, LBM, PCX, GIF, JPEG, PNG,
+TGA, and TIFF formats.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m755 .libs/showimage /usr/bin
+}

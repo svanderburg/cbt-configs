@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=create-directories
+group=lfs-stage1
+description="Creates basic filesystem layout"
+
+execute()
+{
+    cd $LFS
+
+    mkdir -p bin boot dev/pts etc/opt home lib mnt proc root sbin tmp var opt
+
+    for dirname in $LFS/usr $LFS/usr/local
+    do
+        mkdir $dirname
+        cd $dirname
+        mkdir -p bin etc include lib sbin share src
+        ln -s share/man
+        ln -s share/doc
+        ln -s share/info
+        cd $dirname/share
+        mkdir -p dict doc info locale man nls misc terminfo zoneinfo
+        cd $dirname/share/man
+        mkdir -p man{1,2,3,4,5,6,7,8}
+    done
+
+    cd $LFS/var
+    mkdir -p lock log mail run spool tmp opt cache lib/misc local
+    cd $LFS/opt
+    mkdir -p bin doc include info lib man
+    cd $LFS/usr
+    ln -s ../var/tmp
+
+    # Change permissions for some directories
+    cd $LFS
+    chmod 0750 root
+    chmod 1777 tmp var/tmp
+}

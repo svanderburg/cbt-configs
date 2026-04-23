@@ -1,0 +1,4 @@
+#!/bin/bash
+# /usr/bin/jarwrapper - the wrapper for binfmt_misc/jar
+
+java -jar $1

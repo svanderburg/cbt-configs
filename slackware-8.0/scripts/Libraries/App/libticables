@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=libticables
+version=3.7.0
+group=Libraries/App
+license=LGPLv2.1
+description="TI cables library"
+src="l/libticables/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library is part of the TILP framework and provides support for a variety of
+linking cables.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

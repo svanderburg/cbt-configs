@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libglade
+version=0.17
+group=Libraries/gnome
+license=LGPLv2.1
+description="Glade library"
+src="l/libglade/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library allows you to load glade interface files in a program at runtime.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

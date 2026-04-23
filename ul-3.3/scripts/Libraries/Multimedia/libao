@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libao
+version=0.8.8
+group=Libraries/Multimedia
+license=GPLv2
+description="Cross platform audio library"
+src="l/libao/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Libao is a cross-platform audio library that allows programs to output audio
+using a simple API on a wide variety of platforms.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

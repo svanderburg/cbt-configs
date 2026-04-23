@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=ul
+group=lfs-stage1
+version=3.3
+description="UL-Linux tools and scripts"
+license=BSD-3
+workDir=$name-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+Includes UL-Linux administration tools and provides a copy of the UL-Linux
+scripts.
+EOF
+}
+
+unpackPhase()
+{
+    mkdir -p $name-$version
+    cd $name-$version
+    cp -av $cbtBaseDir/* .
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    cd sbin
+    make PREFIX=$LFS/usr install
+    cd ..
+    mkdir -p $LFS/usr/src/$name-$version
+    cp -av * $LFS/usr/src/$name-$version
+}

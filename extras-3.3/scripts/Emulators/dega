@@ -1,0 +1,59 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=dega
+version=1.07
+license=unknown
+group=Emulators
+description="DEGA Sega Master System and Game Gear emulator"
+src="d/dega/$name-$version.tar.gz"
+
+desktopName="DEGA"
+category=Emulators
+exec="dega -f"
+comment="Sega Master System and Game Gear emulator"
+mimeType="application/x-sms-rom;application/x-gamegear-rom"
+noDisplay=true
+
+showLongDescription()
+{
+    cat << "EOF"
+DEGA is a a Sega Master System and Game Gear emulator.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -m755 dega /usr/bin
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > gamegear.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Sega Game Gear ROM
+MimeType=application/x-gamegear-rom
+Icon=binary
+Patterns=*.gg;*.GG
+EOF
+
+        cat > sms.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Sega Master System ROM
+MimeType=application/x-sms-rom
+Icon=binary
+Patterns=*.sms;*.SMS
+EOF
+    fi
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=strace
+version=4.4_1
+pkgVersion=4.4-1
+group=Tools/Development
+license=BSD
+description="System call tracer"
+src="s/strace/${name}_${pkgVersion}.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+strace is a diagnostic, debugging and instructional userspace utility for Linux.
+It is used to monitor and tamper with interactions between processes and the
+Linux kernel, which include system calls, signal deliveries, and changes of
+process state.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

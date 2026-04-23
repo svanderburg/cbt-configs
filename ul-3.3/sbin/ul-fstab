@@ -1,0 +1,274 @@
+#!/bin/bash -e
+
+export FSTAB="${FSTAB:-/etc/fstab}"
+
+enumerateHardDiskDevices()
+{
+    echo /dev/hd{a,b,c,d,e,f,g,h,i,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z} /dev/sd{a,b,c,d,e,f,g,h,i,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
+}
+
+queryLinuxNativePartitionEntries()
+{
+    for diskDevice in $(enumerateHardDiskDevices)
+    do
+        fdisk -l "$diskDevice" | tail +6 | grep "83  Linux" | cut -d ' ' -f1 | while read partitionDevice
+        do
+            if [ "$(grep "^$partitionDevice" $FSTAB 2> /dev/null)" = "" ]
+            then
+                echo "$partitionDevice"
+                echo "-"
+            fi
+        done
+    done
+
+    echo "(none)"
+    echo "-"
+}
+
+requestLinuxNativePartition()
+{
+    deviceFile=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --menu "Select Linux partition" \
+        20 40 11 \
+        $(queryLinuxNativePartitionEntries) \
+        2>&1 1>&3)
+
+    if [ "$deviceFile" = "(none)" ]
+    then
+        return 1
+    fi
+}
+
+queryLinuxSwapPartitionEntries()
+{
+    for diskDevice in $(enumerateHardDiskDevices)
+    do
+        fdisk -l "$diskDevice" | tail +6 | grep "82  Linux" | cut -d ' ' -f1 | while read swapDevice
+        do
+            if [ "$(grep "^$swapDevice" $FSTAB 2> /dev/null)" = "" ]
+            then
+                echo "$swapDevice"
+                echo "-"
+            fi
+        done
+    done
+
+    echo "(none)"
+    echo "-"
+}
+
+requestLinuxSwapPartition()
+{
+    deviceFile=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --menu "Select swap partition" \
+        20 40 11 \
+        $(queryLinuxSwapPartitionEntries) \
+        2>&1 1>&3)
+
+    if [ "$deviceFile" = "(none)" ]
+    then
+        return 1
+    fi
+}
+
+queryNonLinuxPartitionEntries()
+{
+    for diskDevice in $(enumerateHardDiskDevices)
+    do
+        fdisk -l "$diskDevice" | tail +6 | grep -v "82  Linux" | grep -v "83  Linux" | cut -d ' ' -f1 | while read partitionDevice
+        do
+            if [ "$(grep "^$partitionDevice" $FSTAB 2> /dev/null)" = "" ]
+            then
+                echo "$partitionDevice -"
+            fi
+        done
+    done
+    
+    echo "(none)"
+    echo "-"
+}
+
+requestNonLinuxPartition()
+{
+    deviceFile=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --menu "Select non-Linux partition" \
+        20 40 11 \
+        $(queryNonLinuxPartitionEntries) \
+        2>&1 1>&3)
+
+    if [ "$deviceFile" = "(none)" ]
+    then
+        return 1
+    fi
+}
+
+requestFileSystem()
+{
+    fileSystem=$(dialog --backtitle "UL" \
+      --title "Filesystem configuration tool" \
+      --inputbox "Filesystem was not detected. Please specify:" \
+      8 50 "ext2" \
+      2>&1 1>&3)
+}
+
+requestLinuxFileSystem()
+{
+    local output="$(file -s "$deviceFile")"
+
+    case "$output" in
+        *"ext2 filesystem"*)
+            fileSystem="ext2"
+            ;;
+        *)
+            requestFileSystem
+            ;;
+    esac
+}
+
+requestDeviceFile()
+{
+    deviceFile=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --inputbox "Path to device file" \
+        8 40 "/dev/cdrom" \
+        2>&1 1>&3)
+}
+
+requestMountTarget()
+{
+    set +e
+    mountTarget=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --inputbox "Specify mount target:" \
+        8 40 "/mnt/cdrom" \
+        2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        return $exitStatus
+    fi
+
+    if [ ! -d "$mountTarget" ]
+    then
+        set +e
+        dialog --backtitle "UL" \
+          --title "Filesystem configuration tool" \
+          --yesno "Mount target does not exist! Do you want to create it?" \
+          5 60
+        exitStatus=$?
+        set -e
+
+        if [ "$exitStatus" = "0" ]
+        then
+            mkdir -p "$mountTarget"
+        fi
+    fi
+}
+
+requestOptions()
+{
+    options=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --inputbox "Options" \
+        20 40 "ro,user,noauto" \
+        2>&1 1>&3)
+}
+
+appendToConfig()
+{
+    cat >> $FSTAB <<EOF
+$deviceFile    $mountTarget    $fileSystem    $options
+EOF
+}
+
+exec 3>&1
+
+while true
+do
+    set +e
+    selectedOption=$(dialog --backtitle "UL" \
+        --title "Filesystem configuration tool" \
+        --menu "Select a configuration option" \
+        20 65 12 \
+        "linux"     "Add an already formatted Linux partition" \
+        "other"     "Add an already formatted non-Linux partition" \
+        "swap"      "Add a swap partition" \
+        "removable" "Add a removable storage drive" \
+        "show"      "Shows the current fstab" \
+        "edit"      "Manually edit the fstab" \
+        2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        exit
+    fi
+
+    case "$selectedOption" in
+        linux)
+            requestLinuxNativePartition || continue
+            requestMountTarget || continue
+            requestLinuxFileSystem || continue
+            options="defaults    1    1"
+            appendToConfig
+            ;;
+        other)
+            requestNonLinuxPartition || continue
+            requestMountTarget || continue
+            requestFileSystem || continue
+            options="defaults    0    0"
+            appendToConfig
+            ;;
+        swap)
+            requestLinuxSwapPartition || continue
+            mountTarget="swap"
+            fileSystem="swap"
+            options="defaults    0    0"
+
+            set +e
+            dialog --backtitle "UL" \
+              --title "Filesystem configuration tool" \
+              --yesno "Do you want to format the swap partition?" \
+              5 60
+            exitStatus=$?
+            set -e
+
+            if [ "$exitStatus" = "0" ]
+            then
+                mkswap "$deviceFile"
+            fi
+
+            appendToConfig
+            ;;
+        removable)
+            requestDeviceFile || continue
+            requestMountTarget || continue
+            fileSystem="auto"
+
+            set +e
+            options=$(dialog --backtitle "UL" \
+              --title "Filesystem configuration tool" \
+              --inputbox "Specify mount options:" \
+              8 50 "rw,user,noauto" \
+              2>&1 1>&3)
+            set -e
+
+            appendToConfig
+            ;;
+        show)
+            dialog --backtitle "UL" \
+            --title "$FSTAB" \
+            --textbox "$FSTAB" 20 70
+            ;;
+        edit)
+            EDITOR="${EDITOR:-vi}"
+            "$EDITOR" "$FSTAB"
+            ;;
+    esac
+done

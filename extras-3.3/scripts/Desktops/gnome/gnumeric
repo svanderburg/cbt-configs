@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gnumeric
+version=1.0.13
+group=Desktops/gnome
+license=GPLv2
+description="Gnumeric spreadsheet"
+src="g/gnumeric/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Gnumeric is a spreadsheet program for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    if which evolution
+    then
+        extraArgs="--with-evolution"
+    fi
+
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --localstatedir=/var/lib $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/kde/share/applnk ]
+    then
+        mkdir -p /opt/kde/share/applnk/Office
+        cp /opt/gnome/share/gnome/apps/Applications/gnumeric.desktop /opt/kde/share/applnk/Office
+    fi
+}

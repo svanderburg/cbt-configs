@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=gawk
+version=3.1.0
+description="GNU awk"
+license=GPLv2
+src="g/gawk/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The awk utility interprets a special-purpose programming language that makes it
+possible to handle simple data-reformatting jobs with just a few lines of code.
+EOF
+}

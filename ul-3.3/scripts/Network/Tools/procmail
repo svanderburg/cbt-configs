@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=procmail
+version=3.22
+group=Network/Tools
+license=GPLv2
+description="Mail processor utility"
+src="p/procmail/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The procmail mail processing program. It can be used to create mail-servers,
+mailing lists, sort your incoming mail into separate folders/files.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    yes sendmail | make BASENAME=/usr LOCKINGTEST=/tmp install
+    make install-suid
+}

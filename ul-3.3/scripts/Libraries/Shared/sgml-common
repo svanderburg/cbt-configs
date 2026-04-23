@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sgml-common
+version=0.6.3
+group=Libraries/Shared
+license=GPLv2
+description="SGML catalog support"
+src="s/sgml-common/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The sgml-common package contains a collection of entities and DTDs
+that are useful for processing SGML, but that don't need to be
+included in multiple packages.  Sgml-common also includes an
+up-to-date Open Catalog file.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man
+    make
+}
+
+installPhase()
+{
+    make install
+    install-catalog --add /etc/sgml/sgml-ent.cat \
+      /usr/share/sgml/sgml-iso-entities-8879.1986/catalog
+    install-catalog --add /etc/sgml/sgml-docbook.cat \
+      /etc/sgml/sgml-ent.cat
+}

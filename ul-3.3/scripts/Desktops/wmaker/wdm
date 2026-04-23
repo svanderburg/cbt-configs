@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=wdm
+version=1.22.1
+group=Desktops/wmaker
+license=GPLv2
+description="WINGs Display Manager"
+src="w/wdm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+wdm combines the functions of a graphical display manager identifying and
+authenticating a user on a system with some of the functions of a session
+manager in selecting and starting a window manager. It uses the WINGs
+graphical user interface toolkit from the Window Maker project.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-wdmdir=/etc/wdm --enable-pam
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Replace obsolete pam_pwdb.so module by pam_unix.so and remove pam_cracklib.so
+
+    cp /etc/pam.d/wdm wdm.pamd
+    sed -e 's/pam_pwdb.so/pam_unix.so/g' \
+      -e '/pam_cracklib.so/d' \
+      wdm.pamd > /etc/pam.d/wdm
+}

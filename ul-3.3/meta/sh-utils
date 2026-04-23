@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=sh-utils
+version=2.0
+description="GNU Shell Utils"
+license=GPLv2
+src="s/sh-utils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Shell Utilities are the basic shell-manipulation utilities of the GNU
+Operating System.
+EOF
+}

@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=evolution
+version=1.2.4
+group=Desktops/gnome
+license=GPLv2
+description="Evolution mail client"
+src="e/evolution/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Evolution is an integrated mail, calendar and address book suite.
+EOF
+}
+
+preConfigurePhase()
+{
+    # Make modification to prevent conflict between gtkhtml 0.8.x and 1.1.x
+    cd /opt/gnome/include
+    mv gtkhtml gtkhtml.old
+    ln -s gtkhtml-1.1 gtkhtml
+}
+
+buildPhase()
+{    
+    ./configure --prefix=/opt/gnome-$gnomeVersion --with-db3=/opt/db-3.1 \
+      --mandir=/opt/gnome-$gnomeVersion/share/man \
+      --with-openldap --enable-openssl --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}
+
+postConfigurePhase()
+{
+    # Undo conflict revolution
+    cd /opt/gnome/include
+    rm gtkhtml
+    mv gtkhtml.old gtkhtml
+}

@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=file
+version=3.37
+group=lfs-stage2
+description="File"
+license=BSD
+src="f/file/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The file command is "a file type guesser", that is, a command-line tool that
+tells you in words what kind of data a file contains. This command doesn't rely
+on filename extentions to tell you the type of a file, but looks at the file’s
+actual contents.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    touch aclocal.m4 configure Makefile.in stamp-h.in
+    ./configure --prefix=/usr --datadir=/usr/share/misc
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gv
+version=3.5.8
+group=Desktops/X11
+license=GPLv2
+description="Ghostscript frontend"
+src="g/gv/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+gv, an X11 ghostscript frontend based on Tim Theisen's ghostview 1.5.
+EOF
+}
+
+buildPhase()
+{
+    xmkmf
+    make Makefiles
+    ln -s ../doc/gv.man source
+    make
+}
+
+installPhase()
+{
+    make install
+}

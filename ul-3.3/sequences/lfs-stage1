@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+optional="false"
+
+scripts="\
+lfs-stage1/create-stage1-directory \
+lfs-stage1/create-directories \
+lfs-stage1/cbt \
+lfs-stage1/binutils-pass1 \
+lfs-stage1/gcc-pass1 \
+lfs-stage1/linux-headers \
+lfs-stage1/glibc \
+lfs-stage1/adjust-toolchain \
+lfs-stage1/gcc-pass2 \
+lfs-stage1/binutils-pass2 \
+lfs-stage1/gawk \
+lfs-stage1/fileutils \
+lfs-stage1/bzip2 \
+lfs-stage1/gzip \
+lfs-stage1/diffutils \
+lfs-stage1/findutils \
+lfs-stage1/make \
+lfs-stage1/grep \
+lfs-stage1/sed \
+lfs-stage1/gettext \
+lfs-stage1/textutils \
+lfs-stage1/sh-utils \
+lfs-stage1/ncurses \
+lfs-stage1/patch \
+lfs-stage1/tar \
+lfs-stage1/texinfo \
+lfs-stage1/bash \
+lfs-stage1/util-linux \
+lfs-stage1/passwd-group-create \
+lfs-stage1/create-bash-symlink \
+lfs-stage1/create-tty-devs \
+lfs-stage1/create-bootstrap-profile \
+lfs-stage1/remove-stage1-symlink \
+lfs-stage1/ul \
+"

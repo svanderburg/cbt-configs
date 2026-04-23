@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=pingus
+version=0.6.0
+group=Games
+license=GPLv2
+description="Pingus"
+src="p/pingus/$name-$version.tar.bz2"
+
+desktopName="Pingus"
+category=Games
+exec=/usr/local/games/pingus
+comment="Pingus"
+
+showLongDescription()
+{
+    cat << "EOF"
+Pingus is a free Lemmings-like puzzle game covered under the GNU GPL. It
+features currently 77 playable levels and runs under a wide variety of operating
+systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

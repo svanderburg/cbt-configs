@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libxslt
+version=1.0.24
+group=Libraries/Shared
+license=MIT
+description="XSL transformation library"
+src="l/libxslt/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libxslt is the XSLT C library developed for the GNOME project. It provides an
+implementation of XSLT 1.0, plus most of the EXSLT set of processor-portable
+extensions functions and some of Saxon's evaluate and expressions extensions.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

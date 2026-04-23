@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-applets
+version=1.4.0.5
+group=Desktops/gnome
+license=GPLv2
+description="GNOME applets"
+src="g/gnome-applets/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains a variety of applets for use with the GNOME panel.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion \
+        --mandir=/opt/gnome-$gnomeVersion/share/man \
+        --localstatedir=/var/lib --enable-shared
+    cp charpick/Makefile charpick/Makefile.bak
+    sed 's/-Werror//g' charpick/Makefile.bak > charpick/Makefile
+    make
+}
+
+installPhase()
+{
+    make install
+}

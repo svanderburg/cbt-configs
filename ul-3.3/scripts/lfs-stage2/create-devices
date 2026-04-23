@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=create-devices
+group=lfs-stage2
+description="Creates commonly used device files"
+files=("m/MAKEDEV/MAKEDEV-1.4.bz2")
+
+execute()
+{
+    cp $sourcesDir/${files[0]} /dev
+    cd /dev
+    bunzip2 MAKEDEV-1.4.bz2
+    mv MAKEDEV-1.4 MAKEDEV
+    chmod 754 MAKEDEV
+
+    ./MAKEDEV -v generic
+
+    # Give sound device files public permissions
+    # Otherwise, ordinary users need special privileges which makes little sense
+    chmod 666 dsp?
+    chmod 666 mixer?
+    chmod 666 sequencer*
+}

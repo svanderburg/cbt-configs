@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=libticalcs
+version=4.4.3
+group=Libraries/App
+license=LGPLv2.1
+description="TI calculators library"
+src="l/libticalcs/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library is part of the TILP framework and provides support for a variety of
+Texas Instruments (TI) calculator models.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

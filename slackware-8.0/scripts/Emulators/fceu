@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=fceu
+version=081
+license=GPLv2
+group=Emulators
+description="FCE Ultra NES emulator"
+src="f/fceu/${name}${version}src.tar.gz"
+
+desktopName="FCE Ultra"
+category=Emulators
+exec="fceu -fs 1"
+comment="NES Emulator"
+mimeType="application/x-nes-rom"
+noDisplay=true
+
+showLongDescription()
+{
+    cat << "EOF"
+FCE Ultra is an emulator for the Nintento Entertainment System (NES).
+EOF
+}
+
+buildPhase()
+{
+    make -f Makefile.unixsdl
+}
+
+installPhase()
+{
+    install -m755 fceu /usr/bin
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > fceu.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=NES ROM
+MimeType=application/x-nes-rom
+Icon=binary
+Patterns=*.nes;*.NES
+EOF
+    fi
+}

@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=foomatic
+version=2.0.3
+group=Hardware
+license=GPLv2
+description="Database system managing printer drivers"
+src="f/foomatic/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Foomatic is a database-driven system for integrating free software printer
+drivers with the CUPS printing system and also with an easy-to-use command-line
+interface for direct, spooler-less printing.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make install
+}

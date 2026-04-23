@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=flex
+version=2.5.4a
+group=lfs-stage2
+description="Flex"
+license=BSD
+src="f/flex/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Flex (fast lexical analyzer generator) is a free and open-source software
+alternative to lex. It is a computer program that generates lexical analyzers
+(also known as "scanners" or "lexers").
+
+It is frequently used as the lex implementation together with Berkeley Yacc
+or GNU bison parser generators.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    cat > /usr/bin/lex << "EOF"
+#!/bin/sh
+# Begin /usr/bin/lex
+
+exec /usr/bin/flex -l "$@"
+
+# End /usr/bin/lex
+EOF
+    chmod 755 /usr/bin/lex
+}

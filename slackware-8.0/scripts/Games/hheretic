@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=hheretic
+version=0.2.4
+group=Games
+license=GPLv2
+description="Hacked Heretic"
+src="h/hheretic/$name-$version.tar.gz"
+
+desktopName="HHeretic"
+category=Games
+exec=/usr/local/bin/run-hheretic-gl
+comment="Hacked Heretic"
+
+showLongDescription()
+{
+    cat << "EOF"
+Hacked Heretic is a Linux port of the Heretic game and includes various
+improvements, such as an OpenGL renderer.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    install hheretic-gl /usr/local/bin
+    cat > /usr/local/bin/run-hheretic-gl << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/hheretic
+exec /usr/local/bin/hheretic-gl "$@"
+EOF
+    chmod 755 /usr/local/bin/run-hheretic-gl
+}

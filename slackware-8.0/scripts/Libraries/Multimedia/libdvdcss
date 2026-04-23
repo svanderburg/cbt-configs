@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=libdvdcss
+version=1.1.1
+group=Libraries/Multimedia
+license=GPLv2
+description="DVD CSS library"
+src="l/libdvdcss/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libdvdcss is a free and open-source software library for accessing DVDs
+encrypted with Content Scramble System (CSS). 
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

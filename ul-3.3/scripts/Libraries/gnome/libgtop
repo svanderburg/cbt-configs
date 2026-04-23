@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgtop
+version=1.0.13
+group=Libraries/gnome
+license=GPLv2
+description="gtop Library"
+src="l/libgtop/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libgtop package contains a library for accessing system performance data.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --infodir=/opt/gnome-$gnomeVersion/share/info \
+      --with-libgtop-inodedb --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

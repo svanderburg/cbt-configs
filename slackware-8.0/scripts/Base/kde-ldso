@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+name=kde-ldso
+group=Base
+description="Adds the KDE lib folder to ld.so.conf"
+
+execute()
+{
+    echo "/opt/kde/lib" >> /etc/ld.so.conf
+    ldconfig
+}

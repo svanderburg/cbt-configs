@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=fstab-configure
+group=lfs-stage2
+description="Generates a basic fstab"
+
+execute()
+{
+    cat > /etc/fstab << "EOF"
+# Begin /etc/fstab
+
+# filesystem    mount-point  fs-type    options    dump    fsck-order
+proc            /proc        proc       defaults   0       0
+EOF
+
+    # Add root partition
+    local rootDevice="$(grep " / " /proc/mounts | tail -1 | cut -d ' ' -f 1)"
+    local fsType="$(grep " / " /proc/mounts | tail -1 | cut -d ' ' -f 3)"
+
+    cat >> /etc/fstab <<EOF
+$rootDevice     /            $fsType    defaults   1       1
+
+# End /etc/fstab
+EOF
+}

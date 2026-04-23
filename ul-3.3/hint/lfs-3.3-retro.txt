@@ -1,0 +1,655 @@
+AUTHOR:        Sander van der Burg
+DATE:          2026-02-18
+LICENSE:       GNU Free Documentation License Version 1.2
+SYNOPSIS:      Deploy LFS 3.3 to vintage computers or emulators/virtualizers
+               taking modern lessons learned into account
+DESCRIPTION:   This hint describes how to deploy LFS 3.3 to vintage computers or
+               emulators/virtualizers (such as PCem or VirtualBox) so that you
+               can enjoy an early 2002 Linux experience
+PREREQUISITES: A copy of the LFS-3.3 book and corresponding tarballs and patches
+HINT:
+
+Introduction
+============
+In the retro computing community I have seen a lot of people running vintage
+operating systems, such as Windows 98, and applications and games that were
+interesting in that period of time. Virtualizers, such as VirtualBox, and
+fully-featured PC emulators, such as PCem or 86Box, make it possible to
+conveniently experiment with such legacy setups on modern computers.
+
+In addition to Windows, some people have also been using vintage Linux
+distributions to run classic Linux applications, such as games from Loki games
+(http://lokigames.com).
+
+Although it is nice to still have copies of old Linux distributions at our
+disposal, I wanted to retain the ability to construct a suitable legacy Linux
+distribution from scratch so that it can also be modified and studied.
+
+For quite a few commercial products in the late 90s, early 00s (such as games
+from Loki games) the GNU build toolchain of Linux from Scratch 3.3 is a good
+basis -- it consists of GNU Binutils 2.12, GCC 2.95.3 and glibc 2.2.5.
+glibc 2.2.5 and the C++ ABI of GCC 2.95.3 provide a good level of compatibility.
+
+GCC 2.95.x was also the recommended compiler for a number of prominent FOSS
+projects, such as the 2.4.x version range of the Linux kernel.
+
+The LFS-3.3 book can still be downloaded from the LFS museum:
+https://www.linuxfromscratch.org/museum/lfs-museum/3.3
+
+LFS-3.3 can also be used as a basis for deploying classic versions of KDE (such
+as version 2.2.2, the last in the 2.x version range) and GNOME (such as version
+1.4.1, the last release in the 1.x version range).
+
+Although the packages that LFS-3.3 deploys are the right fit for me, the LFS-3.3
+book has three additional drawbacks beyond using old versions of packages:
+
+* The bootstrap strategy is not very robust -- in the first phase, a bootstrap
+  package set is constructed by statically compiling packages in a single pass.
+  A drawback of this strategy is that these packages still have a strong
+  dependency on the host system (namely its version of glibc) making the
+  boot process somewhat unpredictable and less robust. In LFS 5.0, the bootstrap
+  strategy became more robust by compiling software in multiple passes in
+  which the GNU build tool chain is bootstrapped first.
+* The book symlinks /etc/mtab to /proc/mounts to ensure that it always remains
+  up-to-date. The downside of this decision is that it breaks compatibility with
+  some applications. In LFS-4.1, this bad practice was dropped.
+* Some of the required packages and patches are no longer available from their
+  original locations. A small number of them are extremely hard to find.
+
+In this hint, I will describe how we can construct LFS-3.3 using a multi-pass
+bootstrap strategy (that was introduced in the OLD/pure_lfs.txt hint) correcting
+the mtab problem using the mtab fix described in the OLD/mtab-pre-lfs-4.1.txt
+hint.
+
+Experimental setup
+==================
+Although you can compile LFS-3.3 on a vintage computer (from the late 90s, early
+00s), it is far more efficient to use modern solutions.
+
+I ended up building my LFS-3.3 system in VirtualBox (and eventually
+transferring the installation from my VirtualBox VM to my retro PC).
+
+On a modern PC, thanks to much faster hardware and the fact that there is not
+too much overhead using a VM over using a physical machine, building the entire
+distribution did not take me longer than half an hour.
+
+Similar to modern versions of LFS, you also need an existing Linux distribution
+as a basis to bootstrap from. I have used Slackware 8.0 that is still available
+on the Internet:
+https://mirror.math.princeton.edu/pub/slackware/slackware-iso/slackware-8.0-iso/
+
+Downloading the required packages
+=================================
+Some packages described in the LFS-3.3 book can no longer be downloaded from
+their original URLs. Some packages no longer seem to be available on
+conventional download sites. Fortunately, the Internet Archive still has them.
+
+I have used the following URLs to obtain the required packages:
+
+* autoconf 2.53: https://ftp.gnu.org/gnu/autoconf/autoconf-2.53.tar.bz2
+* automake 1.6: https://ftp.gnu.org/gnu/automake/automake-1.6.tar.gz
+* bash 2.05a: https://ftp.gnu.org/gnu/bash/bash-2.05a.tar.gz
+* bin86 0.16.2: https://web.archive.org/web/20021019165500/http://ftp.linuxfromscratch.org/lfs-packages/3.3/bin86-0.16.2.tar.bz2
+* binutils 2.12: https://ftp.gnu.org/gnu/binutils/binutils-2.12.tar.bz2
+* bison 1.34: https://ftp.gnu.org/gnu/bison/bison-1.34.tar.bz2
+* bzip2 1.0.2: https://sourceware.org/pub/bzip2/bzip2-1.0.2.tar.gz
+* diffutils 2.8: https://ftp.gnu.org/gnu/diffutils/diffutils-2.8.tar.gz
+* e2fsprogs 1.27: https://sourceforge.net/projects/e2fsprogs/files/e2fsprogs/1.27/
+* ed 0.2: https://ftp.gnu.org/pub/old-gnu/gnu-0.2/src/ed-0.2.tar.gz
+* file 3.37: https://web.archive.org/web/20021019163156/http://ftp.linuxfromscratch.org/lfs-packages/3.3/file-3.37.tar.bz2
+* fileutils 4.1: https://ftp.gnu.org/old-gnu/fileutils/fileutils-4.1.tar.gz
+* findutils 4.1: https://ftp.gnu.org/gnu/findutils/findutils-4.1.tar.gz
+* flex 2.5.4a: https://mirrors.slackware.com/slackware/slackware-4.0/source/d/flex/flex-2.5.4a.tar.gz
+* gawk 3.1.0: https://ftp.gnu.org/gnu/gawk/gawk-3.1.0.tar.gz
+* gcc 2.95.3: https://ftp.gnu.org/gnu/gcc/gcc-2.95.3.tar.gz
+* gettext 0.11.1: https://ftp.gnu.org/old-gnu/gettext/gettext-0.11.1.tar.gz
+* glibc 2.2.5: https://ftp.gnu.org/gnu/glibc/glibc-2.2.5.tar.gz
+* glibc-linuxthreads 2.2.5: https://ftp.gnu.org/gnu/glibc/glibc-linuxthreads-2.2.5.tar.gz
+* grep 2.5: https://ftp.gnu.org/gnu/grep/grep-2.5.tar.bz2
+* groff 1.17.2: https://ftp.gnu.org/gnu/groff/old/groff-1.17.2.tar.gz
+* gzip 1.2.4a: https://ftp.gnu.org/gnu/gzip/gzip-1.2.4a.tar.gz
+* kbd 1.06: https://www.kernel.org/pub/linux/utils/kbd/kbd-1.06.tar.gz
+* less 374: https://mirrors.slackware.com/slackware/slackware-8.1/source/a/less/less-374.tar.gz
+* lfs-bootscripts 1.9: https://web.archive.org/web/20021025052424/http://ftp.linuxfromscratch.org/lfs-packages/3.3/lfs-bootscripts-1.9.tar.bz2
+* libtool 1.4.2: https://ftp.gnu.org/gnu/libtool/libtool-1.4.2.tar.gz
+* lilo 22.2: https://www.joonet.de/sources/lilo/oldsrc/lilo-22.2.tar.gz
+* linux 2.4.18: https://www.kernel.org/pub/linux/kernel/v2.4/linux-2.4.18.tar.bz2
+* m4 1.4: https://ftp.gnu.org/gnu/m4/m4-1.4.tar.gz
+* MAKEDEV 1.4: https://web.archive.org/web/20021019163636/http://ftp.linuxfromscratch.org/lfs-packages/3.3/MAKEDEV-1.4.bz2
+* make 3.79.1: https://ftp.gnu.org/gnu/make/make-3.79.1.tar.gz
+* man 1.5j: https://aeb.win.tue.nl/ftpdocs/linux-local/utils/man/man-1.5j.tar.gz
+* man-pages 1.48: https://aeb.win.tue.nl/ftpdocs/linux-local/manpages.archive/man-pages-1.48.tar.gz
+* modutils 2.4.15: https://www.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-2.4.15.tar.gz
+* ncurses 5.2: https://ftp.gnu.org/gnu/ncurses/ncurses-5.2.tar.gz
+* netkit-base 0.17: http://www.ibiblio.org/pub/linux/system/network/netkit/netkit-base-0.17.tar.gz
+* net-tools 1.60: https://sunsite.icm.edu.pl/pub/Linux/net-tools/net-tools-1.60.tar.bz2
+* patch 2.5.4: https://ftp.gnu.org/gnu/patch/patch-2.5.4.tar.gz
+* perl 5.6.1: https://www.cpan.org/src/5.0/perl-5.6.1.tar.gz
+* procinfo 18: https://mirrors.slackware.com/slackware/slackware-13.0/source/a/procps/procinfo-18.tar.gz
+* procps 2.0.7: https://ftp.linuxfoundation.org/pub/lsb/impl/packages/procps-2.0.7.tar.gz
+* psmisc 20.2: https://mirrors.slackware.com/slackware/slackware-9.0/source/a/procps/psmisc-20.2.tar.gz
+* reiserfsprogs 3.x.1b: https://sunsite3.icm.edu.pl/pub/Linux/reiserfs/reiserfsprogs/reiserfsprogs-3.x.1b.tar.gz
+* sed 3.02: https://ftp.gnu.org/gnu/sed/sed-3.02.tar.gz
+* shadow 4.0.3: https://mirrors.slackware.com/slackware/slackware-12.0/source/a/shadow/shadow-4.0.3.tar.bz2
+* sh-utils 2.0: https://ftp.gnu.org/old-gnu/sh-utils/sh-utils-2.0.tar.gz
+* sysklogd 1.4.1: https://mirrors.slackware.com/slackware/slackware-13.0/source/a/sysklogd/sysklogd-1.4.1.tar.gz
+* sysvinit 2.84: https://ftp.linuxfoundation.org/pub/lsb/impl/packages/sysvinit-2.84.tar.gz
+* tar 1.13: https://ftp.gnu.org/gnu/tar/tar-1.13.tar.gz
+* texinfo 4.1: https://ftp.gnu.org/gnu/texinfo/texinfo-4.1.tar.gz
+* textutils 2.0: https://ftp.gnu.org/old-gnu/textutils/textutils-2.0.tar.gz
+* util-linux 2.11o: https://web.archive.org/web/20020818220056/http://www.kernel.org/pub/linux/utils/util-linux/util-linux-2.11o.tar.bz2
+* vim 6.1: https://ftp.nluug.nl/pub/vim/unix/vim-6.1.tar.bz2
+
+Downloading the required patches
+================================
+The required patches in the LFS-3.3 book no longer seem to be available from
+their original locations, but can still be obtained by using the Internet
+Archive:
+
+* Find Utils Patch (4.1) https://web.archive.org/web/20021019163419/http://ftp.linuxfromscratch.org/lfs-packages/3.3/findutils-4.1.patch.bz2
+* GCC Patch (2.95.3-2): https://web.archive.org/web/20020804110631/http://ftp.linuxfromscratch.org/lfs-packages/3.3/gcc-2.95.3-2.patch.bz2
+* Gzip Patch (1.2.4a): https://web.archive.org/web/20020804112450/http://ftp.linuxfromscratch.org/lfs-packages/3.3/gzip-1.2.4a.patch.bz2
+* Sh-utils Patch (2.0): https://web.archive.org/web/20020812083835/ftp://ftp.linuxfromscratch.org/lfs-packages/3.3/sh-utils-2.0.patch.bz2
+* Tar Patch (1.13): https://web.archive.org/web/20020830040550/http://ftp.de.linuxfromscratch.org/lfs-packages/3.3/tar-1.13.patch.bz2
+* Kbd Patch (1.06-2): https://web.archive.org/web/20020804112550/http://ftp.linuxfromscratch.org/lfs-packages/3.3/kbd-1.06-2.patch.bz2
+
+We need a patch from the pure_lfs.txt hint that can be obtained here:
+
+* https://web.archive.org/web/20030628063218/http://www.linuxfromscratch.org/~greg/patches/pure_lfs/binutils-2.13.2.lib-path.patch.gz
+
+We also need this patch:
+
+* https://www.linuxfromscratch.org/patches/downloads/gcc/gcc-2.95.3-no_fixinc-1.patch
+
+And my own patch adjusting the GCC specs file:
+
+* https://www.linuxfromscratch.org/patches/downloads/gcc/gcc-2.95.3-specs-1.patch
+
+glibc-2.2.5-mtab.patch and lfs-bootscripts-1.9-mtab.patch files can be created
+by copying and pasting the corresponding patches from the mtab-pre-lfs-4.1.txt
+hint.
+
+Procedure
+=========
+You can follow the LFS-3.3 book until Chapter 4. Chapter 5 (Preparing the LFS
+system) constructs a set of bootstrap packages. This process needs to be done
+differently -- after following the instructions in the "Creating directories"
+section, you must construct the bootstrap packages in a different order and in
+multiple passes.
+
+Preparing the LFS system
+========================
+As already explained, we follow a similar strategy as described in the
+pure_lfs.txt hint. I have adjusted the procedure for the packages used in
+LFS-3.3.
+
+First, we will build a GNU build toolchain consisting of binutils, gcc and
+glibc. In the first pass, binutils and gcc will link to the host system's gcc
+libraries and glibc. This toolchain is used to compile a glibc that matches the
+version used in the LFS book.
+
+Then we compile the GNU build toolchain again (a second pass). The second-pass
+gcc and binutils packages link to our custom built glibc, rather than the host
+system's glibc, eliminating that dependency on the host system.
+
+Finally, we will build the remaining utilities with our pass-2 GNU build
+toolchain to construct a small bootstrap distribution, sufficient to build all
+required LFS packages from source code.
+
+After completing the instructions described in the "Creating directories" sub
+section, we need to perform the following steps:
+
+Create /stage1 directory and symlink, modify the search PATH
+------------------------------------------------------------
+mkdir -p $LFS/stage1
+ln -s $LFS/stage1 /stage1
+
+export PATH=/stage1/bin:$PATH
+
+binutils 2.12 - pass 1
+----------------------
+mkdir ../binutils-build
+cd ../binutils-build
+CFLAGS="-O2 -pipe" ../binutils-2.12/configure --prefix=/stage1 \
+   --disable-nls
+make LDFLAGS="-all-static -s"
+make install
+
+After the installation of binutils, you should retain the build and source code
+directories.
+
+You should prepare a version of ld that is used to search for libraries in the
+stage1 lib directory by default:
+
+cd ld
+make clean
+make LIB_PATH=/stage1/lib
+
+We will install this modified version of ld at a later point in time.
+
+gcc 2.95.3 - pass1
+------------------
+bzip2 -dc gcc-2.95.3-2.patch.bz2 | patch -p1
+cat gcc-2.95-3-no_fixinc-1.patch | patch -p1
+
+mkdir ../gcc-build
+cd ../gcc-build
+CFLAGS="-O2 -pipe" ../gcc-2.95.3/configure --prefix=/stage1 \
+   --with-local-prefix=/stage1 --enable-languages=c \
+   --disable-nls --enable-shared
+make BOOT_LDFLAGS="-static -s" BOOT_CFLAGS="-O2 -pipe" \
+   STAGE1_CFLAGS="-O2 -pipe" bootstrap
+make install
+ln -s gcc /stage1/bin/cc
+
+linux-headers 2.4.18
+--------------------
+make mrproper
+make include/linux/version.h
+make symlinks
+
+cp -HR include/asm /stage1/include
+cp -R include/asm-generic /stage1/include
+cp -R include/linux /stage1/include
+touch /stage1/include/linux/autoconf.h
+
+glibc 2.2.5
+-----------
+mv ../linuxthreads* .
+mkdir ../glibc-build
+cd ../glibc-build
+CFLAGS="-O2 -pipe" ../glibc-2.2.5/configure --prefix=/stage1 \
+   --enable-add-ons --disable-profile \
+   --with-binutils=/stage1/bin --with-headers=/stage1/include \
+   --without-gd
+make
+# make check
+
+mkdir -p /stage1/etc
+touch /stage1/etc/ld.so.conf
+
+make install
+make localedata/install-locales
+
+adjust-toolchain
+----------------
+Here, we install our previously modified ld executable to ignore the standard
+library directories, e.g. /lib, /usr/lib and use /stage1 instead:
+
+cd $LFS/usr/src/binutils-build/ld
+make install-data-local
+
+The following instructions adjust gcc spec file to use the dynamic linker from
+stage1, rather than the dynamic linker in the conventional /lib directory:
+
+SPECFILE=/stage1/lib/gcc-lib/i686-pc-linux-gnu/*/specs
+cp ${SPECFILE} ./XX
+sed 's@/lib/ld-linux.so.2@/stage1/lib/ld-linux.so.2@g' ./XX > ${SPECFILE}
+unset SPECFILE
+rm -f ./XX
+
+Remove the binutils source code and build directories:
+
+rm -rf $LFS/usr/src/binutils-*
+
+gcc 2.95.3 - pass 2
+-------------------
+bzip2-d gcc-2.95.3-2.patch.bz2 | patch -p1
+cat gcc-2.95.3-no_fixinc-1.patch | patch -p1
+cat gcc-2.95.3-specs-1.patch | patch -p1
+
+mkdir ../gcc-build
+cd ../gcc-build
+CFLAGS="-O2 -pipe" CXXFLAGS="-O2 -pipe" ../gcc-2.95.3/configure \
+   --prefix=/stage1 --with-local-prefix=/stage1 --enable-languages=c,c++ \
+   --enable-shared --enable-threads=posix --enable-__cxa_atexit \
+   --enable-clocale=gnu
+make LDFLAGS="-s"
+# make -k check
+make install
+
+binutils 2.12 - pass 2
+----------------------
+Apply this patch first to adjust the library path to /stage1:
+
+gzip -cd binutils-2.13.2.lib-path.patch.gz | patch -p1
+
+Despite the fact that we build binutils 2.12, the 2.13.2 patch from the
+mtab-pre-lfs-4.1.txt hint can also be applied to this old version of binutils
+without any problems.
+
+mkdir ../binutils-build
+cd ../binutils-build
+CFLAGS="-O2 -pipe" ../binutils-2.12/configure --prefix=/stage1 \
+   --with-lib-path=/stage1/lib --enable-shared
+make LDFLAGS="-s"
+make check
+make install
+
+Similar to the binutils-pass1 step we need to retain the source code and build
+directories. We must prepare an ld command that uses the standard library paths
+as its search paths again:
+
+cd ld
+make clean
+make LIB_PATH=/usr/lib:/lib
+
+The above ld command will be deployed at a later point in time.
+
+gawk 3.1.0
+----------
+cp awklib/Makefile.in awklib/Makefile.in.backup
+sed -e '/^datadir/s/awk/gawk/' \
+  -e '/^libexecdir/s%/awk%%' awklib/Makefile.in.backup \
+  > awklib/Makefile.in
+./configure --prefix=/stage1 --disable-nls \
+  --libexecdir=/stage1/bin
+make
+make install
+
+fileutils 4.1
+-------------
+cp lib/Makefile.in lib/Makefile.in.backup
+sed -e 's/\(.*\)\(fopen-safer\.c \)\\/\1\2atexit.c \\/' \
+  -e 's/\(.*\)\(idcache\$U\.\$.*\)\\/\1\2atexit$U.$(OBJEXT) \\/' \
+lib/Makefile.in.backup > lib/Makefile.in
+
+./configure --disable-nls \
+  --prefix=/stage1 --bindir=/stage1/bin
+make
+make install
+
+bzip2 1.0.2
+-----------
+make
+make PREFIX=/stage1 install
+
+gzip 1.2.4a
+-----------
+bzip2 -dc gzip-1.2.4a.patch.bz2 | patch -p1
+
+./configure --prefix=/stage1
+make
+make PREFIX=/stage1 install
+
+diffutils 2.8
+-------------
+./configure --prefix=/stage1 --disable-nls
+make
+make install
+
+findutils 4.1
+-------------
+bzip2 -dc findutils-4.1.patch.bz2 | patch -p1
+
+./configure --prefix=/stage1 --disable-nls
+make localstatedir=/var/lib/misc
+make localstatedir=/var/lib/misc libexecdir=/stage1/bin install
+
+make 3.79.1
+-----------
+./configure --prefix=/stage1 --disable-nls
+make
+make install
+
+grep 2.5
+--------
+CFLAGS="-pipe" ./configure --prefix=/stage1 \
+   --disable-perl-regexp --with-included-regex
+make
+make install
+
+sed 3.02
+--------
+./configure --prefix=/stage1 --bindir=/stage1/bin
+make
+make install
+
+gettext 0.11.1
+--------------
+CFLAGS="-pipe" ./configure --prefix=/stage1
+make
+make install
+rm -f /stage1/lib/gettext/gnu.gettext.*
+
+textutils 2.0
+-------------
+./configure --prefix=/stage1 --disable-nls
+make
+make install
+
+sh-utils 2.0
+------------
+bzip2 -dc sh-utils-2.0.patch.bz2 | patch -p1
+
+./configure --prefix=/stage1 --disable-nls
+make
+make install
+
+ncurses 5.2
+-----------
+./configure --prefix=/stage1 --with-shared \
+   --without-debug
+make
+make install
+
+patch 2.5.4
+-----------
+export CPPFLAGS=-D_GNU_SOURCE
+./configure --prefix=/stage1
+unset CPPFLAGS
+make
+make install
+
+tar 1.13
+--------
+bzip2 -dc tar-1.13.patch.bz2 | patch -p1
+
+./configure --prefix=/stage1 --disable-nls \
+    --libexecdir=/stage1/bin --bindir=/stage1/bin
+make
+make install
+
+texinfo 4.1
+-----------
+./configure --prefix=/stage1 --disable-nls
+make
+make install
+
+bash 2.05a
+----------
+./configure --prefix=/stage1 \
+  --bindir=/stage1/bin --with-curses
+make
+make install
+cd /stage1/bin
+ln -sf bash sh
+
+util-linux 2.11o
+----------------
+cp hwclock/hwclock.c hwclock/hwclock.c.backup &&
+sed 's%etc/adjtime%var/lib/hwclock/adjtime%' \
+  hwclock/hwclock.c.backup > hwclock/hwclock.c &&
+
+./configure
+make -C lib
+make -C mount mount umount
+make -C text-utils more
+cp mount/mount mount/umount text-utils/more /stage1/bin
+
+Remaining steps
+---------------
+After completing the package installations, you can follow the instructions in
+the book again starting from section: "Creating passwd and group files".
+
+Since the multi-pass bootstrap strategy is more robust and eliminates the
+dependency on the host system's glibc, it is not necessary to copy NSS library
+files from the host system. As a result the section: "Copying old NSS library
+files" can be skipped.
+
+Installing basic system software
+================================
+After running the instructions in the section: "Entering the chroot'ed
+environment", we must adjust the PATH environment variable to include our stage1
+bootstrap system:
+
+export PATH=$PATH:/stage1/bin
+
+Skip the section: "Creating /etc/mtab symlink". Instead, do the following:
+
+touch /etc/mtab
+
+Most of the packages can be installed in the same order with the same
+instructions as in the book. The exceptions are the man-pages and the GNU build
+toolchain:
+
+* You should install man-pages first before any other package.
+* Then you should install the GNU build toolchain packages by running the
+  instructions described in the next sections
+
+linux-headers 2.4.18
+--------------------
+make mrproper
+make include/linux/version.h
+make symlinks
+
+mkdir -p /usr/include/asm
+cp include/asm/* /usr/include/asm
+cp -R include/asm-generic /usr/include
+cp -R include/linux /usr/include
+touch /usr/include/linux/autoconf.h
+
+glibc 2.2.5
+-----------
+mv ../linuxthreads* .
+cp malloc/Makefile malloc/Makefile.backup
+sed 's%\$(PERL)%/usr/bin/perl%' malloc/Makefile.backup > malloc/Makefile
+cp login/Makefile login/Makefile.backup
+sed 's/root/0/' login/Makefile.backup > login/Makefile
+cat glibc-2.2.5-mtab.patch | patch -p1
+mkdir ../glibc-build
+cd ../glibc-build
+CFLAGS="-O2 -pipe" ../glibc-2.2.5/configure --prefix=/usr \
+  --enable-add-ons --disable-profile --libexecdir=/usr/bin \
+  --with-headers=/usr/include
+echo "cross-compiling = no" > configparms
+make
+touch /etc/ld.so.conf
+make install
+make localedata/install-locales
+
+adjust-toolchain
+----------------
+Here, we use our previously modified ld to change the search directories of the
+linker:
+
+cd /usr/src/binutils-build
+cd ld
+make INSTALL=/stage1/bin/install install-data-local
+
+We also need to update the specs file so that the dynamic linker is used from
+its original location:
+
+SPECFILE=/stage1/lib/gcc-lib/i686-pc-linux-gnu/*/specs
+cp ${SPECFILE} ./XX
+sed 's@/stage1/lib/ld-linux.so.2@/lib/ld-linux.so.2@g' ./XX > ${SPECFILE}
+unset SPECFILE
+rm -f ./XX
+
+We can now delete our previous binutils instance:
+
+rm -rf $LFS/usr/src/binutils-build
+rm -rf $LFS/usr/src/binutils-2.12
+
+binutils 2.12
+-------------
+mkdir ../binutils-build
+cd ../binutils-build
+CFLAGS="-O2 -pipe" ../binutils-2.12/configure --prefix=/usr --enable-shared
+make tooldir=/usr LDFLAGS="-s"
+make check
+make tooldir=/usr install
+make tooldir=/usr install-info
+rm /usr/lib/libiberty.a
+
+gcc 2.95.3
+----------
+bzip2 -dc gcc-2.95.3-2.patch.bz2 | patch -p1
+cat gcc-2.95.3-no_fixinc-1.patch | patch -p1
+
+mkdir ../gcc-build
+cd ../gcc-build
+CFLAGS="-O2 -pipe" CXXFLAGS="-O2 -pipe" ../gcc-2.95.3/configure --prefix=/usr \
+   --enable-shared --enable-threads=posix \
+   --enable-__cxa_atexit --enable-clocale=gnu
+make LDFLAGS="-s"
+# make -k check
+make install
+ln -sf ../usr/bin/cpp /lib
+ln -sf gcc /usr/bin/cc
+rm /usr/lib/libiberty.a
+
+Remaining packages
+------------------
+You can install the remaining packages in the same order using the same
+instructions as in the LFS-3.3 book (this means that you should skip Linux
+headers, binutils, gcc and glibc because they have already been installed).
+
+lfs-bootscripts 1.9
+-------------------
+To make sure that the mtab is used in a correct and FHS-compliant way, you need
+to apply the lfs-bootscripts-1.9-mtab.patch before installing the LFS bootscripts
+package:
+
+cat lfs-bootscripts-1.9-mtab.patch | patch -p1
+cp -a rc.d sysconfig /etc
+chown -R root.root /etc/rc.d /etc/sysconfig
+
+Finally, we must create the following directory to store the mtab file in an
+FHS-compliant way (and a symlink to /etc/mtab to not break compatibility):
+
+mkdir -p /var/lib/misc
+touch /var/lib/misc/mtab
+ln -sf ../var/lib/misc/mtab /etc/mtab
+
+Conclusion
+==========
+This hint describes how to build LFS-3.3 in a more robust way. Although this
+distribution is mostly old and obsolete, LFS-3.3 can still be useful for retro
+computing purposes. Some interesting use cases are running old games, such as
+games from Loki games and running old applications, such as classic versions of
+the KDE and GNOME desktops.
+
+Since the packages are quite old (and most likely contain security related
+bugs), it is imperative that you do NOT use them for production purposes. You
+should definitely not use machines running this old distribution as a server on
+the Internet. As a matter of fact, you should always be very careful connecting
+such a machine to Internet.
+
+Next steps
+==========
+LFS produces a bare bones Linux system, that is not useful on its own. You can
+follow some of the hints in the OLD/ directory to enrich your system with
+additional packages, making the distribution more useful.
+
+Some nice additions that you can apply to your bare bones retro LFS-3.3 systems
+are:
+* If you want more convenient networking support, for example, to exchange data
+  from between your host system and your LFS system in VirtualBox, having a
+  DHCP client comes in handy. I have followed the OLD/dhcpcd.txt hint to install
+  dhcpcd.
+* XFree86. I have successfully deployed version 4.2.1. I used a combination of
+  the xfree86_42.txt and xfree86+freetype.txt hints.
+* OLD/kde.txt describes how to deploy KDE 2.2.2 from scratch. This version of
+  KDE gives me a desktop experience that is comparable to Windows 9x and 2000.
+* There are a variety of GNOME hints: gnome.txt, gnome_o.txt,
+  gnome-install.txt, and gnome-1.4.txt that I combined to produce a working
+  GNOME 1.4.1 desktop installation
+* If you want a simple package management solution, you can follow the
+  PREVIOUS_FORMAT/tgz.txt hint.
+* One of my use cases is to play games. To set up a suitable infrastructure
+  for that, it may help to install tuxracer by following the
+  PREVIOUS_FORMAT/tuxracer.txt hint
+* I have mentioned "Loki Games" a couple of times. One of the games published
+  by Loki games is a Linux port of Unreal Tournament. The unreal_tournament.txt
+  hint describes how it can be installed. The hint should also work on LFS-3.3.

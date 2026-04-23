@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gdbm
+version=1.8.3
+group=Libraries/Shared
+license=GPLv2
+description="GNU Database Manager"
+src="g/gdbm/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU dbm (or GDBM, for short) is a library of database functions that use
+extensible hashing and work similar to the standard UNIX dbm. These routines
+are provided to a programmer needing to create and manipulate a hashed
+database.
+
+The basic use of GDBM is to store key/data pairs in a data file. Each key must
+be unique and each key is paired with only one data item.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --infodir=/usr/share/info --mandir=/usr/share/man
+    make
+}
+
+installPhase()
+{
+    make BINOWN=root BINGRP=root install
+    make BINOWN=root BINGRP=root install-compat
+}

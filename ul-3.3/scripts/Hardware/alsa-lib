@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=alsa-lib
+version=0.9.8
+group=Hardware
+license=GPLv2
+description="ALSA libraries"
+src="a/alsa-lib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The ALSA Library package contains the ALSA library. This is used by programs
+(including ALSA Utilities) requiring access to the ALSA sound interface.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

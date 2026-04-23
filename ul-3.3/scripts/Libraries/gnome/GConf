@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=GConf
+version=1.0.7
+group=Libraries/gnome
+license=LGPLv2
+description="GConf"
+src="g/GConf/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GConf is a configuration database system for storing application preferences.
+It supports default or mandatory settings set by the administrator, and changes
+to the database are instantly applied to all running applications.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --sysconfdir=/etc/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

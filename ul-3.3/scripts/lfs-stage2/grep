@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/grep
+
+group=lfs-stage2
+
+buildPhase()
+{
+    ./configure --prefix=/usr --bindir=/bin
+    make
+}
+
+installPhase()
+{
+    rm -f /bin/egrep /bin/fgrep # to allow a second install with checkinstall
+    make install
+}

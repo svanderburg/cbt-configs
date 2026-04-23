@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lesstif
+version=0.93.36
+group=Libraries/X
+license=LGPLv2.1
+description="Motif compatible implementation"
+src="l/lesstif/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+LessTif is the Hungry Programmers' version of the OSF/Motif GUI toolkit. It aims
+to be source compatible meaning that the same source code should compile with
+both and work exactly the same!
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr/X11R6
+    make
+}
+
+installPhase()
+{
+    make install
+
+    cat > /etc/X11/xinit/xinitrc.mwm << "EOF"
+#!/bin/sh
+
+exec mwm
+EOF
+
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/mwm << "EOF"
+description="Lesstif (Motif) Window Manager"
+EOF
+
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/mwm /usr/share/ul/ul-xsession/sessions
+}

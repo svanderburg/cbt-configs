@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=anjuta
+version=0.1.9
+group=Desktops/gnome
+license=GPLv2
+description="Anjuta IDE"
+src="a/anjuta/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Anjuta is a versatile Integrated Development Environment (IDE) for C and C++ 
+on GNU/Linux. It has been written for GTK/GNOME, and features a number of 
+advanced programming facilities. These include project management, 
+application wizards, an on board interactive debugger, and a powerful source 
+editor with source browsing and syntax highlighting.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS='-I/opt/gnome/include' \
+      ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --localstatedir=/var/lib
+    make
+}
+
+installPhase()
+{
+    make install
+
+    if kde-config --version
+    then
+        cp /opt/gnome/share/gnome/apps/Development/anjuta.desktop /opt/kde/share/applnk/Development
+    fi
+}

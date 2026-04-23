@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=arc
+version=5.21j
+group=Tools/Packers
+license=GPLv2
+description="ARC archiver"
+src="a/arc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This program is based on the MSDOS ARC program, version 5.21, plus
+a few enhancements
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -m755 arc marc /usr/bin
+}

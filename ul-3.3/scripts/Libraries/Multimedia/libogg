@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libogg
+version=1.0
+group=Libraries/Multimedia
+license=BSD
+description="OGG library"
+src="l/libogg/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Libogg contains necessary functionality to create, decode, and work with Ogg
+bitstreams.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-db
+version=0.2.96
+group=Libraries/gnome
+license=LGPLv2.1
+description="GNOME database library"
+src="g/gnome-db/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-db is the library that let you use specialy designed widget to view and
+edit data managed through the GDA architecture, using a GUI program.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

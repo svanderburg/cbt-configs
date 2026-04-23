@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=psmisc
+version=20.2
+group=lfs-stage2
+description="Procps"
+license=GPLv2
+src="p/psmisc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains five little utilities that use the proc FS:
+fuser, killall, pidof, pstree, peekfd
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --exec-prefix=/
+    make
+}
+
+installPhase()
+{
+    make install
+}

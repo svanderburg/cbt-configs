@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=Linux-PAM
+version=0.77
+shortVersion=77
+group=lfs-stage2
+license=BSD-3
+description="Pluggable Authentication Modules"
+src="l/Linux-PAM/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Linux Pluggable Authentication Modules (PAM) is a suite of libraries that allow
+a Linux system administrator to configure methods to authenticate users. It
+provides a flexible and centralized way to switch authentication methods for
+secured applications by using configuration files instead of changing
+application code.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --enable-static-libpam --with-mailspool=/var/mail \
+      --enable-read-both-confs --sysconfdir=/etc
+    make
+}
+
+installPhase()
+{
+    make install
+    mv /lib/libpam.a /lib/libpam_misc.a /lib/libpamc.a /usr/lib
+    ln -sf ../../lib/libpam.so.0.$shortVersion /usr/lib/libpam.so
+    ln -sf ../../lib/libpam_misc.so.0.$shortVersion /usr/lib/libpam_misc.so
+    ln -sf ../../lib/libpamc.so.0.$shortVersion /usr/lib/libpamc.so
+}

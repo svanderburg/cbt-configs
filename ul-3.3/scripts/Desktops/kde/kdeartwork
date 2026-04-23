@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeartwork
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE artwork"
+src="k/kdeartwork/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A number of additional themes, sounds, wall papers and window styles for the
+KDE desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

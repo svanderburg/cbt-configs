@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=vim
+version=6.1
+group=lfs-stage2
+description="VI iMproved"
+license=GPLv2
+src="v/vim/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Vim is a highly configurable text editor built to make creating and changing any
+kind of text very efficient. It is included as "vi" with most UNIX systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --localstatedir=/var/lib/vim
+    make CPPFLAGS=-DSYS_VIMRC_FILE=\\\"/etc/vimrc\\\"
+}
+
+installPhase()
+{
+    make install
+    cd /usr/bin
+    ln -sf vim vi
+}

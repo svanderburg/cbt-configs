@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ghex
+version=1.2.1
+group=Desktops/gnome
+license=GPLv2
+description="Hex editor"
+src="g/ghex/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GHex is a hex editor for the GNOME desktop.
+
+GHex can load raw data from binary files and display them for editing in a
+traditional hex editor view. The display is split in two columns, with
+hexadecimal values in one column and the ASCII representation in the other.
+GHex is a useful tool for working with raw data.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --localstatedir=/var/lib --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=textutils
+version=2.0
+description="GNU Textutils"
+license=GPLv2
+src="t/textutils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Text Utilities are the basic text-manipulation utilities of the GNU
+operating system
+EOF
+}

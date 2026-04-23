@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=glade
+version=0.6.4
+group=Desktops/gnome
+license=GPLv2
+description="Glade interface builder"
+src="g/glade/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+glade is a graphical user interface builder for GTK+, with additional components
+for GNOME.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --localstatedir=/var/lib --enable-shared --with-bonobo
+    make
+}
+
+installPhase()
+{
+    make install
+}

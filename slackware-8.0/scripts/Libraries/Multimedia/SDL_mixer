@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=SDL_mixer
+version=1.2.5
+group=Libraries/Multimedia
+license=LGPLv2
+description="SDL mixer"
+src="s/SDL_mixer/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+SDL_mixer is a simple multi-channel audio mixer.
+It supports 8 channels of 16 bit stereo audio, plus a single channel
+of music, mixed by the popular MikMod MOD, Timidity MIDI, and mpg123 MP3
+libraries.
+
+The mixer can currently load Microsoft WAVE files and Creative Labs VOC
+files as audio samples, and can load MIDI files via Timidity and the
+following music formats via MikMod:  .MOD .S3M .IT .XM. It can load
+Ogg Vorbis streams as music if built with Ogg Vorbis or Tremor libraries,
+and finally it can load MP3 music using the libmpeg123 or libmad libraries.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m755 .libs/playmus /usr/local/bin
+    install -m755 .libs/playwave /usr/local/bin
+}

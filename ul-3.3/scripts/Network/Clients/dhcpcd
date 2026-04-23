@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dhcpcd
+version=1.3.22_pl4
+pkgVersion=1.3.22-pl4
+group=Network/Clients
+license=GPLv2
+description="DHCP client"
+src="d/dhcpcd/$name-$pkgVersion.tar.bz2"
+patches=("d/dhcpcd/$name-$pkgVersion-fhs-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The dhcpcd package contains the dhcpcd client. This is useful for connecting
+your computer to a network which uses DHCP to assign network addresses.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix="" --sysconfdir=/var/lib \
+      --mandir=/usr/share/man
+    make
+}
+
+installPhase()
+{
+    make install
+}

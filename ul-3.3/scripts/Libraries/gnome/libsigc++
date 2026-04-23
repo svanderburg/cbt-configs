@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libsigc++
+version=1.0.3
+group=Libraries/gnome
+license=LGPLv2.1
+description="Typesafe callback framework for C++"
+src="l/libsigc++/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libsigc++ implements a callback system for use in abstract interfaces and
+general programming. It is one of the earliest implementations of the signals
+and slots concept implemented using C++ template metaprogramming. It was
+created as an alternative to use of a meta compiler such as found in the signals
+and slots implementation in Qt.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cpio
+version=2.5
+group=Tools/Packers
+license=GPLv2
+description="GNU cpio archiver"
+src="c/cpio/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU cpio copies files into or out of a cpio or tar archive. The archive can be
+another file on the disk, a magnetic tape, or a pipe.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/sbin --bindir=/bin
+    make
+}
+
+installPhase()
+{
+    make install
+}

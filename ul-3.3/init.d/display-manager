@@ -1,0 +1,45 @@
+#!/bin/bash
+# Begin $rc_base/init.d/display-manager
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+if [ -f /etc/sysconfig/display-manager ]
+then
+    source /etc/sysconfig/display-manager
+fi
+
+DISPLAY_MANAGER="${DISPLAY_MANAGER:-/usr/X11R6/bin/xdm}"
+DISPLAY_MANAGER_NAME="$(basename "$DISPLAY_MANAGER")"
+
+case "$1" in
+	start)
+		echo "Starting $DISPLAY_MANAGER_NAME..."
+		loadproc $DISPLAY_MANAGER
+		;;
+
+	stop)
+		echo "Stopping $DISPLAY_MANAGER_NAME..."
+		killproc $DISPLAY_MANAGER
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc $DISPLAY_MANAGER
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/display-manager

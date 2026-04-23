@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=minicom
+version=2.00.0
+group=Network/Clients
+license=GPLv2
+description="Terminal client"
+src="m/minicom/$name-$version.src.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+minicom is a communication program which somewhat resembles the
+shareware program TELIX but is free with source code and runs
+under most Unices. Features include dialing directory with auto-
+redial, support for UUCP-style lock files on serial devices, a
+separate script language interpreter, capture to file, multiple
+users with individual configurations, and more.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

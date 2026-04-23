@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=uade
+version=0.73
+group=Applications
+description="UNIX Amiga Delitracker Emulator"
+license=GPLv2
+src="u/uade/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+UADE plays old Amiga tunes through UAE emulation and cloned m68k-assembler
+Eagleplayer API.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

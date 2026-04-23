@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=hosts-configure
+group=lfs-stage2
+description="Creates a basic hosts file"
+
+execute()
+{
+    cat > /etc/hosts << "EOF"
+# Begin /etc/hosts
+
+127.0.0.1 localhost
+127.0.0.2 lfs.local lfs
+
+# End /etc/hosts
+EOF
+}

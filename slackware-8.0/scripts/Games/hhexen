@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=hhexen
+version=1.6.4
+group=Games
+license=GPLv2
+description="Hacked Hexen"
+src="h/hhexen/$name-$version.tar.gz"
+
+desktopName="HHexen"
+category=Games
+exec=/usr/local/bin/run-hhexen-gl
+comment="Hacked Hexen"
+
+showLongDescription()
+{
+    cat << "EOF"
+Hacked Hexen is a Linux port of the Hexen game and includes various
+improvements, such as an OpenGL renderer.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    install hhexen-gl /usr/local/bin
+    cat > /usr/local/bin/run-hhexen-gl << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/hhexen
+exec /usr/local/bin/hhexen-gl "$@"
+EOF
+    chmod 755 /usr/local/bin/run-hhexen-gl
+}
+

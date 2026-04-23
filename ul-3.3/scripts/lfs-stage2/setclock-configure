@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=setclock-configure
+group=lfs-stage2
+description="Sets UTC setting"
+
+execute()
+{
+    cat > /etc/sysconfig/clock << "EOF"
+# Begin /etc/sysconfig/clock
+
+UTC=1
+
+# End /etc/sysconfig/clock
+EOF
+}

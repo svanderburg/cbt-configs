@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=WindowMaker
+version=0.80.2
+group=Desktops/wmaker
+license=GPLv2
+description="WindowMaker"
+src="w/WindowMaker/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Window Maker is an X11 window manager originally designed to provide integration
+support for the GNUstep Desktop Environment, although it can run stand alone.
+In every way possible, it reproduces the elegant look and feel of the NeXTSTEP
+user interface.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --sysconfdir=/etc --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+
+    cat > /etc/X11/xinit/xinitrc.wmaker << "EOF"
+#!/bin/sh
+
+exec wmaker
+EOF
+
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/wmaker << "EOF"
+description="Window Maker"
+EOF
+
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/windowmaker /usr/share/ul/ul-xsession/sessions
+}

@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fcron
+version=2.9.4
+group=Services
+license=GPLv2
+description="Task scheduler"
+src="f/fcron/$name-$version.src.tar.gz"
+buildAsRoot=true
+
+showLongDescription()
+{
+    cat << "EOF"
+Fcron is a scheduler. It aims at replacing Vixie Cron, so it implements most of
+its functionalities. Contrary to Vixie Cron, fcron does not need your system to
+be up 7 days a week, 24 hours a day : it also works well with systems which are
+running only occasionnally (contrary to anacrontab).
+EOF
+}
+
+preConfigurePhase()
+{
+    groupadd -g 22 cron
+    useradd -u 22 -g cron cron
+}
+
+buildPhase()
+{
+    if ! which sendmail
+    then
+        extraArgs="--without-sendmail"
+    fi
+
+    ./configure --prefix=/usr \
+      --with-username=cron --with-groupname=cron \
+      --with-answer-all=no $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m754 $cbtBaseDir/init.d/fcron /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/fcron /usr/share/ul/ul-init
+}

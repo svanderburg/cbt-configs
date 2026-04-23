@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=id3lib
+version=3.8.3
+group=Libraries/Shared
+license=GPLv2
+description="ID3v1/v1.1/v2 tag parser library"
+src="i/id3lib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+id3lib is a software library for manipulating ID3v1/v1.1 and ID3v2 tags.
+It conforms to all ID3v2 standards up and including the ID3v2.3.0 informal
+standard.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

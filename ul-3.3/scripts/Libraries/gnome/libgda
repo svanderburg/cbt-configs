@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgda
+version=0.2.96
+group=Libraries/gnome
+license=LGPLv2.1
+description="GNU/GNOME data access library"
+src="l/libgda/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libgda is an interface to the GDA architecture, providing a nice
+wrapper around the GDA interfaces, for both the client and the server
+parts. It also provides a bunch of tools to help you both in the
+development and management of your data sources, all done through
+the GDA model's interfaces.
+
+GNU Data Access (GDA) is an attempt to provide uniform access to 
+different kinds
+of data sources (databases, information servers, mail spools, etc).
+It is a complete architecture that provides all you need to access
+your data.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

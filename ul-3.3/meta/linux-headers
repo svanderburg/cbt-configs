@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+name=linux-headers
+version=2.4.23 # 2.4.18
+description="Linux headers"
+license=GPLv2
+src="l/linux/linux-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package only contains the Linux kernel headers that are required by glibc
+EOF
+}

@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/binutils
+
+group=lfs-stage2
+workDir=$name-$version
+
+buildPhase()
+{
+    mkdir ../$name-build
+    cd ../$name-build
+    CFLAGS="-O2 -pipe" ../$name-$version/configure --prefix=/usr --enable-shared
+    make tooldir=/usr LDFLAGS="-s"
+    make check
+}
+
+installPhase()
+{
+    cd ../$name-build
+    make tooldir=/usr install
+    make tooldir=/usr install-info
+    rm /usr/lib/libiberty.a
+}

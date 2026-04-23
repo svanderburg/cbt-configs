@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=automake15
+version=1.5
+group=Tools/Misc
+license=GPLv2
+description="GNU Automake"
+src="a/automake/automake-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Automake is a tool for automatically generating Makefile.in files compliant
+with the GNU Coding Standards. Automake requires the use of GNU Autoconf.
+
+This is an older version that is required to build the k3b and krusader
+projects.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/automake-$version
+}
+
+installPhase()
+{
+    make install
+}

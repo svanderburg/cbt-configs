@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xfig
+version=3.2.4
+group=Desktops/X11
+license=xfig
+description="X Figure Drawing"
+src="x/xfig/${name}.${version}.full.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Xfig is an interactive drawing tool which runs under X Window System Version 11
+Release 4 (X11R4) or later.
+
+In xfig, figures may be drawn using objects such as circles, boxes, lines,
+spline curves, text, etc. Those objects can be created, deleted, moved or
+modified. Attributes such as colors or line styles can be selected in various
+ways. For text, 35 fonts are available. It is also possible to embed images in
+formats such as JPEG, PDF, EPS, PNG, etc.
+EOF
+}
+
+buildPhase()
+{
+    cp Imakefile Imakefile.bak
+    sed -e 's|XCOMM #define XAW3D|#define XAW3D|' \
+      -e 's|XCOMM #define USEXPM|#define USEXPM|' \
+      -e 's|XCOMM #define USEXPM_ICON|#define USEXPM_ICON|' \
+      Imakefile.bak > Imakefile
+    xmkmf -a
+    make
+}
+
+installPhase()
+{
+    make install.all
+    make install.man
+}

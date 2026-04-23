@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=create-bash-profile
+group=lfs-stage2
+description="Creates basic bash config files"
+
+execute()
+{
+    mkdir -p /etc/profile.d
+    install -m755 $cbtBaseDir/profile.d/00base.sh /etc/profile.d
+
+    cat > /etc/profile << "EOF"
+# Begin /etc/profile
+
+for script in /etc/profile.d/*.sh
+do
+    . "$script"
+done
+
+# End /etc/profile
+EOF
+
+    cat > /etc/skel/.bash_profile << "EOF"
+# Begin ~/.bash_profile
+
+if [ -f "$HOME/.bashrc" ]
+then
+    source $HOME/.bashrc
+fi
+
+# End ~/.bash_profile
+EOF
+
+    cp /etc/skel/.bash_profile /root
+}

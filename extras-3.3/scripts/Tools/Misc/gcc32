@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gcc32
+version=3.2.3
+group=Tools/Misc
+license=GPLv2
+description="GNU GCC 3.2.3"
+src="g/gcc/gcc-$version.tar.bz2"
+workDir=gcc-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+Fortran, and Java well as libraries for these languages (libstdc++,...).
+
+GCC was originally written as the compiler for the GNU operating system.
+
+This a newer version of gcc that can be installed separately of the base system
+so that it can be used to compile OpenOffice.org
+EOF
+}
+
+buildPhase()
+{
+    #export PATH=/opt/binutils-2.13.2/bin:$PATH
+
+    mkdir ../gcc-build
+    cd ../gcc-build
+    ../gcc-$version/configure --prefix=/opt/gcc-$version --enable-shared \
+      --enable-threads=posix --with-slibdir=/lib \
+      --enable-__cxa_atexit --enable-clocale=gnu
+    make bootstrap
+}
+
+installPhase()
+{
+    #export PATH=/opt/binutils-2.13.2/bin:$PATH
+
+    cd ../gcc-build
+    make install-no-fixedincludes
+    ln -s gcc /opt/gcc-$version/bin/cc
+}

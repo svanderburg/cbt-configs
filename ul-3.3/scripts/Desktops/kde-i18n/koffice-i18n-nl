@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=koffice-i18n-nl
+version=1.1.1
+group=Desktops/kde-i18n
+license=GPLv2
+description="KOffice Dutch Internationalization"
+src="k/koffice-i18n/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dutch localization settings for KOffice
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

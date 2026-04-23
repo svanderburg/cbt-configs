@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtop
+version=1.0.13
+group=Desktops/gnome
+license=GPLv2
+description="Process monitor"
+src="g/gtop/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Process monitoring application for the GNOME desktop
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

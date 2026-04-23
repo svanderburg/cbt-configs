@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdegames
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE games"
+src="k/kdegames/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A compilation of various games for the KDE desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final
+    make
+}
+
+installPhase()
+{
+    make install
+}

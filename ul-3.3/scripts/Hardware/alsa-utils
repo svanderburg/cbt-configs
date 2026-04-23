@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=alsa-utils
+version=0.9.8
+group=Hardware
+license=GPLv2
+description="ALSA utilities"
+src="a/alsa-utils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The alsa-utils package contains various utilities which are useful for
+controlling your sound card.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m754 $cbtBaseDir/init.d/alsa /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/alsa /usr/share/ul/ul-init
+}

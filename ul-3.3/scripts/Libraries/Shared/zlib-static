@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=zlib-static
+version=1.1.4
+group=Libraries/Shared
+license=zlib
+description="zlib compression library"
+src="z/zlib/zlib-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+zlib is designed to be a free, general-purpose, legally unencumbered lossless
+data-compression library for use on virtually any computer hardware and
+operating system. The zlib data format is itself portable across platforms.
+
+This package provides a compiled static library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

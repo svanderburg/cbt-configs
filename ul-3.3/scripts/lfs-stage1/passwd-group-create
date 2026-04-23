@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=passwd-group-create
+group=lfs-stage1
+description="Generates new passwd and group config"
+
+execute()
+{
+    echo "root:x:0:0:root:/root:/bin/bash" > $LFS/etc/passwd
+    cat > $LFS/etc/group << "EOF"
+root:x:0:
+bin:x:1:
+sys:x:2:
+kmem:x:3:
+tty:x:4:
+tape:x:5:
+daemon:x:6:
+floppy:x:7:
+disk:x:8:
+lp:x:9:
+dialout:x:10:
+audio:x:11:
+users:x:100:
+EOF
+
+    # Additions for cbt
+    echo "lfs:x:98:98:lfs:/home/lfs:/bin/bash" >> $LFS/etc/passwd
+    echo "lfs:x:98:" >> $LFS/etc/group
+}

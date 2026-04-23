@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=cbt
+group=lfs-stage1
+version=0.1
+description="Conservative Build Tool"
+license=BSD-3
+src="c/cbt/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Conservative Build Tool executes sequences of scripts to construct Linux
+systems from scratch.
+EOF
+}
+
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    make PREFIX=$LFS/usr TARGET_PREFIX=/usr install
+}

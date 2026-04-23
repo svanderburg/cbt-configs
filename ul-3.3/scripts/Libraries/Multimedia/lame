@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lame
+version=3.93.1
+group=Libraries/Multimedia
+license=LGPLv2.1
+description="LAME MP3 ripper"
+src="l/lame/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+LAME is a high quality MPEG Audio Layer III (MP3) encoder.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --mandir=/usr/share/man --with-gtk-prefix=/opt/gnome
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=XML-Parser
+version=2.31
+group=Libraries/Perl
+license=AL
+description="Expat XML parser extension for Perl"
+src="x/XML-Parser/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This module provides ways to parse XML documents. It is built on top of
+XML::Parser::Expat, which is a lower level interface to James Clark's expat
+library.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    perl Makefile.PL
+    make
+}
+
+installPhase()
+{
+    make install
+}

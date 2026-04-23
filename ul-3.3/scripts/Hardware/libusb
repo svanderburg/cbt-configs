@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libusb
+version=0.1.7
+group=Hardware
+license=LGPLv2.1
+description="USB library"
+src="l/libusb/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libusb package contains a library used by some applications for USB device
+access.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --disable-build-docs
+    make
+}
+
+installPhase()
+{
+    make install
+}

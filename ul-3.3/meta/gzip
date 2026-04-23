@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=gzip
+version=1.2.4a
+description="GNU GZip"
+license=GPLv2
+src="g/gzip/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Gzip is a popular data compression program originally written by
+Jean-loup Gailly for the GNU project. Mark Adler wrote the decompression part.
+EOF
+}

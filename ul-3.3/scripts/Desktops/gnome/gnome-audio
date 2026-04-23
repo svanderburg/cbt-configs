@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-audio
+version=1.4.0
+group=Desktops/gnome
+license=GPLv2
+description="GNOME audio"
+src="g/gnome-audio/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains sound files for a default GNOME set.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

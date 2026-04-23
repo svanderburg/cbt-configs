@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sane-backends
+version=1.0.8
+group=Hardware
+license=GPLv2
+description="SANE backends"
+src="s/sane-backends/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+SANE stands for "Scanner Access Now Easy" and is an application programming
+interface (API) that provides standardized access to any raster image scanner
+hardware (flatbed scanner, hand-held scanner, video- and still-cameras,
+frame-grabbers, etc.). The SANE API is public domain and its discussion and
+development is open to everybody.
+
+SANE is split into back ends and front ends. The back ends are drivers for the
+supported scanners and cameras.
+EOF
+}
+
+buildPhase()
+{
+    # Fix gphoto2 detection
+    cp configure configure.bak
+    sed 's|2.0.1|2.1.0|' configure.bak > configure
+    chmod 755 configure
+
+    # Optionally enable gphoto2 detection
+    if gphoto2-config --version
+    then
+        local extraArgs="--with-gphoto2"
+    fi
+
+    ./configure --prefix=/usr --sysconfdir=/etc $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=unrar
+version=3.3.6
+group=Tools/Packers
+license=unrar
+description="UnRAR"
+src="u/unrar/unrarsrc-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The unrar package contains a RAR extraction utility used for extracting files
+from RAR archives. RAR archives are usually created with WinRAR, primarily in a
+Windows environment.
+EOF
+}
+
+buildPhase()
+{
+    make -f makefile.unix
+}
+
+installPhase()
+{
+    install -v -m755 unrar /usr/local/bin
+}

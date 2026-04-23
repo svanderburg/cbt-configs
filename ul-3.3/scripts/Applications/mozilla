@@ -1,0 +1,88 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mozilla
+version=1.0.2
+group=Applications
+license=MPL
+description="Mozilla Internet suite"
+src="m/mozilla/$name-source-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Web-browser, advanced e-mail and newsgroup client, IRC chat client, and HTML
+editing made simple -- all your Internet needs in one application.
+EOF
+}
+
+buildPhase()
+{
+    export MOZILLA_OFFICIAL=1
+    export BUILD_OFFICIAL=1
+    export MOZ_INTERNAL_LIBART_LGPL=1
+
+    echo ac_add_options --prefix=/opt/$name-$version >> .mozconfig
+    echo ac_add_options --mandir=/opt/$name-$version/share/man >> .mozconfig
+    echo ac_add_options --with-system-jpg >> .mozconfig
+    echo ac_add_options --with-system-zlib >> .mozconfig
+    echo ac_add_options --with-system-png >> .mozconfig
+    echo ac_add_options --with-system-mng >> .mozconfig
+    echo ac_add_options --enable-crypto >> .mozconfig
+    echo ac_add_options --disable-jsd >> .mozconfig
+    echo ac_add_options --disable-accessibility >> .mozconfig
+    echo ac_add_options --enable-mathml >> .mozconfig
+    echo ac_add_options --enable-svg >> .mozconfig
+    echo mk_add_options MOZ_INTERNAL_LIBART_LGPL=1 >> .mozconfig
+    echo ac_add_options --disable-tests >> .mozconfig
+    echo ac_add_options --disable-dtd-debug >> .mozconfig
+    echo ac_add_options --enable-reorder >> .mozconfig
+    echo ac_add_options --enable-strip >> .mozconfig
+    echo ac_add_options --enable-optimize=-O3 >> .mozconfig
+    echo ac_add_options --enable-elf-dynstr-gc >> .mozconfig
+    echo ac_add_options --enable-cpp-rtti >> .mozconfig
+
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+    ln -sfn /opt/$name-$version /opt/$name
+
+    cd /opt/$name-$version/lib/mozilla-1.0.1
+    export LD_LIBRARY_PATH="/opt/$name-$version/lib/mozilla-1.0.1"
+    export MOZILLA_FIVE_HOME="/opt/$name-$version/lib/mozilla-1.0.1"
+    ./regxpcom
+    ./regchrome
+    touch `find /opt/$name-$version/lib/mozilla-1.0.1 -name '*.rdf'`
+
+    install -m755 $cbtBaseDir/profile.d/30mozilla.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/30mozilla.csh /etc/profile.d
+    fi
+
+    # Add GNOME desktop item (KDE detects it by itself)
+
+    if gnome-config --version
+    then
+        cat > /opt/gnome/share/gnome/apps/Internet/mozilla.desktop << "EOF"
+[Desktop Entry]
+Type=Application
+Name=Mozilla
+Comment=Mozilla Internet Suite
+Exec=mozilla
+Icon=/opt/mozilla/lib/mozilla-1.0.1/icons/mozicon50.xpm
+EOF
+    fi
+
+    # Install Java plugin if it exists
+    if java -version
+    then
+        ln -sfn /opt/j2sdk/jre/plugin/i386/ns610/libjavaplugin_oji.so /opt/mozilla/lib/mozilla-1.0.1/plugins
+    fi
+}

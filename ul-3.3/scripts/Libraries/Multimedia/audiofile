@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=audiofile
+version=0.2.3
+group=Libraries/Multimedia
+license=LGPLv2.1
+description="Audiofile library"
+src="a/audiofile/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The AudioFile package contains the audio file libraries and two sound file
+support programs useful to support basic sound file formats.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

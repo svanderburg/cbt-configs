@@ -1,0 +1,24 @@
+#!/bin/bash
+
+dialog --backtitle "UL" \
+  --title "Universal Time Clock (UTC) configuration" \
+  --yesno "Do you want to enable UTC?" \
+  5 50
+exitStatus=$?
+
+if [ $exitStatus -eq 0 ]
+then
+    UTC=1
+else
+    UTC=0
+fi
+
+# Update config
+
+cat > /etc/sysconfig/clock <<EOF
+# Begin /etc/sysconfig/clock
+
+UTC=$UTC
+
+# End /etc/sysconfig/clock
+EOF

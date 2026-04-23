@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=kde-config
+group=Libraries/kde
+description="Global configuration settings for KDE libs"
+
+execute()
+{
+    echo "/opt/kde/lib" >> /etc/ld.so.conf
+    ldconfig
+}

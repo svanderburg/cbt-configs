@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=expat
+version=1.95.7
+group=Libraries/Shared
+license=MIT
+description="Stream oriented XML parser"
+src="e/expat/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Expat is a stream-oriented XML parser library written in C.
+Expat excels with files too large to fit RAM, and where performance and
+flexibility are crucial.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

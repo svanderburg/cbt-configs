@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ORBit
+version=0.5.13
+group=Libraries/gnome
+license=LGPLv2.1
+description="ORBit"
+src="o/ORBit/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The ORBit package contains a high-performance CORBA Object Request Broker.
+This allows programs to send requests and receive replies from other programs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --infodir=/opt/gnome-$gnomeVersion/share/info --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

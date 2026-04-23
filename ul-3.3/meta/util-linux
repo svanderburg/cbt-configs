@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=util-linux
+version=2.11o
+description="Utilities for Linux"
+license=GPLv2
+src="u/util-linux/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+util-linux is a package of utilities distributed by the Linux Kernel
+Organization for use in a Linux operating system.
+EOF
+}

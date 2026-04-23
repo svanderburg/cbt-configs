@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=locale
+group=Services
+description="Locale settings script"
+
+showLongDescription()
+{
+    cat << "EOF"
+A profile.d script providing localization settings
+EOF
+}
+
+installPhase()
+{
+    install -m755 $cbtBaseDir/profile.d/03locale.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/03locale.csh /etc/profile.d
+    fi
+}

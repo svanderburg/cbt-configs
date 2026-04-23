@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeadmin
+version=2.2.2
+group=Desktops/kde
+license=GPLv2
+description="KDE admin"
+src="k/kdeadmin/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of programs for KDE that a system administrator typically needs.
+EOF
+}
+
+buildPhase()
+{
+    if which rpm
+    then
+        local extraArgs="--with-rpm"
+    fi
+
+    CFLAGS="$CFLAGS -I/opt/db-2.7/include" LDFLAGS="-L/opt/db-2.7/lib" \
+      ./configure --prefix=/opt/kde-$kdeVersion --disable-debug --enable-final $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+}

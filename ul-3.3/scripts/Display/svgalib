@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=svgalib
+version=1.4.3
+group=Display
+license=public
+description="SVGA graphics library"
+src="s/svgalib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+SVGAlib is an open-source low-level graphics library allowing programs to change
+video mode and display full-screen graphics, without the use of a windowing
+system.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    make prefix=/usr install
+}

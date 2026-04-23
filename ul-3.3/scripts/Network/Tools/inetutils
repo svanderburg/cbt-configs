@@ -1,0 +1,81 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=inetutils
+version=1.4.2
+group=Network/Tools
+license=GPLv2
+description="Various network utilities, services and clients"
+src="i/inetutils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Inetutils is a collection of common network programs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --disable-syslogd \
+      --libexecdir=/usr/sbin --infodir=/usr/share/info \
+      --mandir=/usr/share/man --with-wrap \
+      --disable-inetd --disable-ping --disable-ifconfig
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Install some ready to use services
+    mkdir -p /etc/xinetd.d
+
+    cat > /etc/xinetd.d/telnet << "EOF"
+service telnet
+{
+  disable        = yes
+  socket_type    = stream
+  wait           = no
+  user           = root
+  server         = /usr/sbin/telnetd
+  bind           = 127.0.0.1
+  log_on_failure += USERID
+}
+EOF
+
+    cat > /etc/xinetd.d/talk << "EOF"
+service talk
+{
+    disable     = yes
+    socket_type = dgram
+    wait        = yes
+    user        = root
+    server      = /usr/sbin/talkd
+}
+EOF
+
+    cat > /etc/xinetd.d/ntalk << "EOF"
+service ntalk
+{
+    disable     = yes
+    socket_type = dgram
+    wait        = yes
+    user        = root
+    server      = /usr/sbin/talkd
+}
+EOF
+
+    cat > /etc/xinetd.d/tftp << "EOF"
+service tftp
+{
+    disable     = yes
+    socket_type = dgram
+    wait        = yes
+    user        = root
+    server      = /usr/sbin/tftpd
+}
+EOF
+}

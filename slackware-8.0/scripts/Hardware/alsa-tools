@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=alsa-tools
+version=0.9.8
+group=Hardware
+license=GPLv2
+description="ALSA tools"
+src="a/alsa-tools/$name-$version.tar.bz2"
+selectedSubComponents="ac3dec as10k1 envy24control sb16_csp seq/sbiload"
+
+showLongDescription()
+{
+    cat << "EOF"
+The alsa-tools package contains advanced tools for certain soundcards.
+EOF
+}
+
+buildPhase()
+{
+    for dir in $selectedSubComponents
+    do
+        cd "$dir"
+        ./configure
+        make
+        cd ..
+    done
+}
+
+installPhase()
+{
+    for dir in $selectedSubComponents 
+    do
+        cd "$dir"
+        make install
+        cd ..
+    done
+}

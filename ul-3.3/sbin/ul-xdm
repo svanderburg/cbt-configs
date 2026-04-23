@@ -1,0 +1,75 @@
+#!/bin/bash -e
+
+generateManagerSelectedStatus()
+{
+    if [ "$selectedDisplayManager" = "$1" ]
+    then
+        echo "on"
+    else
+        echo "off"
+    fi
+}
+
+queryDisplayManagers()
+{
+    displayManagers=()
+
+    if [ "$DISPLAY_MANAGER" != "" ]
+    then
+        local selectedDisplayManager="$(basename "$DISPLAY_MANAGER")"
+    fi
+
+    if which xdm
+    then
+        displayManagers=("${displayManagers[@]}" "xdm" "X Display Manager" `generateManagerSelectedStatus "xdm"`)
+    fi
+
+    if which gdm
+    then
+        displayManagers=("${displayManagers[@]}" "gdm" "GNOME Display Manager" `generateManagerSelectedStatus "gdm"`)
+    fi
+
+    if which kdm
+    then
+        displayManagers=("${displayManagers[@]}" "kdm" "KDE Display Manager" `generateManagerSelectedStatus "kdm"`)
+    fi
+
+    if which wdm
+    then
+        displayManagers=("${displayManagers[@]}" "wdm" "WINGs Display Manager" `generateManagerSelectedStatus "wdm"`)
+    fi
+}
+
+################################################################################
+# Construct menu                                                               #
+################################################################################
+
+if [ -f /etc/sysconfig/display-manager ]
+then
+    source /etc/sysconfig/display-manager
+fi
+
+queryDisplayManagers
+
+exec 3>&1
+
+set +e
+DISPLAY_MANAGER=$(dialog --backtitle "UL" \
+    --title "Configure display manager" \
+    --radiolist "Select display manager" \
+    15 50 7 \
+    "${displayManagers[@]}" 2>&1 1>&3)
+exitStatus=$?
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+set -e
+
+################################################################################
+# Save selection                                                               #
+################################################################################
+
+echo "DISPLAY_MANAGER=`which $DISPLAY_MANAGER`" > /etc/sysconfig/display-manager

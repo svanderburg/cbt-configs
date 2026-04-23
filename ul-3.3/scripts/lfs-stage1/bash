@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/bash
+
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure --prefix=/stage1 \
+      --bindir=/stage1/bin --with-curses
+    make
+}
+
+installPhase()
+{
+    make install
+    cd /stage1/bin
+    ln -sf bash sh
+}

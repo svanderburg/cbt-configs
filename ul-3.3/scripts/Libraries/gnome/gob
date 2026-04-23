@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gob
+version=1.0.12
+group=Libraries/gnome
+license=GPLv2
+description="GTK+ Object Builder"
+src="g/gob/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GOB (GNOME Object Builder) is a preprocessor for making GObjects with inline C
+code so that generated files are not edited. Syntax is inspired by Java and Yacc
+or Lex. The implementation is intentionally kept simple, and no C actual code
+parsing is done.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnomeVersion \
+      --mandir=/opt/gnome-$gnomeVersion/share/man --enable-shared
+    make
+}
+
+installPhase()
+{
+    make install
+}

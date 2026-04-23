@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=zip
+version=2.3
+group=Tools/Packers
+license=info-zip
+description="Zip from Info-Zip"
+src="z/zip/${name}23.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Package containing a compressor/archiver for creating and modifying zipfiles.
+EOF
+}
+
+buildPhase()
+{
+    cp unix/Makefile .
+    make prefix=/usr generic_gcc
+}
+
+installPhase()
+{
+    make prefix=/usr install
+}

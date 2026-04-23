@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=quake2
+version=r0.16.1
+group=Games
+license=GPLv2
+description="icculus.org Quake 2 port"
+src="q/quake2/$name-$version.tar.gz"
+
+desktopName="Quake 2"
+category=Games
+exec=/usr/local/bin/run-quake2
+comment="icculus.org Quake 2 port"
+
+showLongDescription()
+{
+    cat << "EOF"
+A port of Quake 2 provided by icculus.org
+EOF
+}
+
+buildPhase()
+{
+    sed -e "s|-falign-loops=2||g" \
+      -e "s|-falign-jumps=2||g" \
+      -e "s|-falign-functions=2||g" Makefile > Makefile.new
+    mv Makefile.new Makefile
+    make
+}
+
+installPhase()
+{
+    chown -R root:root releasei386
+    mv releasei386 /usr/local/share/quake2
+    cat > /usr/local/bin/run-quake2 << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/quake2
+exec /usr/local/share/quake2/sdlquake2 "$@"
+EOF
+    chmod 755 /usr/local/bin/run-quake2
+}

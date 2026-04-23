@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=mozilla-config
+group=Applications
+description="Global configuration settings for Mozilla"
+
+execute()
+{
+    echo "/opt/mozilla/lib" >> /etc/ld.so.conf
+    ldconfig
+}

@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+name=texinfo
+version=4.1
+description="GNU Texinfo"
+license=GPLv2
+src="t/texinfo/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Texinfo is the official documentation format of the GNU project. It is used by
+many non-GNU projects as well.
+
+Texinfo uses a single source file to produce output in a number of formats, both
+online and printed (such as HTML, PDF, DVI, LaTeX). This means that instead of
+writing different documents for online information and another for a printed
+manual, you need write only one document.
+EOF
+}

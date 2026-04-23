@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+exec 3>&1
+
+while true
+do
+    set +e
+    selectedOption=$(dialog --backtitle "UL setup" \
+       --title "Configuration menu" \
+       --menu "Select a system aspect to configure" 19 55 12 \
+       "ul-kbd"      "Configure keyboard layout" \
+       "passwd"      "Configure root password" \
+       "ul-devices"  "Configure default devices" \
+       "ul-fstab"    "Configure filesystems" \
+       "ul-utc"      "Configure UTC" \
+       "ul-timezone" "Configure timezone" \
+       "ul-lilo"     "Configure LILO" \
+       "ul-network"  "Configure network" \
+       "ul-init"     "Configure boot services" \
+       "ul-alsa"     "Configure ALSA" \
+       "ul-gpm"      "Configure GPM" \
+       "ul-xinit"    "Configure default window manager" \
+       "ul-adduser"  "Add new user" \
+       "xf86config"  "Configure XFree86" \
+       "ul-xdm"      "Select X display manager" \
+       "ul-cfgdms"   "Configure display managers" \
+        2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        exit
+    fi
+
+    $selectedOption
+done

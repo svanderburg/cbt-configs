@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployDesktopSourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=quakeforge
+version=0.5.5
+group=Games
+license=GPLv2
+description="Quake port"
+src="q/quakeforge/$name-$version.tar.bz2"
+
+desktopName="Quakeforge"
+category=Games
+exec=/usr/local/bin/nq-sdl
+comment="Quake port"
+
+showLongDescription()
+{
+    cat << "EOF"
+QuakeForge is a 3D first-person shooter game engine based on id Software's
+legendary Quake and QuakeWorld game engines. Its purpose is to improve the state
+of the game by improving the engine, making a good base for game and engine
+modifications, and making it accessible to a large number of players.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+}

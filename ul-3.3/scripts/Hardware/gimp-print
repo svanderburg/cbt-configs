@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gimp-print
+version=4.2.4
+group=Hardware
+license=GPLv2
+description="High quality printing drivers"
+src="g/gimp-print/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Gimp-Print is a suite of printer drivers that may be used with CUPS, the Common
+UNIX Printing System. These drivers provide high quality printing that in many
+cases equal or exceed proprietary vendor-supplied drivers in quality and
+functionality, and can be used for demanding printing tasks requiring
+flexibility and high quality.
+
+This software package include an enhanced Print plugin for the GIMP that
+replaces the plugin packaged with the GIMP in addition to the CUPS driver.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-ghost
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+    make install
+}

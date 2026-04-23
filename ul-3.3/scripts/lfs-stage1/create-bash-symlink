@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=create-bash-symlink
+group=lfs-stage1
+description="Creates /bin/bash symlink"
+
+execute()
+{
+    ln -sf /stage1/bin/bash $LFS/bin
+}

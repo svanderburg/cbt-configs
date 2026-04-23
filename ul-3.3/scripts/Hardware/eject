@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=eject
+version=2.0.13
+group=Hardware
+license=GPLv2
+description="Program to eject removable media"
+src="e/eject/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Eject allows removable media (typically a CD-ROM, floppy disk, tape drive, JAZ
+or ZIP disk) to be ejected under software control. The command can also control
+some multi-disc CD-ROM changers, the auto-eject feature supported by some
+devices, and close the disc tray of some CD-ROM devices.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

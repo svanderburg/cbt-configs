@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=adjust-toolchain
+group=lfs-stage1
+description="Adjusts the toolchain used by gcc"
+
+execute()
+{
+    # Install linker scripts that ignore the standard folders, e.g. /lib, /usr/lib and use /stage1 instead
+    cd $LFS/usr/src/binutils-build/ld
+    make install-data-local
+
+    # Adjust gcc spec file to use the dynamic linker from stage1, rather than the conventional /lib
+    SPECFILE=/stage1/lib/gcc-lib/i686-pc-linux-gnu/*/specs
+    cp ${SPECFILE} ./XX
+    sed 's@/lib/ld-linux.so.2@/stage1/lib/ld-linux.so.2@g' ./XX > ${SPECFILE}
+    unset SPECFILE
+    rm -f ./XX
+
+    # Remove binutils stuff
+    rm -rf $LFS/usr/src/binutils-*
+}

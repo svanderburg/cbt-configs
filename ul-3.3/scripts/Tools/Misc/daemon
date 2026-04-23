@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=daemon
+version=0.6.4
+group=Tools/Misc
+license=GPLv2
+description="Tool that daemonizes programs"
+src="d/daemon/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Daemon turns other process into daemons. There are many tasks that need to be
+performed to correctly set up a daemon process. Daemon performs these tasks for
+other processes. This is useful for writing daemos in languages other that C,
+C++ or Perl (e.g. /bin/sh, Java).
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make PREFIX=/usr
+}
+
+installPhase()
+{
+    make PREFIX=/usr install
+}

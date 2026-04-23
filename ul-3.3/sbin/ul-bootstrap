@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+checkIfMounted()
+{
+    [ "$(cut -d ' ' -f 2 < /etc/mtab | grep -x "$1" 2> /dev/null)" != "" ]
+}
+
+source settings/lfs-stage1-settings
+
+export CBT_GLOBAL_CONFIG="$LFS/etc/cbt/cbt"
+export CBT_STATE_DIR="$LFS/var/state/cbt"
+export CBT_LOG_DIR="$LFS/var/log/cbt"
+export TMPDIR="$LFS/tmp"
+mkdir -p "$TMPDIR"
+
+echo "Executing stage 1"
+cbt-run-seq sequences/lfs-stage1
+
+# Mount proc filesystem
+checkIfMounted $LFS/proc || mount proc $LFS/proc -t proc
+
+# Enter chroot environment
+cd $LFS
+chroot $LFS /stage1/bin/env -i HOME=/root \
+  TERM="$TERM" PS1='\u:\w\$ ' \
+  /stage1/bin/bash --login -c ul-stage2 +h
+
+# Unmount previously mounted filesystems
+umount $LFS/proc

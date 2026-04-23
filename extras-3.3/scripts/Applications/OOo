@@ -1,0 +1,74 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=OOo
+version=1.0.2
+group=Applications
+description="OpenOffice.org"
+license=LGPLv2
+src="o/OOo/${name}_${version}_source.tar.bz2"
+patches=("o/OOo/openoffice-1.0.2-add-entry-for-kmail.patch" "o/OOo/openoffice-1.0.2-add-pam-headers.patch" "o/OOo/openoffice-1.0.2-bison-fix.patch" "o/OOo/openoffice-1.0.2-cpputools-regcomp-makefile.patch" "o/OOo/openoffice-1.0.2-dmake-clean.patch" "o/OOo/openoffice-1.0.2-dont-build-mozab.patch" "o/OOo/openoffice-1.0.2-dont-catch-segv.patch" "o/OOo/openoffice-1.0.2-dont-uglify-html.patch" "o/OOo/openoffice-1.0.2-dont-unset-home.patch" "o/OOo/openoffice-1.0.2-errno-fix.patch" "o/OOo/openoffice-1.0.2-honor-current-path.patch" "o/OOo/openoffice-1.0.2-jdk1.4-syntax-fix.patch" "o/OOo/openoffice-1.0.2-linux-test-bin-location.patch" "o/OOo/openoffice-1.0.2-main-retval.patch" "o/OOo/openoffice-1.0.2-mdk-asm-fixes.patch" "o/OOo/openoffice-1.0.2-new-mozilla-ab.patch" "o/OOo/openoffice-1.0.2-psprint-pdf-drivers.patch" "o/OOo/openoffice-1.0.2-sal-main-cmdline.patch" "o/OOo/openoffice-1.0.2-system-freetype-2.1.patch" "o/OOo/openoffice-1.0.2-system-getopt.patch" "o/OOo/openoffice-1.0.2-system-libXrender.patch" "o/OOo/openoffice-1.0.2-user-fontpath.patch" "o/OOo/openoffice-1.0.2-gcc323.patch")
+files=("o/OOo/gpc231.tar.Z")
+
+showLongDescription()
+{
+    cat << "EOF"
+OpenOffice.org is an open-source office productivity software suite. It
+originated from the proprietary StarOffice, developed by Star Division, which
+was acquired by Sun Microsystems in 1999. Sun open-sourced the software in July
+2000 as a free alternative to Microsoft Office.
+EOF
+}
+
+buildPhase()
+{
+    # Use gcc 3.2.3 rather than the standard gcc 2.95.3
+    export PATH=/opt/gcc-3.2.3/bin:$PATH
+    export LD_LIBRARY_PATH=/opt/gcc-3.2.3/lib
+
+    # Disable optmizations
+    unset CFLAGS || true
+    unset CXXFLAGS || true
+
+    # Update GPC library
+    tar xfvz $sourcesDir/${files[0]}
+    mv gpc231/* external/gpc
+    rmdir gpc231
+
+    # Remove incorrect -mcpu flag
+    cd solenv/inc
+    cp unxlngi4.mk unxlngi4.mk.orig
+    sed -e "s:\-mcpu=pentiumpro::" unxlngi4.mk.orig > unxlngi4.mk
+    cd ../..
+
+    # Configure
+    cd config_office
+    ./configure --with-lang=ENUS #--with-stlport4-home=/usr
+    cd ..
+    set +e
+    source LinuxIntelEnv.Set.sh
+    set -e
+
+    # Compile
+    ./bootstrap
+    dmake
+}
+
+installPhase()
+{
+    # Run X virtual framebuffer, because the install process requires X
+    export DISPLAY=:0
+    Xvfb "$DISPLAY" & XvfbPid=$!
+    sleep 3
+
+    cd instsetoo/unxlngi4.pro/01/normal
+    cp install install.orig
+    sed -e "s:^oo_home=.*:oo_home=openoffice:" install.orig > install
+    ./install --prefix=/opt
+
+    # Stop X virtual framebuffer
+    sleep 3
+    kill $XvfbPid
+}

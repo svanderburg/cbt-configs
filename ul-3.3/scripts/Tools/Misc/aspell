@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=aspell
+version=0.50.3
+group=Tools/Misc
+license=GPLv2
+description="A Spell Checker"
+src="a/aspell/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Aspell is a Free and Open Source spell checker designed to eventually
+replace Ispell. it can either be used as a library or as an independent spell
+checker.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m755 scripts/{spell,ispell} /usr/bin
+}

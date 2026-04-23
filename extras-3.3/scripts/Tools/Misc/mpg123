@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=mpg123
+version=0.59r
+group=Tools/Misc
+license=GPLv2
+description="mpg123 tools"
+src="m/mpg123/$name-$version-gpl.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The mpg123 distribution contains a real time MPEG 1.0/2.0/2.5 audio player/
+decoder for layers 1,2 and 3 (most commonly MPEG 1.0 layer 3 aka MP3).
+EOF
+}
+
+buildPhase()
+{
+    make PREFIX=/usr linux
+}
+
+installPhase()
+{
+    make PREFIX=/usr install
+}

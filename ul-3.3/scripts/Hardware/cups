@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cups
+version=1.1.18
+group=Hardware
+license=GPLv2
+description="Common UNIX Printing System"
+src="c/cups/$name-$version-source.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Common UNIX Printing System ("CUPS") is a print spooler and associated
+utilities. It is based on the "Internet Printing Protocol" and provides printing
+services to most PostScript and raster printers.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Remove init.d stuff. We have replacement scripts that are better
+    rm /etc/rc.d/init.d/cups
+    rm /etc/rc.d/rc0.d/K00cups
+    rm /etc/rc.d/rc2.d/S99cups
+    rm /etc/rc.d/rc3.d/S99cups
+    rm /etc/rc.d/rc5.d/S99cups
+
+    # Install custom cups init.d script
+    install -m754 $cbtBaseDir/init.d/cups /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/cups /usr/share/ul/ul-init
+}

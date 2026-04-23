@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+export CFLAGS="-O2 -march=pentiumpro"
+export CXXFLAGS="$CFLAGS"
+
+set +h
+umask 022
+LFS=/mnt/lfs
+LC_ALL=POSIX
+LDFLAGS="-s"
+PATH=/stage1/bin:$PATH
+export LFS LC_ALL LDFLAGS PATH
+
+sourcesDir=$LFS/mnt/source
+CBT_UNPACK_PLUGINS=$LFS/usr/share/cbt/unpack-plugins
+CBT_UNCOMPRESS_PLUGINS=$LFS/usr/share/cbt/uncompress-plugins

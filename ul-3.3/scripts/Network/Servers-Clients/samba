@@ -1,0 +1,58 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=samba
+version=2.2.12
+group=Network/Servers-Clients
+license=GPLv2
+description="SMB compatible server and client"
+src="s/samba/$name-$version.tar.gz"
+workDir=$name-$version/source
+
+showLongDescription()
+{
+    cat << "EOF"
+Samba is the most feature-rich Open Source implementation of the SMB and
+Active Directory protocols for Linux and UNIX-like systems.
+EOF
+}
+
+buildPhase()
+{
+    if which openssl
+    then
+        extraArgs="--with-ssl"
+    fi
+
+    ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+      --with-piddir=/var/run --with-fhs --with-smbmount \
+      --with-libsmbclient $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+    mv /usr/bin/smbmount /usr/bin/mount.smbfs
+    rm -rf /usr/private
+    mkdir -p /etc/samba/private
+    mkdir -p /var/cache/samba
+
+    # Make sure libsmbclient gets installed
+    cp -av bin/libsmbclient.so /usr/lib/libsmbclient.so.0.0
+    chown root.root /usr/lib/libsmbclient.so.0.0
+    chmod 755 /usr/lib/libsmbclient.so.0.0
+    cp -av include/libsmbclient.h /usr/include/libsmbclient.h
+    chown root.root /usr/include/libsmbclient.h
+    chmod 644 /usr/include/libsmbclient.h
+    cd /usr/lib
+    rm -f llbsmbclient.so.0 libsmbclient.so
+    ln -sf libsmbclient.so.0.0 libsmbclient.so.0
+    ln -sf libsmbclient.so.0.0 libsmbclient.so
+
+    install -m754 $cbtBaseDir/init.d/samba /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/samba /usr/share/ul/ul-init
+}

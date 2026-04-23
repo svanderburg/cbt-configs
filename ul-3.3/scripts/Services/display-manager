@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=display-manager
+group=Services
+description="Display manager service script"
+
+showLongDescription()
+{
+    cat << "EOF"
+An init.d script that starts a selected display manager.
+EOF
+}
+
+installPhase()
+{
+    install -m754 $cbtBaseDir/init.d/display-manager /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/display-manager /usr/share/ul/ul-init
+}

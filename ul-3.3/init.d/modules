@@ -1,0 +1,60 @@
+#!/bin/sh
+# Backported from a newer LFS version
+
+# Begin $rc_base/init.d/modules
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+case "$1" in
+    start)
+        # Exit if there's no modules file or there are no
+        # valid entries
+        [ -r /etc/sysconfig/modules ] &&
+            egrep -qv '^($|#)' /etc/sysconfig/modules ||
+            exit 0
+
+        echo "Loading modules:"
+
+        # Only try to loadules if the user has actually given us
+        # some modules to load.
+        while read module args
+        do
+            # Ignore comments and blank lines
+            case "$module" in
+                ""|"#"*) continue ;;
+            esac
+
+            # Attempt to load the module, making
+            # sure to pass any arguments provided.
+            modprobe ${module} ${args} >/dev/null
+
+            # Print the module name if successful,
+            # otherwise take note.
+            if [ $? -eq 0 ]
+            then
+                echo " ${module}"
+            else
+                failedmod="${failedmod} ${module}"
+            fi
+
+            echo
+
+            # Print a message about successfully loaded
+            # modules on the correct line.
+            print_status success
+
+            # Print a failure message with a list of any
+            # modules that may have failed to load.
+            if [ -n "${failedmod}" ]
+            then
+                echo "Failed to load modules: ${failedmod}"
+                print_status failure
+            fi
+        done < /etc/sysconfig/modules
+        ;;
+    *)
+        echo "Usage: $0 {start}"
+        exit 1
+        ;;
+esac

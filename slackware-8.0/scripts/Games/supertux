@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/slackware-8.0
+
+name=supertux
+version=0.1.3
+group=Games
+license=GPLv2
+description="Supertux"
+src="s/supertux/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+SuperTux is an open-source classic 2D jump'n run sidescroller game in a style
+similar to the original Super Mario games.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Install desktop links for KDE and GNOME
+    sed -e "s|Icon=|Icon=/usr/local/share/pixmaps/|" /usr/local/share/applications/supertux.desktop > supertux.desktop
+    install -m644 supertux.desktop /opt/kde/share/applnk/Games
+    install -m644 supertux.desktop /opt/gnome/share/gnome/apps/Games
+
+    # Remove non-working desktop item from global location
+    rm /usr/local/share/applications/supertux.desktop
+    rmdir --ignore-fail-on-non-empty /usr/local/share/applications
+}

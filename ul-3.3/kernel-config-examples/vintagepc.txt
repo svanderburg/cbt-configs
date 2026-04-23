@@ -1,0 +1,147 @@
+Hardware
+========
+This is a kernel configuration for my custom built vintage PC that has the
+following hardware:
+
+Motherboard:   ASUS P2B-F (Intel 440BX chipset, USB support)
+CPU:           Intel Pentium III 450
+RAM:           192 MiB
+Floppy drives: A GoTek floppy emulator (primary) and a 1.44 MB 3.5" floppy drive
+               (secondary)
+DVD ROM:       LG DVD-ROM + CD-RW
+Hard drive:    CF2IDE device with 32 MiB memory card
+Keyboard:      PS/2
+Mouse:         PS/2
+Graphics card: Diamond Viper V770 (NVIDIA RIVA TNT2 chipset)
+Sound card:    Sound Blaster Audigy 2
+Network card:  RealTek 8193
+Joypad:        Microsoft Sidewinder
+
+Kernel configuration
+====================
+Only make the following modifications. Keep the rest as it is
+
+Code maturity level options -->
+  [*] Prompt for development and/or incomplete code/drivers
+
+Processor type and features -->
+  (Pentium-III/Celeron(Coppermine)) Processor family
+  [*] MTRR (Memory Type Range Register) support
+  [ ] Symmetric multi-processing support
+
+General setup -->
+  PCMCIA/CardBus support -->
+    < > PCMCIA/CardBus support
+  [*] BSD Process Accounting
+  <M> Kernel support for a.out binaries
+  <M> Kernel support for MISC binaries
+  [*] Power Management support
+  <M>   Advanced Power Management BIOS support
+
+Parallel port support -->
+  <M> Parallel port support
+  <M>   PC-style hardware (NEW)
+  [*]   IEEE 1284 transfer modes (NEW)
+
+Block devices -->
+  <M> Loopback device support
+  <M> Network block device support
+  <M> RAM disk support
+  [*] Per partition statistics in /proc/partitions
+
+Networking options -->
+  [*] Network packet filtering (replaces ipchains)
+  IP: Netfilter Configuration  --->
+       (enable all as modules, except ipchains and ipfwadm)
+
+ATA/IDE/MFM/RLL support -->
+  IDE, ATA, and ATAPI block devices --->
+    [ ] CMD640 chipset bugfix/support
+    < > RZ1000 chipset bugfix/support
+
+SCSI support -->
+  <M> SCSI support
+  SCSI low-level drivers --->
+    < > SYM53C8XX SCSI support
+
+Network device support -->
+  Ethernet (10 or 100 Mbit)  --->
+  [*]   EISA, VLB, PCI and on board controllers
+  <M>     RealTek RTL-8193 PCI Fast Ethernet Adapter support
+  < >     EtherExpressPro/100 support (eepro100, original Becker driver)
+  <M> PLIP (parallel port) support
+  <M> PPP (point-to-point protocol) support
+  <M>   PPP support for async serial ports (NEW)
+  <M>   PPP support for sync tty ports (NEW)
+  <M>   PPP Deflate compression (NEW)
+  <M>   PPP BSD-Compress compression (NEW)
+
+Input core support -->
+  <M> Input core support
+  <M>   Keyboard support
+  <M>   Mouse support
+  <M>   Joystick support
+  <M>   Event interface support
+
+Character devices -->
+  <M> Enhanced Real Time Clock Support
+  <M> /dev/agpart (AGP Support)
+  [*]   Intel 440LX/BX/GX and I815/I820/I830M/I830MP/I840/I845/I850/I860
+  [ ]   Intel I810/I815/I830M (on-board) support (NEW)
+  [ ]   VIA chipset support (NEW)
+  [ ]   AMD Irongate, 761, and 762 support (NEW)
+  [ ]   AMD Opteron/Athlon64 on-CPU GART support (NEW)
+  [ ]   Generic SiS support (NEW)
+  [ ]   ALI chipset support (NEW)
+  [ ]   Serverworks LE/HE support (NEW)
+  [ ]   NVIDIA chipset support (NEW)
+  [ ]   ATI IGP chipset support (NEW)
+
+File systems -->
+  <*> Reiserfs support
+  [ ]   Enable reiserfs debug mode
+  [*]   Stats in /proc/fs/reiserfs
+  <M> Amiga FFS file system support (EXPERIMENTAL)
+  <M> Ext3 journaling file system support
+  [*]   JBD (ext3) debugging support
+  <M> DOS FAT fs support
+  <M>   MSDOS fs support
+  <M>   VFAT (Windows-95) fs support
+  <*> ISO 9660 CDROM file system support
+  [*]   Microsoft Joliet CDROM extensions
+  [*]   Transparent decompression extensions
+  <M> Minix fs support
+  <M> NTFS file system support (read only)
+  <M> UDF file system support (read only)
+  Partition types -->
+    [*] Advanced partition selection
+    [*]   Amiga partition table support (NEW)
+  Native Language support -->
+    <M> Codepage 437
+    <M> Codepage 850
+    <M> NLS ISO 8859-1
+    <M> NLS ISO 8859-15
+    <M> NLS UTF-8 (NEW)
+
+Console drivers -->
+  [*] Video mode selection support
+  Frame-buffer support --->
+    [*] Support for frame buffer devices (EXPERIMENTAL)
+    <M>   nVidia Riva support (EXPERIMENTAL)
+    [*]   VESA VGA graphics console (NEW)
+
+Sound -->
+  <M> Sound card support
+  <M>   Creative SBLive! (EMU10K1)
+  [*]    Creative SBLive! MIDI
+  < >   Creative Ensoniq AudioPCI 97 (ES1371)
+
+USB support -->
+  [*]   Preliminary USB device filesystem
+  <M>   USB Mass Storage support
+  <M>   USB Human Interface Device (full HID) support
+  [*]     HID input layer support
+  [*]     /dev/hiddev raw device support
+
+Library routines -->
+  <M> CRC32 functions (NEW)

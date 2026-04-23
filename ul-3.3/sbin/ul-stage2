@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+echo "Executing stage 2"
+
+cd /usr/src/ul-3.3
+cbt-run-seq sequences/lfs-stage2
+ul-setup

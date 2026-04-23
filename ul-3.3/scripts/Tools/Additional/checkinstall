@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=checkinstall
+version=1.5.3
+group=Tools/Additional
+license=GPLv2
+description="Checkinstall"
+src="c/checkinstall/$name-$version.tgz"
+patches=("c/checkinstall/$name.followspecsbetter.diff.gz")
+noCheckInstall=true # We must disable this so that we can bootstrap checkinstall
+
+showLongDescription()
+{
+    cat << "EOF"
+checkinstall keeps track of all the files created or modified by your
+installation script, builds a standard binary package (.deb, .rpm, .tgz) and
+installs it in your system giving you the ability to uninstall it with your
+distribution's standard package management utilities.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+    # Force re-running make install with checkinstall with the right parameters
+    installCommand="make install"
+    installPackageWithCheckInstall 
+}

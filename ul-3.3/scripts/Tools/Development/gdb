@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gdb
+version=5.1.1
+group=Tools/Development
+license=GPLv2
+description="GNU debugger"
+src="g/gdb/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GDB, the GNU Project debugger, allows you to see what is going on inside another
+program while it executes -- or what another program was doing at the moment it
+crashed.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

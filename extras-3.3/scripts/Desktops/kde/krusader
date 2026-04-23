@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=krusader
+version=1.01
+group=Desktops/kde
+license=GPLv2
+description="Krusader file manager"
+src="k/krusader/$name-$version-kde2.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Krusader is a new "old-school" file manager and ftp client. It's twin panel
+look follows in the footsteps of the great file managers of old: GNU's
+Midnight Commander and the DOS all time favorite Norton Commander.
+EOF
+}
+
+buildPhase()
+{
+    # Force using older Automake
+    export PATH=/opt/automake-1.5/bin:$PATH
+
+    # Automake fixes
+    cp Makefile.am Makefile.am.orig
+    sed -e '/EXTRA_DIST = admin/d' \
+      -e 's/kruader.spec/krusader.spec admin/' \
+      Makefile.am.orig > Makefile.am
+
+    ./configure --prefix=/opt/kde-$kdeVersion
+    make
+}
+
+installPhase()
+{
+    make install
+}

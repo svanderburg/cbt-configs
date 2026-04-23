@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gmp
+version=4.0.1
+group=Libraries/Shared
+license=LGPLv2.1
+description="GNU Math Precision library"
+src="g/gmp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GMP is a free library for arbitrary precision arithmetic, operating on signed
+integers, rational numbers, and floating-point numbers. There is no practical
+limit to the precision except the ones implied by the available memory in the
+machine GMP runs on. GMP has a rich set of functions, and the functions have a
+regular interface. 
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info
+    make
+}
+
+installPhase()
+{
+    make install
+}

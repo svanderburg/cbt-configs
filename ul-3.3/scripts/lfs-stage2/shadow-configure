@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=shadow-configure
+group=lfs-stage2
+description="Enables shadow passwords"
+
+execute()
+{
+    /usr/sbin/pwconv
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=help2man
+version=1.29
+group=Tools/Development
+license=GPLv2
+description="Help page generator"
+src="h/help2man/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+help2man is a script to create simple man pages from the --help and --version
+output of programs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}
