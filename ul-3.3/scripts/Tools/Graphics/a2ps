@@ -6,7 +6,7 @@ source $cbtBaseDir/settings/ul-packages-settings
 name=a2ps
 version=4.13b
 group=Tools/Graphics
-license=psutils
+license=GPLv2
 description="Any to PostScript converter"
 src="a/a2ps/$name-$version.tar.gz"
 
@@ -20,7 +20,7 @@ EOF
 
 buildPhase()
 {
-    ./configure --prefix=/usr --enable-paths=yes
+    ./configure --prefix=/usr --sysconfdir=/etc/a2ps --enable-paths=yes
     make
 }
 
@@ -28,4 +28,3 @@ installPhase()
 {
     make install
 }
-
