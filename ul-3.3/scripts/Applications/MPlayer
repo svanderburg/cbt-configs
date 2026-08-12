@@ -28,6 +28,7 @@ EOF
 buildPhase()
 {
     ./configure --prefix=/usr \
+      --confdir=/etc/mplayer \
       --enable-largefiles \
       --enable-gui \
       --enable-menu \
