@@ -20,10 +20,17 @@ preConfigurePhase()
 
 buildPhase()
 {
+    local extraArgs=
+
+    if which tcpd
+    then
+        extraArgs="--with-tcp-wrappers"
+    fi
+
     ./configure --prefix=/usr --sysconfdir=/etc/ssh \
         --libexecdir=/usr/sbin --with-md5-passwords \
         --disable-suid-ssh \
-        --with-ipv4-default
+        --with-ipv4-default $extraArgs
     make
 }
 
