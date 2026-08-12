@@ -23,7 +23,7 @@ buildPhase()
     CPPFLAGS='-I/opt/db-3.3/include' LIBS='-L/opt/db-3.3/lib' \
       LDFLAGS='-L/opt/db-3.3/lib' \
       ./configure --prefix=/usr --sysconfdir=/etc --disable-debug \
-      --libexecdir=/usr/sbin --enable-ldbm
+      --libexecdir=/usr/sbin --localstatedir=/var/lib --enable-ldbm
     make depend
     make
 }
