@@ -17,8 +17,10 @@ do
        "ul-lilo"     "Configure LILO" \
        "ul-network"  "Configure network" \
        "ul-init"     "Configure boot services" \
+       "ul-firewall" "Configure firewall" \
        "ul-alsa"     "Configure ALSA" \
        "ul-gpm"      "Configure GPM" \
+       "ul-locale"   "Configure localisation" \
        "ul-xinit"    "Configure default window manager" \
        "ul-adduser"  "Add new user" \
        "xf86config"  "Configure XFree86" \

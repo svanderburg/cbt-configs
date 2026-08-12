@@ -18,7 +18,7 @@ EOF
 exec 3>&1
 
 set +e
-TYPE=$(dialog --backtitle "UL" \
+FIREWALL_TYPE=$(dialog --backtitle "UL" \
        --title "Firewall configuration" \
        --radiolist "Select firewall type" 20 40 10 \
            "personal" "Personal firewall" on \
@@ -31,9 +31,9 @@ then
     exit 1
 fi
 
-if [ "$TYPE" = "personal" ]
+if [ "$FIREWALL_TYPE" = "personal" ]
 then
-    echo "TYPE=personal" > /etc/sysconfig/firewall
+    echo "FIREWALL_TYPE=personal" > /etc/sysconfig/firewall
 else
     set +e
     INTNET=$(dialog --backtitle "`echo $BACKTITLE`" \
@@ -224,7 +224,7 @@ EOF
     fi
 
     cat > /etc/sysconfig/firewall <<EOF
-TYPE=$TYPE
+FIREWALL_TYPE=$FIREWALL_TYPE
 INTNET=$INTNET
 ETHNET=$ETHNET
 ACCEPTLOCALNET=$ACCEPTLOCALNET
