@@ -51,6 +51,7 @@ Network/Tools/procmail \
 Network/Servers/sendmail \
 Network/Servers/proftpd \
 Network/Servers/apache \
+Tools/Misc/sharutils \
 Tools/Misc/gnupg \
 Tools/Misc/mtools \
 Tools/Misc/dosfstools \
