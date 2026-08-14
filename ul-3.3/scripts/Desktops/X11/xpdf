@@ -4,11 +4,11 @@ source $cbtFunctionsDir/deploySourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=xpdf
-version=0.92e
+version=1.01
 group=Desktops/X11
 license=GPLv2
 description="X PDF"
-src="x/xpdf/$name-$version.tgz"
+src="x/xpdf/$name-$version.tar.gz"
 
 showLongDescription()
 {
@@ -21,7 +21,9 @@ EOF
 
 buildPhase()
 {
-    ./configure --prefix=/usr/X11R6 --with-gzip
+    ./configure --prefix=/usr/X11R6 \
+        --with-gzip \
+	--with-freetype2-includes=/usr/include/freetype2
     make
 }
 

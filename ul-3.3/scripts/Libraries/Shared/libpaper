@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libpaper
+version=1.1.8
+group=Libraries/Shared
+license=GPLv2
+description="Means to implement actions based on paper size"
+src="l/libpaper/${name}_${version}.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The paper library and accompanying files are intended to provide a simple
+way for applications to take actions based on a system- or user-specified
+paper size.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make
+}
+
+installPhase()
+{
+    make install
+
+    cat > /etc/papersize << "EOF"
+a4
+EOF
+}

@@ -36,7 +36,8 @@ installPhase()
 
     ./configure --prefix=/usr \
       --without-texinfo --with-system-ncurses --with-system-zlib \
-      --exec-prefix=/usr --bindir=/usr/bin
+      --exec-prefix=/usr --bindir=/usr/bin \
+      --with-system-t1lib
     make world
     texconfig dvips paper a4
     texconfig font rw

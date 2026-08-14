@@ -28,6 +28,7 @@ Libraries/Shared/openjade \
 Libraries/Shared/tcp_wrappers \
 Libraries/Shared/libpcap \
 Libraries/Shared/cyrus-sasl \
+Libraries/Shared/libpaper \
 Programming/slang \
 Tools/Packers/compress \
 Tools/Packers/unzip \
@@ -91,6 +92,7 @@ Libraries/X/freetype2 \
 Display/XFree86 \
 Libraries/X/freetype \
 Libraries/X/ttmkfdir \
+Tools/Graphics/t1lib \
 Desktops/X11/fvwm95 \
 Desktops/X11/xfm \
 Desktops/X11/xpdf \

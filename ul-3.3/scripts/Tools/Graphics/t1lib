@@ -1,0 +1,78 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=t1lib
+version=1.3.1
+group=Tools/Graphics
+license=GPLv2/LGPLv2
+description="Adobe Type 1 character and glyph generator"
+src="t/t1lib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+t1lib is a library distributed under the GNU General Public Library
+License for generating character- and string-glyphs from Adobe Type 1
+fonts under UNIX. t1lib uses most of the code of the X11 rasterizer
+donated by IBM to the X11-project. But some disadvantages of the
+rasterizer being included in X11 have been eliminated. Here are some
+of the features:
+
+- t1lib is completely independent of X11 (although the program
+  provided for testing the library needs X11)
+
+- fonts are made known to library by means of a font database file at
+  runtime 
+
+- searchpaths for all types of input files are configured by means
+  of a configuration file at runtime 
+
+- characters are rastered as they are needed
+
+- characters and complete strings may be rastered by a simple function
+  call
+
+- when rastering strings, pairwise kerning information from .afm-files
+  may optionally be taken into account
+
+- an interface to ligature-information of afm-files is provided
+
+- a program to generate afm-files from Type 1 font files is included
+
+- rotation and arbitrary transformations are supported
+
+- there's support for extending and slanting fonts
+
+- underlining, overlining and overstriking is supported
+
+- new encoding vectors may be loaded at runtime and fonts may be
+  reencoded using these encoding vectors 
+
+- antialiasing is implemented 
+
+- Right-To-Left typesetting is supported
+
+- Font subsetting is easily possible
+
+- support of composite character information
+
+- An interactive test program called "xglyph" is included in the
+  distribution. This program allows to test all of the features of the
+  library. It requires X11.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make without_doc # We need to disable docs, because it requires LaTeX. But LaTeX requires t1lib
+}
+
+installPhase()
+{
+    make install
+}
