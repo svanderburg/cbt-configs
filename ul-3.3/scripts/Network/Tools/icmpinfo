@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=icmpinfo
+version=1.11
+group=Network/Tools
+license=AL
+description="ICMP message inspection utility"
+src="i/icmpinfo/$name-$version.tar.gz"
+patches=("i/icmpinfo/${name}_${version}-4.diff.gz")
+
+showLongDescription()
+{
+    cat << "EOF"
+icmpinfo is a tool for looking at the icmp messages received on the running
+host.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -m755 icmpinfo /usr/sbin
+}

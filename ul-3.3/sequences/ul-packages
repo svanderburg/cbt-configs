@@ -80,6 +80,7 @@ Network/Tools/iptables \
 Network/Tools/curl \
 Network/Tools/wget \
 Network/Tools/tcpdump \
+Network/Tools/icmpinfo \
 Network/Tools/lrzsz \
 Network/Tools/portmap \
 Libraries/Shared/w3c-libwww \
