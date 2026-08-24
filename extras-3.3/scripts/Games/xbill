@@ -31,7 +31,7 @@ EOF
 
 buildPhase()
 {
-    CPPFLAGS='-I/usr/X11R6/include' ./configure
+    CPPFLAGS='-I/usr/X11R6/include' ./configure --localstatedir=/var/lib
     make
 }
 
