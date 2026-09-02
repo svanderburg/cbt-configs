@@ -35,7 +35,7 @@ buildPhase()
 
 installPhase()
 {
-    cp -v rott /usr/local/bin
+    install -m755 rott /usr/local/bin
     cat > /usr/local/bin/run-rott << "EOF"
 #!/bin/bash -e
 cd /usr/local/share/rott

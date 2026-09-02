@@ -27,7 +27,6 @@ EOF
 
 buildPhase()
 {
-    pwd
     echo 'extern int ignore_escape;' > a
     sed 's|extern int ignore_escape;||' game.c > game.new
     cat a game.new > game.c
@@ -36,7 +35,7 @@ buildPhase()
 
 installPhase()
 {
-    cp build duke3d /usr/local/bin
+    install -m755 build duke3d /usr/local/bin
     cat > /usr/local/bin/run-duke3d << "EOF"
 #!/bin/bash -e
 cd /usr/local/share/duke3d
