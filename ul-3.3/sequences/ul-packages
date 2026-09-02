@@ -92,6 +92,7 @@ Network/Servers/xinetd \
 Display/svgalib \
 Libraries/X/freetype2 \
 Display/XFree86 \
+Display/XFree86-config \
 Libraries/X/freetype \
 Libraries/X/ttmkfdir \
 Tools/Graphics/t1lib \

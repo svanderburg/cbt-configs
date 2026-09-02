@@ -28,12 +28,12 @@ buildPhase()
 {
     cp config/cf/site.def config.bak
     sed 's/BuildXKB              NO/BuildXKB              YES/' config.bak > config/cf/site.def
-    
+
     echo $'\n#define HasZlib YES\n' >> config/cf/host.def
     echo $'\n#define HasNCurses YES\n' >> config/cf/host.def
     echo $'\n#define HasFreetype2 YES\n' >> config/cf/host.def
     echo $'\n#define BuildFreetype2Library NO\n' >> config/cf/host.def
-    
+
     if [ "$CFLAGS" != "" ]
     then
         cat >> config/cf/host.def <<EOF
@@ -42,7 +42,7 @@ buildPhase()
 
 EOF
     fi
-    
+
     make World
 
     # Build Xaw3d
@@ -96,10 +96,4 @@ EOF
 
     mkdir -p /usr/share/ul/ul-xsession/sessions
     install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/{xsession,failsafe} /usr/share/ul/ul-xsession/sessions
-}
-
-postConfigurePhase()
-{
-    echo "/usr/X11R6/lib" >> /etc/ld.so.conf
-    ldconfig
 }

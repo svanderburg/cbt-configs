@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=XFree86-config
+group=Display
+description="Global configuration settings for XFree86"
+
+execute()
+{
+    echo "/usr/X11R6/lib" >> /etc/ld.so.conf
+    ldconfig
+}
