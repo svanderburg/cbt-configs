@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $cbtFunctionsDir/deploySourcePackage
+source $cbtFunctionsDir/deployDesktopSourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=xsane
@@ -9,6 +9,11 @@ group=Hardware
 license=GPLv2
 description="XSane"
 src="x/xsane/$name-$version.tar.gz"
+
+desktopName="XSane - Scanning"
+category=Graphics
+comment="Acquire images from a scanner"
+exec=xsane
 
 showLongDescription()
 {
