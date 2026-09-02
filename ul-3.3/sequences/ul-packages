@@ -111,6 +111,7 @@ Libraries/Image/lcms \
 Libraries/Image/libmng \
 Libraries/Image/tiff \
 Libraries/Image/giflib \
+Libraries/Image/jbigkit \
 Tools/Graphics/tetex \
 Display/DirectFB \
 Applications/emacs \

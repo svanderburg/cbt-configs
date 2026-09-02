@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=jbigkit
+version=1.4
+group=Libraries/Image
+license=GPLv2
+description="JBIG-KIT library"
+src="j/jbigkit/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+JBIG-KIT is a software implementation of the JBIG1 data compression standard
+(ITU-T T.82), which was designed for bi-level image data, such as scanned
+documents. This library is available in portable C code. It is widely used in
+fax products, printer firmware, printer drivers, document management systems and
+imaging software.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    cd libjbig
+    install -m644 jbig.h /usr/include
+    install -m644 libjbig.a /usr/lib
+
+    cd ../pbmtools
+    install -m755 jbgtopbm pbmtojbg /usr/bin
+    install -d -m755 /usr/share/man/man1
+    install -m644 jbgtopbm.1 pbmtojbg.1 /usr/share/man/man1
+    install -d -m755 /usr/share/man/man5
+    install -m644 pbm.5 pgm.5 /usr/share/man/man5
+}
