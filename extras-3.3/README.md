@@ -64,6 +64,7 @@ This package set contains tools to manage a variety of archive types:
 * CAB (extraction only)
 * lha
 * rar (unrar only)
+* zoo
 
 WINE and binfmt_misc plugin
 ---------------------------

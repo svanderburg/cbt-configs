@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=zoo
+version=210
+group=Tools/Packers
+license=zoo
+description="Zoo archiver"
+src="z/zoo/${name}${version}.tar.gz"
+oldFixesPatch="z/zoo/${name}${version}-old-fixes.patch"
+patches=("z/zoo/${name}${version}-fix-fullpath-buffer-overflow.patch" "z/zoo/${name}${version}-CVE-2006-1269.patch" "z/zoo/${name}${version}-CVE-2007-1673.patch" "z/zoo/${name}${version}-ms-help-reduce-outputted-newlines-in-help.patch" "z/zoo/${name}${version}-wait-return-comment-out.patch" "z/zoo/${name}${version}-printf.patch" "z/zoo/${name}${version}-printf-2.patch" "z/zoo/${name}${version}-printf-3.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+zoo is a (public domain) file archiving tool for maintaining collections of
+files. It uses Lempel-Ziv-Welch compression to provide space savings in the
+range of 20% to 80%, depending on the files.
+
+Unlike other archiving tools, zoo can store and selectively extract multiple
+generations of the same file. If files are added to an archive with the same
+pathname yet more recent date, the older version(s) will be retained (with a
+semicolon and version number, similar to file versioning in VMS) as the new file
+is added. This allows files that are frequently modified to be backed up in such
+a way as to allow access to previous versions (up to the version limit chosen)
+from one archive.
+EOF
+}
+
+unpackPhase()
+{
+    mkdir -p zoo
+    cd zoo
+    tar xfvz $sourcesDir/$src
+    cat $sourcesDir/$oldFixesPatch | patch -p1 || true # This patch is allowed to fail because the makefile is rejected
+}
+
+buildPhase()
+{
+    rm -f fiz
+    make linux
+}
+
+installPhase()
+{
+    install -v -m755 zoo fiz /usr/local/bin
+    install -v -m644 zoo.1 fiz.1 /usr/local/share/man/man1
+}
