@@ -27,6 +27,6 @@ installPhase()
 {
     make install
 
-    # Some packages want a generic directory
-    ln -sfn /usr/share/automake-1.6 /usr/share/automake
+    # Some packages want (e.g. sgml-common) a generic directory
+    ln -sfn /usr/share/automake-$version /usr/share/automake
 }
