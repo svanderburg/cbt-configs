@@ -15,6 +15,7 @@ Tools/Packers/cabextract \
 Tools/Packers/arj \
 Tools/Packers/arc \
 Tools/Development/hexedit \
+Tools/Development/graphviz \
 Tools/Graphics/xsnow \
 Libraries/Multimedia/smpeg \
 Libraries/Multimedia/SDL_mixer \
