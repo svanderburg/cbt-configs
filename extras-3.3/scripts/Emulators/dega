@@ -20,7 +20,7 @@ noDisplay=true
 showLongDescription()
 {
     cat << "EOF"
-DEGA is a a Sega Master System and Game Gear emulator.
+DEGA is a Sega Master System and Game Gear emulator.
 EOF
 }
 

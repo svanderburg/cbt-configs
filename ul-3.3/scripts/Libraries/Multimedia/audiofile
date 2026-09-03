@@ -6,7 +6,7 @@ source $cbtBaseDir/settings/ul-packages-settings
 name=audiofile
 version=0.2.3
 group=Libraries/Multimedia
-license=LGPLv2.1
+license=LGPLv2
 description="Audiofile library"
 src="a/audiofile/$name-$version.tar.bz2"
 

@@ -6,7 +6,7 @@ source $cbtBaseDir/settings/ul-packages-settings
 name=esound
 version=0.2.29
 group=Libraries/Multimedia
-license=LGPLv2.1
+license=LGPLv2
 description="Enlightened Sound Daemon"
 src="e/esound/$name-$version.tar.bz2"
 

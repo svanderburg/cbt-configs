@@ -5,7 +5,7 @@ source $cbtBaseDir/settings/extra-settings
 
 name=automake15
 version=1.5
-group=Tools/Misc
+group=Tools/Development
 license=GPLv2
 description="GNU Automake"
 src="a/automake/automake-$version.tar.gz"

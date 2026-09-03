@@ -18,7 +18,6 @@ comment="TI 8x emulator"
 showLongDescription()
 {
     cat << "EOF"
-
 TilEm is an emulator and debugger for Texas Instruments Z80-based graphing
 calculators. It can emulate any of the following calculator models: TI-73,
 TI-73 Explorer, TI-76.fr, TI-81, TI-82, TI-82 STATS / TI-82 STATS.fr, TI-83,

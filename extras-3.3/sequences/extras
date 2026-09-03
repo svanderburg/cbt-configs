@@ -5,8 +5,6 @@ optional="true"
 scripts="\
 Tools/Misc/dos2unix \
 Tools/Misc/unix2dos \
-Tools/Misc/automake15 \
-Tools/Misc/gcc32 \
 Tools/Misc/sox \
 Tools/Misc/mpg123 \
 Tools/Packers/lha \
@@ -15,6 +13,8 @@ Tools/Packers/cabextract \
 Tools/Packers/arj \
 Tools/Packers/arc \
 Tools/Packers/zoo \
+Tools/Development/automake15 \
+Tools/Development/gcc32 \
 Tools/Development/hexedit \
 Tools/Development/graphviz \
 Tools/Graphics/xsnow \

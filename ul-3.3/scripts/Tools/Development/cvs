@@ -6,7 +6,7 @@ source $cbtBaseDir/settings/ul-packages-settings
 name=cvs
 version=1.11.5
 group=Tools/Development
-license=GPLv2
+license=GPLv1
 description="Concurrent Versioning System"
 src="c/cvs/$name-$version.tar.gz"
 patches=("c/cvs/$name-$version-zlib.patch")

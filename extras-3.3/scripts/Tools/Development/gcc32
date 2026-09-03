@@ -5,7 +5,7 @@ source $cbtBaseDir/settings/extra-settings
 
 name=gcc32
 version=3.2.3
-group=Tools/Misc
+group=Tools/Development
 license=GPLv2
 description="GNU GCC 3.2.3"
 src="g/gcc/gcc-$version.tar.bz2"
