@@ -35,6 +35,6 @@ lfs-stage1/passwd-group-create \
 lfs-stage1/create-bash-symlink \
 lfs-stage1/create-tty-devs \
 lfs-stage1/create-bootstrap-profile \
-lfs-stage1/remove-stage1-symlink \
 lfs-stage1/ul \
+lfs-stage1/remove-stage1-symlink \
 "
