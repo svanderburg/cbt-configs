@@ -9,7 +9,7 @@ version=20030318
 license=LGPLv2.1
 group=Emulators
 description="WINE Is Not an Emulator"
-src="w/Wine/$name-$version.tar.gz"
+src="w/wine/$name-$version.tar.gz"
 
 showLongDescription()
 {
