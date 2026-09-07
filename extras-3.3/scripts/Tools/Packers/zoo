@@ -9,7 +9,7 @@ group=Tools/Packers
 license=zoo
 description="Zoo archiver"
 src="z/zoo/${name}${version}.tar.gz"
-oldFixesPatch="z/zoo/${name}${version}-old-fixes.patch"
+files=("z/zoo/${name}${version}-old-fixes.patch")
 patches=("z/zoo/${name}${version}-fix-fullpath-buffer-overflow.patch" "z/zoo/${name}${version}-CVE-2006-1269.patch" "z/zoo/${name}${version}-CVE-2007-1673.patch" "z/zoo/${name}${version}-ms-help-reduce-outputted-newlines-in-help.patch" "z/zoo/${name}${version}-wait-return-comment-out.patch" "z/zoo/${name}${version}-printf.patch" "z/zoo/${name}${version}-printf-2.patch" "z/zoo/${name}${version}-printf-3.patch")
 
 showLongDescription()
@@ -34,7 +34,7 @@ unpackPhase()
     mkdir -p zoo
     cd zoo
     tar xfvz $sourcesDir/$src
-    cat $sourcesDir/$oldFixesPatch | patch -p1 || true # This patch is allowed to fail because the makefile is rejected
+    cat $sourcesDir/${files[0]} | patch -p1 || true # This patch is allowed to fail because the makefile is rejected
 }
 
 buildPhase()
