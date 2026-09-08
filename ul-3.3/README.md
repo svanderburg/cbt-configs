@@ -203,7 +203,7 @@ and productivity software.
 The UL source code tree contains another sequence (`ul-packages`) containing
 many additional, optional packages.
 
-After bootstrapping the system, a copy of the UL-Linux repsitory can be found by
+After bootstrapping the system, a copy of the UL-Linux repository can be found by
 opening:
 
 ```bash
@@ -263,7 +263,7 @@ making the bootstrap of a Linux distribution more complicated.
 
 It is easy to use the Slackware package manager in the construction process of
 the distribution. Another tool: checkinstall is used to record file
-modifications and convienently create Slackware packages from each package
+modifications and conveniently create Slackware packages from each package
 installation procedure.
 
 In addition to the Slackware package manager, this distribution also contains
@@ -367,7 +367,7 @@ becomes possible to launch any kind of window manager and desktop environment
 that is supported on the system.
 
 As a result of using this tool, it is also possible, for example, to boot into
-GNOME using KDM, or to convienently switch from a KDE session to a GNOME or
+GNOME using KDM, or to conveniently switch from a KDE session to a GNOME or
 WindowMaker session, which is really useful for experimenting with multiple
 window managers and desktop environments at the same time.
 
@@ -416,7 +416,7 @@ contain security-related bugs! You have been warned!
 
 Terminal connection support
 ---------------------------
-In addition to networked sofware, this distribution also makes it possible
+In addition to networked software, this distribution also makes it possible
 to set up a terminal connection (with `agetty`) and use `minicom` as a terminal
 client. It also includes `lrzsz` to facilitate X/Y/ZMODEM file transfers.
 
