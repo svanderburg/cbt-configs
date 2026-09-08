@@ -8,5 +8,10 @@ This repository contains various configurations that can be built with
   version 3.3.
 * [extras-3.3](./extras-3.3) contains a configuration for additional packages
   that can be deployed on top of `ul-3.3`.
+* [ul-6.4](./ul-6.4) contains the configuration files for the UL-6.4 Linux
+  distribution, a historical distribution that is based on Linux From Scratch
+  version 6.4.
+* [extras-6.4](./extras-6.4) contains a configuration for additional packages
+  that can be deployed on top of `ul-6.4`.
 * [slackware-8.0](./slackware-8.0) contains a collection packages that can be
   deployed on top of Slackware 8.0
