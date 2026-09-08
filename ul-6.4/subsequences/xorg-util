@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+utilXorgScripts="\
+Display/X11/util/gccmakedep \
+Display/X11/util/imake \
+Display/X11/util/lndir \
+Display/X11/util/makedepend \
+Display/X11/util/util-macros \
+Display/X11/util/xorg-cf-files \
+"

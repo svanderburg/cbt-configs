@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-user-docs
+version=2.32.0
+group=Desktops/gnome2
+license=GFDLv1.1
+description="GNOME User documentation"
+src="g/gnome-user-docs/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains documents which will be packaged together and
+shipped as gnome-user-docs in the core GNOME distribution. They should
+be documents targetted for end-users of GNOME and have general GNOME
+applicability.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

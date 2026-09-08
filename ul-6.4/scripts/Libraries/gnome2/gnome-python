@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-python
+version=2.28.1
+group=Libraries/gnome2
+license=LGPLv2
+description="GNOME Python bindings"
+src="g/gnome-python/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GnomePython: Python bindings for a few GNOME Developer Platform libraries.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

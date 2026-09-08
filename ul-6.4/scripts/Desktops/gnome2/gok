@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gok
+version=2.30.1
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME On-screen Keyboard"
+src="g/gok/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GOK, a full featured on-screen keyboard for Unix and Unix-like operating
+systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

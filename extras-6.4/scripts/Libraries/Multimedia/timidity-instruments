@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=timidity-instruments
+version=noversion
+group=Libraries/Multimedia
+license=timidity
+description="MIDI instruments for Timidity"
+arch=noarch
+src="t/timidity/timidity.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a collection of MIDI instruments that can be used with
+Timidity, a software-based MIDI player.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    chown -R root:root ../timidity
+    # timidity instruments must reside in this directory
+    # It is not possible to store it elsewhere
+    cp -av ../timidity /usr/local/lib
+}

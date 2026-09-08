@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libxcb
+version=1.6
+group=Libraries/X
+license=X11
+description="XCB library"
+src="l/libxcb/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libxcb provides an interface to the X Window System protocol, which
+replaces the current Xlib interface. It has several advantages over
+Xlib, including:
+
+- size: small, simple library, and lower memory footprint
+- latency hiding: batch several requests and wait for the replies later
+- direct protocol access: interface and protocol correspond exactly
+- proven thread support: transparently access XCB from multiple threads
+- easy extension implementation: interfaces auto-generated from XML-XCB
+
+Xlib can also use XCB as a transport layer, allowing software to make
+requests and receive responses with both, which eases porting to XCB.
+However, client programs, libraries, and toolkits will gain the most
+benefit from a native XCB port.
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --docdir=$XORG_PREFIX/share/doc/$name-$version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Fix ownership of the docs
+    chown -R root:root $XORG_PREFIX/share/doc/$name-$version
+}

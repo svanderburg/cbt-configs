@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtkspell
+version=2.0.16
+group=Libraries/gnome2
+license=GPLv2
+description="Spell checking for GTK widgets"
+src="g/gtkspell/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GtkSpell provides MSWord/MacOSX-style highlighting of misspelled words in a
+GtkTextView widget. Right-clicking a misspelled word pops up a menu of
+suggested replacements.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

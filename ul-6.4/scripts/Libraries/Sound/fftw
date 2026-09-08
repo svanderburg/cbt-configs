@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fftw
+version=3.2.2
+group=Libraries/Sound
+license=GPLv2
+description="The Fastest Fourier Transform in the West library"
+src="f/fftw/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+FFTW is a free collection of fast C routines for computing the Discrete Fourier
+Transform in one or more dimensions. It includes complex, real, symmetric, and
+parallel transforms, and can handle arbitrary array sizes efficiently. FFTW is
+typically faster than other publically-available FFT implementations, and is
+even competitive with vendor-tuned libraries. To achieve this performance, FFTW
+uses novel code-generation and runtime self-optimization techniques (along with
+many other tricks).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

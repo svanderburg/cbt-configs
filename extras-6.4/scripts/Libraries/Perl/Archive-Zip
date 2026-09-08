@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=Archive-Zip
+version=1.30
+group=Libraries/Perl
+license=GPLv2/AL
+description="Perl module to manage Zip files and their content"
+src="a/Archive-Zip/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Archive::Zip module allows a Perl program to create, manipulate,
+read, and write Zip archive files.
+
+Zip archives can be created, or you can read from existing zip files.
+EOF
+}
+
+buildPhase()
+{
+    perl Makefile.PL
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeaccessibility
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE accessibility"
+src="k/kdeaccessibility/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The KDE accessibility package provides KDE programs to aid handicapped users.
+Programs include a screen magnifier, a text to speech plugin service to allow
+an application to speak using the DCOP interface, and an application for
+computer speech for mute users.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

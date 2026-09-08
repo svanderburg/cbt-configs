@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=PolicyKit
+version=0.9
+group=Services
+license=MIT
+description="Policy kit service"
+src="p/PolicyKit/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 28 polkit
+    useradd -c "Policy Kit Daemon User" -d /dev/null \
+        -u 28 -g polkit -s /bin/false polkit
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+        --libexecdir=/usr/lib/PolicyKit \
+        --localstatedir=/var \
+        --with-polkit-user=polkit --with-polkit-group=polkit
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

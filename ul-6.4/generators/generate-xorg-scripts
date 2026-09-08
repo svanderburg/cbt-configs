@@ -1,0 +1,135 @@
+#!/bin/bash -e
+
+source ../settings/ul-packages-settings
+
+group="Display/X11"
+baseDir="../scripts/$group"
+xorgRelease="7.3"
+wgetFilesDir="$sourcesDir/x/xorg"
+sets="proto util lib app font driver"
+
+mkdir -p ../subsequences
+
+for set in $sets
+do
+    # Create initial sequence
+
+    cat > ../subsequences/xorg-$set <<EOF
+#!/bin/bash -e
+
+${set}XorgScripts="\\
+EOF
+
+    # "
+
+    # Iterate over all packages in the set
+    grep -v '^#' $wgetFilesDir/$set-$xorgRelease.wget | while read tarball
+    do
+        if [ "$tarball" != "" ]
+        then
+            # Derive attributes from the tarball name
+            pkgName="$(basename "$tarball" .tar.bz2)"
+            pkgTokens="$(echo "$pkgName" | sed 's|-|/|g')"
+            version="$(basename "$pkgTokens")"
+            name="$(dirname "$pkgTokens" | sed 's|/|-|g')"
+            scriptBaseDir="$baseDir/$set"
+
+            # Generate script for the X11 package
+            mkdir -p $scriptBaseDir
+            cat > $scriptBaseDir/$name <<_EOF_
+#!/bin/bash -e
+
+source \$cbtFunctionsDir/deploySourcePackage
+source \$cbtBaseDir/settings/ul-packages-settings
+
+name=$name
+version=$version
+group=Display/X11/$set
+license=MIT
+description="$name"
+src="x/xorg/$set/\$name-\$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated $set package: $name
+EOF
+}
+
+buildPhase()
+{
+    ./configure \$XORG_CONFIG --with-xorg-module-dir=$XORG_PREFIX/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+_EOF_
+
+    # Additions for certain packages
+    if [ "$set" = "app" ] && [ "$name" = "xinit" ]
+    then
+        cat >> $scriptBaseDir/$name << "_EOF_"
+
+    # Rename xinitrc so that TWM becomes an option
+    mv /etc/X11/xinit/xinitrc /etc/X11/xinit/xinitrc.twm
+
+    # Add option to ul-xinit
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/twm << "EOF"
+description="Tab Window Manager"
+EOF
+
+    # Add xsession option for non XDG compliant display managers
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/xsession /usr/share/ul/ul-xsession/sessions
+
+    # Add xsession option for XDG compliant display managers
+    mkdir -p /etc/X11/sessions
+    cat > /etc/X11/sessions/xsession.desktop << "EOF"
+[Desktop Entry]
+Type=XSession
+Exec=xsm
+TryExec=xsm
+Name=X Session
+Comment=X Session Manager
+EOF
+
+_EOF_
+    fi
+
+    if [ "$set" = "app" ] && [ "$name" = "xdm" ]
+    then
+        cat >> $scriptBaseDir/$name << "_EOF_"
+
+    # Create pam.d entry
+
+    cat > /etc/pam.d/xdm << "EOF"
+auth        required     pam_unix.so
+auth        requisite    pam_nologin.so
+account     required     pam_unix.so
+password    required     pam_unix.so
+session     required     pam_unix.so
+EOF
+
+    # Change shebang line to load profile settings in each X session
+    sed -i 's|#!/bin/sh|#!/bin/bash --login|' /etc/X11/xdm/Xsession
+
+    # Prevent 'XDM authorization key matches an existing client!' error
+    echo 'DisplayManager*authName: MIT-MAGIC-COOKIE-1' >> /etc/X11/xdm/xdm-config
+_EOF_
+    fi
+
+    cat >> $scriptBaseDir/$name << "_EOF_"
+}
+_EOF_
+        fi
+
+        # Add the script to the sequence
+        echo "$group/$set/$name \\" >> ../subsequences/xorg-$set
+    done
+
+    # Finalize the generated sequence
+    echo '"' >> ../subsequences/xorg-$set
+done

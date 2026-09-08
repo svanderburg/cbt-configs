@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgail-gnome
+version=1.20.3
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Accessibility Implementation Library"
+src="l/libgail-gnome/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libgail-gnome package contains the GNOME Accessibility Implementation
+library additions which implement ATK interfaces for libbonoboui and libgnomeui
+widgets.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

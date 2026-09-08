@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=pidgin
+version=2.7.9
+group=Applications
+description="Universal Instant Messager client"
+license=GPLv2
+src="p/pidgin/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libpurple is a library intended to be used by programmers seeking
+to write an IM client that connects to many IM networks.  It supports
+AIM, ICQ, XMPP, MSN and Yahoo!, among others.
+
+Pidgin is an graphical IM client written in C which uses the GTK+
+toolkit.
+
+Finch is a text-based IM client written in C which uses the ncurses
+toolkit.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+	--disable-meanwhile --disable-nm
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

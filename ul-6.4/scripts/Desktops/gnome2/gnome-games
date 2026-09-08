@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-games
+version=2.32.1
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME Games"
+src="g/gnome-games/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Gnome-games is a collection of simple, but addictive, games from the
+GNOME desktop project. They represent many of the popular games and
+include card games, puzzle games and arcade games. They are meant to
+be the sort of game that can be played in five minutes or so. They are
+also meant to be fun enough that you will play them again and
+again. Of course we can't be held responsible for the time and
+productivity lost while playing them.
+EOF
+}
+
+# '
+
+preConfigurePhase()
+{
+    install -v -m755 -d /var/lib/games
+    groupadd -g 60 games
+    useradd -c 'Games High Score Owner' -d /var/lib/games -g games -s /bin/false -u 60 games
+    chown -v games:games /var/lib/games
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

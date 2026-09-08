@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xf86-video-vga
+version=4.1.0
+group=Display/X11/driver
+license=MIT
+description="xf86-video-vga"
+src="x/xorg/driver/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated driver package: xf86-video-vga
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+}

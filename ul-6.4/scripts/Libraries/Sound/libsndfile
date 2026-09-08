@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libsndfile
+version=1.0.23
+group=Libraries/Sound
+license=LGPLv2.1
+description="Routines for reading and writing sampled audio data"
+src="l/libsndfile/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libsndfile is a library of C routines for reading and writing
+files containing sampled audio data.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

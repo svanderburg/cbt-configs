@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgsf
+version=1.14.19
+group=Libraries/gnome2
+license=LGPLv2.1
+description="Structured file format abstraction library"
+src="l/libgsf/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The project aims to provide an efficient extensible i/o abstraction for
+dealing with different structured file formats.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

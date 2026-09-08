@@ -1,0 +1,68 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=koffice
+version=1.6.3
+group=Desktops/kde
+license=LGPLv2
+description="KOffice suite"
+src="k/koffice/$name-$version.tar.bz2"
+patches=("k/koffice/$name-$version-fixes-1.patch" "k/koffice/$name-$version-python26-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+KOffice is a collection of office applications linked together by a common
+basis. This common basis assures that all office application can work
+together. You can, for instance, insert a spreadsheet in your thesis without
+leaving your document. Editing the spreadsheet happens _inside_ your thesis.
+
+The applications currently included in KOffice are:
+- KWord
+  Professional text editing 
+- KSpread
+  Professional number cruncher/spreadsheet
+- KPresenter
+  Professional presentation program
+- KChart
+  Graphing of your abstract data
+- Karbon
+  Vector graphics tool
+- Kugar
+  Database report creation
+- Kivio
+  Flowcharting program
+- Kexi
+  Integrated data management
+- Krita
+  A pixel graphics tool
+- KFormula
+  A mathematical formula editor
+- KOffice Workspace
+  A combination of all of the above
+EOF
+}
+
+buildPhase()
+{
+    # Various fixes for the WordPerfect importer
+    sed -i '1i\
+#include <string.h>
+' filters/kword/wordperfect/import/TableStyle.cxx
+
+    sed -i '1i\
+#include <string.h>
+' filters/kword/wordperfect/import/TextRunStyle.cxx
+
+    CPPFLAGS='-I/usr/include/python2.6' \
+        ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

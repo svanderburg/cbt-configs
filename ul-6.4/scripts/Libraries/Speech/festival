@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=festival
+version=2.1
+group=Libraries/Speech
+license=BSD-4
+description="Festival speech synthesis"
+srcs=("f/festival/$name-$version-release.tar.gz" "f/festival/festlex_CMU.tar.gz" "f/festival/festlex_OALD.tar.gz" "f/festival/festlex_POSLEX.tar.gz" "f/festival/festvox_cmu_us_awb_cg.tar.gz" "f/festival/festvox_cmu_us_rms_cg.tar.gz" "f/festival/festvox_cmu_us_slt_arctic_hts.tar.gz" "f/festival/festvox_kallpc16k.tar.gz" "f/festival/festvox_rablpc16k.tar.gz")
+
+showLongDescription()
+{
+    cat << "EOF"
+Festival offers a general framework for building speech synthesis
+systems as well as including examples of various modules.  As a whole
+it offers full text to speech through a number APIs: from shell level,
+though a Scheme command interpreter, as a C++ library, and an Emacs
+interface.  Festival is multi-lingual (currently English (US and UK)
+and Spanish are distributed but a host of other voices have been
+developed by others) though English is the most advanced.
+
+The system is written in C++ and uses the Edinburgh Speech Tools
+for low level architecture and has a Scheme (SIOD) based command
+interpreter for control.  Documentation is given in the FSF texinfo
+format which can generate, a printed manual, info files and HTML.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    export PATH=$PATH:/opt/speech_tools/bin
+
+    mkdir -p /opt/$name
+    cp -av * /opt/$name
+    chown -R root:root /opt/$name
+    cd /opt/$name
+    ./configure --prefix=/opt/$name
+    make
+
+    install -m755 $cbtBaseDir/profile.d/33festival.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/33festival.csh /etc/profile.d
+    fi
+
+}

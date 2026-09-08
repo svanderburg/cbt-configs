@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libmusicbrainz3
+name2=libmusicbrainz
+version=3.0.3
+group=Libraries/Protocols
+license=LGPLv2.1
+description="Musicbrainz client library"
+src="l/libmusicbrainz/$name2-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The MusicBrainz Client Library (libmusicbrainz), also known as mb_client, is a
+development library geared towards developers who wish to add MusicBrainz lookup
+capabilities to their applications.
+EOF
+}
+
+buildPhase()
+{
+    cmake -DCMAKE_INSTALL_PREFIX=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

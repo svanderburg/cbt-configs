@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ImageMagick
+version=6.5.8_10
+pkgVersion=6.5.8-10
+group=Tools/Graphics
+license=MIT
+description="ImageMagick utility"
+src="i/ImageMagick/$name-$pkgVersion.tar.xz"
+
+showLongDescription()
+{
+    cat << "EOF"
+ImageMagick is a free, open-source software suite, used for editing and
+manipulating digital images. It can be used to create, edit, compose, or convert
+bitmap images, and supports a wide range of file formats, including JPEG, PNG,
+GIF, TIFF.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-modules
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

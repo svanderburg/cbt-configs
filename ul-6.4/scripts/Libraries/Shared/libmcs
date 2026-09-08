@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libmcs
+version=0.7.1
+group=Libraries/Shared
+license=BSD-3
+description="Store configuration abstraction library"
+src="l/libmcs/$name-$version.tbz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+mcs is a library and set of userland tools which abstract the
+storage of configuration settings away from userland applications.
+
+It is hoped that by using mcs, that the applications which use it
+will generally have a more congruent feeling in regards to settings.
+
+There have been other projects like this before (such as GConf), but
+unlike those projects, mcs strictly handles abstraction. It does not
+impose any specific data storage requirement, nor is it tied to any
+desktop environment or software suite.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

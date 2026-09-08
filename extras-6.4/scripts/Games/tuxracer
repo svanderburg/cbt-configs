@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=tuxracer
+version=0.61
+group=Games
+license=GPLv2
+description="Tuxracer"
+srcs=("t/tuxracer/$name-$version.tar.gz t/tuxracer/$name-data-$version.tar.gz")
+patches=("t/tuxracer/$name-$version-config.patch" "t/tuxracer/$name-$version-gcc33.patch" "t/tuxracer/$name-$version-GL.patch" "t/tuxracer/$name-$version-ia64.patch")
+workDir=$name-$version
+
+desktopTargetDir="/usr/local/share/applications"
+desktopFileName="$name-$version"
+genericName="Racing game"
+desktopName="Tuxracer $version"
+exec=/usr/local/bin/tuxracer
+comment="Tuxracer"
+categories="Game;"
+
+showLongDescription()
+{
+    cat << "EOF"
+Tux Racer is a 2000 open-source winter sports racing video game starring the
+Linux mascot, Tux the penguin.
+EOF
+}
+
+buildPhase()
+{
+    sed -i "s|glx_h_up_to_date=no|glx_h_up_to_date=yes|" configure
+    ./configure --with-tcl-lib-name=tcl8.5
+    make
+}
+
+installPhase()
+{
+    make install
+    chown -R root:root ../$name-data-$version
+    mv ../$name-data-$version /usr/local/share/$name
+
+    # Fix permissions
+    chmod 755 /usr/local/share/$name
+    find /usr/local/share/$name -type d | while read dir
+    do
+        chmod 755 "$dir"
+    done
+
+    find /usr/local/share/$name -type f | while read file
+    do
+        chmod 644 "$file"
+    done
+}

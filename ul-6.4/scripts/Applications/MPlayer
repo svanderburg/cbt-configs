@@ -1,0 +1,68 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=MPlayer
+version=1.0rc3
+group=Applications
+license=GPLv2
+description="MPlayer"
+srcs=("m/MPlayer/$name-$version.tar.bz2" "f/font-arial-iso/font-arial-iso-8859-1.tar.bz2")
+files=("d/default/default-1.7.tar.bz2")
+workDir="$name-$version"
+
+showLongDescription()
+{
+    cat << "EOF"
+MPlayer is a free and open-source media player software application.
+EOF
+}
+
+buildPhase()
+{
+    # Unset optimizations. They are not reliable
+    unset CFLAGS || true
+    unset CXXFLAGS || true
+
+    local extraArgs=
+
+    if which textmode
+    then
+        extraArgs="--enable-svga"
+    fi
+
+    # Don't let all optimization flags be detected, unless you want to optimize mplayer for a specific machine
+    if [ "$mplayerOptimizationFlags" = "" ]
+    then
+        mplayerOptimizationFlags="--enable-mmx --enable-mmxext --enable-sse --disable-sse2 --disable-ssse3 --disable-3dnow --disable-3dnowext"
+    fi
+
+    ./configure --prefix=/usr \
+        --confdir=/etc \
+        --enable-gui \
+        --enable-menu \
+        --enable-largefiles \
+        $mplayerOptimizationFlags $extraArgs
+    make
+}
+
+installPhase()
+{
+    make install
+
+    install -d /usr/share/mplayer/font
+    mv ../font-arial-* ../README-arial* /usr/share/mplayer/font
+    chown -R root:root /usr/share/mplayer/font
+    for i in /usr/share/mplayer/font/font-arial-14-iso-8859-1/*
+    do
+        ln -s $i /usr/share/mplayer/font
+    done
+    install -d /usr/share/mplayer/Skin
+    cd /usr/share/mplayer/Skin
+    bzip2 -dc $sourcesDir/${files[0]} | tar xfv -
+    chown -R root:root /usr/share/mplayer/Skin
+
+    # Categorize gmplayer as a GNOME app. For KDE, we have the KMPlayer front-end
+    sed -i 's/Categories=/Categories=GNOME;/' /usr/share/applications/mplayer.desktop
+}

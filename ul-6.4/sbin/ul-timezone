@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+clear
+selectedTZ="$(tzselect)"
+cp -v --remove-destination /usr/share/zoneinfo/$selectedTZ /etc/localtime

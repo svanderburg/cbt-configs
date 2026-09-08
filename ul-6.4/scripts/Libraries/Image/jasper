@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=jasper
+version=1.900.1
+group=Libraries/Image
+license=BSD-2
+description="JPEG 2000 codec library"
+src="j/jasper/$name-$version.zip"
+patches=("j/jasper/$name-$version-security_fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+JasPer is a collection of software (i.e., a library and application programs)
+for the coding and manipulation of images. This software can handle image data
+in a variety of formats. One such format supported by JasPer is the JPEG-2000
+format defined in ISO/IEC 15444-1.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=apache-ant
+version=1.8.4
+group=Tools/Development
+license=ASLv2
+description="Java-based build tool"
+src="a/apache-ant/$name-$version-src.zip"
+
+showLongDescription()
+{
+    cat << "EOF"
+Ant is a Java based build tool. In theory it is kind of like "make" without
+makes wrinkles and with the full portability of pure java code.
+EOF
+}
+
+buildPhase()
+{
+    # Disable test-jar task, because we don't have JUnit
+    sed -i 's;jars,test-jar;jars;' build.xml
+
+    # Change configuration file path
+    sed -i 's|${dist.dir}/etc|/etc/ant|' build.xml
+    sed -i 's|/etc/ant.conf|/etc/ant/ant.conf|' src/script/ant
+}
+
+installPhase()
+{
+    ./bootstrap.sh -Ddist.dir=/opt/$name-$version dist
+    ln -v -sf /etc/ant /opt/$name-$version/etc
+    ln -v -sf $name-$version /opt/$name
+
+    # Install profile scripts
+    install -m755 $cbtBaseDir/profile.d/41apache-ant.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/41apache-ant.csh /etc/profile.d
+    fi
+}

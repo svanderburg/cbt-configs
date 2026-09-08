@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=firefox-config
+group=Applications
+description="Global configuration settings for Firefox"
+
+execute()
+{
+    echo "/opt/firefox/lib/firefox-$firefoxVersion" >> /etc/ld.so.conf
+    ldconfig
+}

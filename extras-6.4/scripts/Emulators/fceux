@@ -1,0 +1,61 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=fceux
+version=2.1.5
+license=GPLv2
+group=Emulators
+description="FCE Ultra NES emulator X"
+src="f/fceux/$name-$version.src.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+FCE Ultra X is an emulator for the Nintento Entertainment System (NES).
+EOF
+}
+
+buildPhase()
+{
+    # Add mime type to desktop file
+    echo 'MimeType=application/x-nes-rom' >> fceux.desktop
+    # Fix pixmaps path and category
+    sed -i -e 's|/usr/share/pixmaps|/usr/local/share/pixmaps|' \
+        -e 's|Game;||' \
+        fceux.desktop
+
+    # Fix problem with pkgconfig path
+    sed -i '/env = Environment/a\
+env["ENV"]["PKG_CONFIG_PATH"] = os.environ.get("PKG_CONFIG_PATH")
+' SConstruct
+
+    scons
+}
+
+installPhase()
+{
+    ./install.sh
+
+    mkdir -p /usr/local/share/applications
+    install -m644 fceux.desktop /usr/local/share/applications
+
+    mkdir -p /usr/local/share/pixmaps
+    install -m644 fceux.png /usr/local/share/pixmaps
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > fceux.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=NES ROM
+MimeType=application/x-nes-rom
+Icon=binary
+Patterns=*.nes;*.NES
+EOF
+    fi
+}

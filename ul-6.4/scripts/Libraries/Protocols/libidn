@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libidn
+version=1.11
+group=Libraries/Protocols
+license=LGPLv3
+description="Internationalized Domain Name support"
+src="l/libidn/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Libidn is a package for internationalized string handling based on the
+Stringprep, Punycode, IDNA and TLD specifications. Libidn is a GNU
+project.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

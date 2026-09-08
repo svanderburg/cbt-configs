@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=seahorse-plugins
+version=2.30.1
+group=Desktops/gnome2
+license=GPLv2
+description="Seahorse key manager GUI"
+src="s/seahorse-plugins/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+seahorse-plugins: plugins and utilities for encryption in GNOME
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

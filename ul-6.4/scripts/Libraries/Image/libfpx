@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libfpx
+version=1.2.0.13
+group=Libraries/Image
+license=ASFv1
+description="FlashPix image library"
+src="l/libfpx/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package is the Flashpix OpenSource Toolkit and is based on source code
+obtained from the Digital Imaging Group Inc and the Eastman Kodak Company.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

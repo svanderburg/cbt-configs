@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=glibmm
+version=2.25.5
+group=Libraries/gnome2
+license=LGPLv2.1
+description="GLib C++ bindings"
+src="g/glibmm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is glibmm, a C++ API for parts of glib that are useful for C++.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libcdio
+version=0.82
+group=Libraries/FileFormats
+license=GPLv3
+description="CD-ROM and CD image access library"
+src="l/libcdio/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libcdio package contains a library for CD-ROM and CD image
+access. Applications wishing to be oblivious of the OS- and
+device-dependent properties of a CD-ROM or of the specific details of
+various CD-image formats may benefit from using this library.
+
+A library for working with ISO-9660 filesystems libiso9660 is
+included. A generic interface for issuing MMC (multimedia commands) is
+also part of the libcdio library.
+
+Also included is a library for working with ISO-9660 filesystems as is
+also the CD-DA error/jitter correction library from cdparanoia.
+
+Some support for disk image types like CDRWin's BIN/CUE format,
+cdrdao's TOC format, and Nero's NRG format are available. Therefore,
+applications that use this library also have the ability to read disc
+images as though they were CD's.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

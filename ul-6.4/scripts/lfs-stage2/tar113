@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/tar113
+
+group=lfs-stage2
+patches=("t/tar/$shortName-$version.patch.bz2")
+
+buildPhase()
+{
+    ./configure --prefix=/opt/$shortName-$version --libexecdir=/opt/$shortName-$version/bin \
+      --bindir=/opt/$shortName-$version/bin --disable-nls
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    ln -sfn /opt/$shortName-$version/bin/tar /bin/tar-$version
+}

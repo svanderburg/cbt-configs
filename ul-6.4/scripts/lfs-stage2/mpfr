@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=mpfr
+version=2.3.2
+group=lfs-stage2
+description="Multiple-precision floating-point computations"
+license=LGPLv3
+src="m/mpfr/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The MPFR library is a C library for multiple-precision floating-point
+computations with correct rounding.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-thread-safe
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=zenity
+version=2.32.1
+group=Desktops/gnome2
+license=LGPLv2
+description="Zenity command"
+src="z/zenity/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is zenity - a rewrite of gdialog, the GNOME port of dialog
+which allows you to display dialog boxes from the commandline
+and shell scripts.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

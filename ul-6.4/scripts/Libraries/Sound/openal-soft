@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=openal-soft
+version=1.12.854
+group=Libraries/Sound
+license=LGPLv2
+description="OpenAL software implementation"
+src="o/openal-soft/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the
+OpenAL 3D audio API. OpenAL provides capabilities for playing audio in a virtual
+3D environment. Distance attenuation, doppler shift, and directional sound
+emitters are among the features handled by the API.
+
+More advanced effects, including air absorption, occlusion, and environmental
+reverb, are available through the EFX extension. It also facilitates streaming
+audio, multi-channel buffers, and audio capture.
+EOF
+}
+
+buildPhase()
+{
+    cmake -DCMAKE_INSTALL_PREFIX=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/glibc
+
+group=lfs-stage2
+patches=("g/glibc/$name-$actualVersion-iconv_tests-1.patch" "g/glibc/$name-$actualVersion-ildoubl_test-1.patch")
+workDir=$name-$actualVersion
+
+buildPhase()
+{
+    sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
+
+    # The ldd shell script uses Bash specific syntax. Change the path to
+    # always use /bin/bash
+    sed -i 's|@BASH@|/bin/bash|' elf/ldd.bash.in
+
+    mkdir ../$name-build
+    cd ../$name-build
+
+    # glibc does not support i386 anymore, so we can optimize for i486
+    echo "CFLAGS += -march=i486 -mtune=native" > configparms
+
+    ../$name-$actualVersion/configure --prefix=/usr \
+      --disable-profile --enable-add-ons \
+      --with-kernel=2.6.0 --libexecdir=/usr/lib/glibc
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd ../$name-build
+
+    touch /etc/ld.so.conf
+
+    # Remove the zoneinfo directory to allow the installation to work a second time
+    # for checkinstall
+    rm -rf /usr/share/zoneinfo
+
+    make install
+    make localedata/install-locales
+}

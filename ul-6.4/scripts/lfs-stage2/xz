@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/xz
+
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure --prefix=/usr --docdir=/usr/share/doc/$name-$version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

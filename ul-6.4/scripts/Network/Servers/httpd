@@ -1,0 +1,76 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=httpd
+version=2.2.21
+group=Network/Servers
+license=ASF
+description="Apache HTTP server"
+src="h/httpd/$name-$version.tar.bz2"
+patches=("h/httpd/$name-$version-config-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The Apache HTTP server is a free and open-source cross-platform web server
+maintained by a community of developers under the auspices of the Apache
+Software Foundation.
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 25 apache
+    useradd -u 25 -c apache -d /dev/null -g apache -s /bin/false apache
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if openssl --version
+    then
+        extraArgs="$extraArgs --enable-ssl"
+    fi
+
+    if pcre-config --version
+    then
+        extraArgs="$extraArgs --with-pcre"
+    fi
+
+    if which ldapwhoami
+    then
+        extraArgs="$extraArgs --with-ldap"
+    fi
+
+    if which db_verify
+    then
+        extraArgs="$extraArgs --with-dbm=db47 --with-berkeley-db"
+    fi
+
+    ./configure --enable-layout=FHS --enable-mods-shared=all --with-z $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    chown -v root:root /usr/lib/apache/httpd.exp \
+        /usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \
+        /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd}}.1 \
+        /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
+        /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8 &&
+    chown -v -R apache:apache /srv/www
+
+    sed -i -e "s/User daemon/User apache/" \
+        -e "s/Group daemon/Group apache/" \
+        /etc/apache/httpd.conf
+
+    install -m754 $cbtBaseDir/init.d/apache /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/apache /usr/share/ul/ul-init
+}

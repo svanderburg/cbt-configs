@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fbset
+version=2.1
+group=Hardware
+license=GPLv2
+description="Framebuffer tools"
+src="f/fbset/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+fbset is a system utility to show or change the settings of the frame buffer
+device. The frame buffer device provides a simple and unique interface to access
+different kinds of graphic displays.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-doc-utils
+version=0.20.2
+group=Desktops/gnome2
+license=LGPLv2.1/GPLv2
+description="GNOME Documentation Utilities"
+src="g/gnome-doc-utils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-doc-utils is a collection of documentation utilities for the Gnome
+project. Notably, it contains utilities for building documentation and
+all auxiliary files in your source tree, and it contains the DocBook
+XSLT stylesheets that were once distributed with Yelp. Starting with
+Gnome 2.8, Yelp will require gnome-doc-utils for the XSLT.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

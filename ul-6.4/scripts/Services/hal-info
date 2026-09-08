@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=hal-info
+version=20081219
+group=Services
+license=GPLv2/AFLv2.1
+description="Hardware data for HAL"
+src="h/hal-info/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+hal-info contains device information for HAL.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+}
+
+installPhase()
+{
+    make install
+}

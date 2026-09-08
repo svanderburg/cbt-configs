@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgnomecanvas
+version=2.30.2
+group=Libraries/gnome2
+license=LGPLv2
+description="Structured graphics engine for GNOME"
+src="l/libgnomecanvas/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNOME canvas is an engine for structured graphics that offers a rich imaging
+model, high performance rendering, and a powerful, high-level API. It offers a
+choice of two rendering back-ends, one based on Xlib for extremely fast display,
+and another based on Libart, a sophisticated, antialiased, alpha-compositing
+engine. Applications have a choice between the Xlib imaging model or a superset
+of the PostScript imaging model, depending on the level of graphic sophistication
+required.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if which libglade-convert
+    then
+        extraArgs="$extraArgs --enable-glade"    
+    fi
+
+    ./configure --prefix=/opt/gnome-$gnome2Version $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

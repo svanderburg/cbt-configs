@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lame
+version=398_2
+actualVersion=398-2
+group=Libraries/Audio
+license=LGPLv2.1
+description="LAME MP3 ripper"
+src="l/lame/$name-$actualVersion.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+LAME is a high quality MPEG Audio Layer III (MP3) encoder.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-mp3rtp
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

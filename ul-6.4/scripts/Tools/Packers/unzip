@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=unzip
+version=6.0
+group=Tools/Packers
+license=info-zip
+description="UnZip from Info-Zip"
+src="u/unzip/${name}60.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Tools for extracting and viewing files in .zip archives
+EOF
+}
+
+buildPhase()
+{
+    case `uname -m` in
+        i?86)
+            make -f unix/Makefile linux
+            ;;
+        *)
+            make -f unix/Makefile linux_noasm
+            ;;
+    esac
+}
+
+installPhase()
+{
+    make prefix=/usr install
+    install -m644 $cbtBaseDir/cbt/unpack-plugins/zip /usr/share/cbt/unpack-plugins
+}

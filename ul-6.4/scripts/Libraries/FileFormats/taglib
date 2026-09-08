@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=taglib
+version=1.6.3
+group=Libraries/FileFormats
+license=LGPLv2/MPLv1
+description="Tag library"
+src="t/taglib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+TagLib is a library for reading and editing the metadata of several popular
+audio formats. Currently, it supports various metadata containers such as ID3v1,
+ID3v2 and Vorbis comments for MP3, MP4, AAC, Ogg, Opus, FLAC, Speex, APE, MPC,
+WavPack, WAV, AIFF, TrueAudio, Matroska, WebM, ASF, WMA, DSF, DFF and tracker
+(MOD, XM, S3M, IT) files.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-power-manager
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME Power Manager"
+src="g/gnome-power-manager/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNOME Power Manager is a GNOME session daemon that acts as a policy agent on top
+of UPower, which requires fairly new versions of the kernel and udev.
+GNOME Power Manager listens for system events and responds with
+user-configurable actions.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gnome-power-manager
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

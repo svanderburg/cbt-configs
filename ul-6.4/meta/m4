@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+name=m4
+version=1.4.12
+description="GNU M4"
+license=GPLv3
+src="m/m4/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU M4 is an implementation of the traditional Unix macro processor. It is
+mostly SVR4 compatible although it has some extensions (for example, handling
+more than 9 positional parameters to macros).
+EOF
+}

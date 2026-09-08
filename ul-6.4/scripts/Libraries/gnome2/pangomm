@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pangomm
+version=2.26.3
+group=Libraries/gnome2
+license=LGPLv2.1
+description="Pango C++ bindings"
+src="p/pangomm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is pangomm, a C++ API for Pango.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/grep
+
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure --prefix=/tools \
+       --disable-perl-regexp \
+       --without-included-regex
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

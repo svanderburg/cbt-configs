@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=py2cairo
+version=1.8.10
+group=Libraries/Graphics
+license=MPLv1/LGPLv2.1
+description="Python bindings for the Cairo library"
+src="p/py2cairo/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Python 2.x bindings for Cairo
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

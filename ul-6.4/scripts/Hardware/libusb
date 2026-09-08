@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libusb
+version=0.1.12
+group=Hardware
+license=LGPLv2.1
+description="USB device management library"
+src="l/libusb/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libusb is a library which allows userspace application access to USB devices.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --disable-build-docs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    cat > /etc/udev/rules.d/23-usb.rules << "EOF"
+# Set group ownership for raw USB devices
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", GROUP="usb"
+EOF
+}

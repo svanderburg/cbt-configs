@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=intltool
+version=0.40.6
+group=Tools/Development
+license=GPLv2
+description="Internationalization tool"
+src="i/intltool/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The intltool package contains an internationalization tool. This is useful for
+extracting translatable strings from source files, collecting the extracted
+strings with messages from traditional source files
+(source directory/package.po) and merging translations into .xml, .desktop and
+.oaf files.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    install -v -m644 -D doc/I18N-HOWTO \
+        /usr/share/doc/$name-$version/I18N-HOWTO
+}

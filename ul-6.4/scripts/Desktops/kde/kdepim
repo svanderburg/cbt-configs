@@ -1,0 +1,70 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdepim
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE Personal Information Management"
+src="k/kdepim/$name-$version.tar.bz2"
+patches=("k/kdepim/$name-$version-inotify-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains the following personal information management programs
+that integrate with KDE:
+
+* kaddressbook: The KDE addressbook application.
+* kandy: sync phone book entries between your cell phone and computer
+         ("kandy" comes from "Handy", the german word used for a cellular)
+* kmail: the KDE mail client
+* kmailcvt: tool for importing mail related data from other programs
+* knode: news client
+* korganizer: a calendar-of-events and todo-list manager
+* kpilot: to sync with your PalmPilot
+* kalarm: gui for setting up personal alarm messages, emails and commands
+* kalarmd: alarm monitoring daemon, shared by korganizer and kalarm.
+* kontact: Integrated PIM application
+* karm: Time tracker.
+* kitchensync: Synchronization framework, still under heavy development.
+* kfile-plugins: vCard KFIleItem plugin.
+* knotes: yellow notes application
+* konsolecalendar: Command line tool for accessing calendar files.
+* korn: mail checker
+* akregator: Feed reader
+
+There is also quite an amount of infrastructure in this package:
+
+* calendarsystem: library for handling of non-gregorian calendar systems
+* libkdepim: Common code for different kdepim apps
+* libkdenetwork: Common code for apps previously being in the kdenetwork CVS
+                 module (KMail, KNode). This will be merged with libkdepim.
+* mimelib: MIME messages library
+* libkcal: C++ api for the iCalendar and vCalendar formats
+* libkcal/libical: a basic iCalendar protocol implementation, see RFCs 2245,2246
+* libkpimexchange: connecting to Exchange2000 servers
+* kabc/frontend: A GUI frontend for libkabc, not intended for end users.
+* kgantt: lib to display and manage Gantt diagrams used by the project view
+          plugin of KOrganizer
+* kdgantt: alternative lib for Gantt diagrams, used by the free/busy view of
+           KOrganizer (yes, we should decide for one of the Gantt libs)
+* kioslaves/sieve: Sieve kioslave
+* ktnef: handling of tnef data
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking \
+        --with-gpg=/usr/bin/gpg2
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

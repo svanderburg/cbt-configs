@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cairo
+version=1.10.2
+group=Libraries/Graphics
+license=MPLv1/LGPLv2.1
+description="Cairo graphics library"
+src="c/cairo/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Cairo is a 2D graphics library with support for multiple output
+devices. Currently supported output targets include the X Window
+System, quartz, win32, and image buffers, as well as PDF, PostScript,
+and SVG file output. Experimental backends include OpenGL, XCB, BeOS,
+OS/2, and DirectFB.
+
+Cairo is designed to produce consistent output on all output media
+while taking advantage of display hardware acceleration when available
+(for example, through the X Render Extension).
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if directfb-config --version
+    then
+        extraArgs="$extraArgs --enable-directfb"
+    fi
+
+    ./configure --prefix=/usr --enable-xcb $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

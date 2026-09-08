@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=openssl
+version=0.9.8j
+group=Libraries/Security
+license=zlib
+description="OpenSSL library library"
+src="o/openssl/$name-$version.tar.gz"
+patches=("o/openssl/$name-$version-fix_manpages-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+OpenSSL contains an open-source implementation of the SSL and TLS protocols.
+The core library, written in the C programming language, implements basic
+cryptographic functions and provides various utility functions. Wrappers
+allowing the use of the OpenSSL library in a variety of computer languages are
+available.
+EOF
+}
+
+buildPhase()
+{
+    #cat "$sourcesDir/${files[0]}" | patch -p1 || true # Patch fails on the FAQ file, we can ignore that
+    ./config --openssldir=/etc/ssl --prefix=/usr shared
+    make MANDIR=/usr/share/man
+}
+
+installPhase()
+{
+    chown -R root:root *
+
+    make MANDIR=/usr/share/man install
+    cp -v -r certs /etc/ssl
+    install -v -d -m755 /usr/share/doc/$name-$version
+    cp -v -r doc/{HOWTO,README,*.{txt,html,gif}} \
+        /usr/share/doc/$name-$version
+}

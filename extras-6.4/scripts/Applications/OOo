@@ -1,0 +1,124 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=OOo
+version=3.2.1
+group=Applications
+description="OpenOffice.org"
+license=LGPLv2
+srcs=("o/OOo/${name}_${version}_src_core.tar.bz2" "o/OOo/${name}_${version}_src_system.tar.bz2" "o/OOo/${name}_${version}_src_extensions.tar.bz2" "o/OOo/${name}_${version}_src_l10n.tar.bz2" "o/OOo/${name}_${version}_src_binfilter.tar.bz2")
+files=("s/seamonkey/seamonkey-1.1.14.source.tar.bz2")
+
+showLongDescription()
+{
+    cat << "EOF"
+OpenOffice.org is an open-source office productivity software suite. It
+originated from the proprietary StarOffice, developed by Star Division, which
+was acquired by Sun Microsystems in 1999. Sun open-sourced the software in July
+2000 as a free alternative to Microsoft Office.
+EOF
+}
+
+buildPhase()
+{
+    # Add Seamonkey as a build dependency
+    cp $sourcesDir/${files[0]} moz/download/
+
+    local extraArgs=
+    
+    if kde-config --version
+    then
+        extraArgs="--enable-kde"
+    fi
+
+    autoreconf
+    PKG_CONFIG=/usr/bin/pkg-config ./configure \
+            --disable-fontooo \
+            --disable-gnome-vfs \
+            --disable-odk \
+            --disable-qadevooo \
+            --enable-cairo \
+	    --enable-gio \
+	    --enable-dbus \
+            --without-afms \
+            --without-fonts \
+            --without-ppds \
+            --with-system-stdlibs \
+            --with-system-cairo \
+            --with-system-expat \
+            --with-system-zlib \
+            --with-package-format=native \
+            --with-vendor="BLFS" \
+            --with-use-shell=bash \
+	    --with-lang="en" \
+	    --with-dict=ENUS,NLNL \
+	    --enable-minimizer \
+	    --enable-presenter-console \
+	    --enable-pdfimport \
+	    --enable-wiki-publisher \
+	    --enable-report-builder \
+	    $extraArgs
+    source LinuxX86Env.Set.sh
+    ./bootstrap
+    make
+}
+
+installPhase()
+{
+    # Install basic files
+    pushd instsetoo_native/unxlng?6.pro/OpenOffice/native/install/en-US/linux-2.6-*/buildroot/opt
+    cp -r -v openoffice.org3 /opt/openoffice-$version
+    cp -r -v openoffice.org/* /opt/openoffice-$version
+    ln -sf basis3.2 /opt/openoffice-$version/basis-link
+    popd
+
+    # Create convienence symlinks so that we can easily start the programs from the command-line
+    for appl in sbase scalc sdraw simpress smath soffice spadmin swriter
+    do
+        ln -v -sf /opt/openoffice-$version/program/$appl /usr/bin
+    done
+
+    # Install icons
+    pushd sysui/desktop/icons
+    install -v -m755 -d /usr/share/icons/{hicolor,locolor}
+    cp -r -v hicolor/* /usr/share/icons/hicolor
+    cp -r -v locolor/* /usr/share/icons/locolor
+    popd
+
+    # Install desktop links
+    install -v -d -m755 /usr/share/applications
+    pushd /opt/openoffice-$version/share/xdg/
+    for appl in *.desktop
+    do
+        sed -i '/Exec/d' $appl
+        echo "Exec=/usr/bin/s`echo $appl | sed 's/.desktop//'`" >> $appl
+        sed -i '/Icon/d' $appl
+        echo "Icon=`echo "${appl}" | sed 's/\.desktop//'`" >> $appl
+    done
+    sed -i 's@bin/sprinteradmin@bin/spadmin@' printeradmin.desktop
+    cp -v *.desktop /usr/share/applications
+    update-desktop-database
+    popd
+
+    # Add dictionaries to the installation
+    cp -v dictionaries/unxlngi6.pro/bin/dict-*.oxt \
+        reportbuilder/unxlngi6.pro/bin/report-builder.oxt \
+        swext/unxlngi6.pro/bin/wiki-publisher.oxt \
+        sdext/unxlngi6.pro/bin/*.oxt \
+        /opt/openoffice-$version/share/extension/install
+
+    # Add extensions to the installation
+    for ext in /opt/openoffice-$version/share/extension/install/*.oxt
+    do
+        yes yes | /opt/openoffice-$version/program/unopkg add --shared --verbose $ext
+    done
+
+    # Install plugin for Firefox
+    if which firefox
+    then
+        cd /opt/firefox/lib/firefox-*/plugins
+        ln -sf /opt/openoffice-$version/program/libnpsoplugin.so 
+    fi
+}

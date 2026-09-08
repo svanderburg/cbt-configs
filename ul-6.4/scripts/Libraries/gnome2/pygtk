@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pygtk
+version=2.22.0
+group=Libraries/gnome2
+license=LGPLv2.1
+description="GTK+ Python bindings"
+src="p/pygtk/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Modules that allow you to use gtk in Python programs. At present, it is a fairly
+complete set of bindings. Despite the low version number, this piece of software
+is quite useful, and is usable to write moderately complex programs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

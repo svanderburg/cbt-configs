@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ttf-bitstream-vera
+version=1.10
+group=Fonts
+license=bitstream
+description="Bitstream Vera fonts"
+src="t/ttf-bitstream-vera/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Bitstream Vera is a digitial typeface (computer font) superfamily with a
+liberal license. It is a TrueType font with full hinting instructions, which
+improve its rendering quality on low-resolution devices.
+
+Vera consists of serif, sans-serif and monospace fonts.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    cp -v *.ttf /usr/X11R$xorgVersion/lib/X11/fonts/TTF
+    fc-cache -f -v
+}

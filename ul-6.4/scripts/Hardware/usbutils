@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=usbutils
+version=0.82
+group=Hardware
+license=GPLv2
+description="USB utilities"
+src="u/usbutils/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The usbutils package contains a utility used to display information about USB
+buses in the system and the devices connected to them.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --disable-zlib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    install -v -m755 update-usbids.sh /usr/sbin/update-usbids
+}

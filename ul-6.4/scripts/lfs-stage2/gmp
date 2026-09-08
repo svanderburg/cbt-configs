@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=gmp
+version=4.2.4
+group=lfs-stage2
+description="GNU Math Precision library"
+license=LGPLv3
+src="g/gmp/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GMP is a free library for arbitrary precision arithmetic, operating on signed
+integers, rational numbers, and floating-point numbers. There is no practical
+limit to the precision except the ones implied by the available memory in the
+machine GMP runs on. GMP has a rich set of functions, and the functions have a
+regular interface.
+EOF
+}
+
+buildPhase()
+{
+    case `uname -m` in
+      i?86) export ABI=32 ;;
+    esac
+
+    ./configure --prefix=/usr --enable-cxx --enable-mpbsd
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    mkdir -pv /usr/share/doc/$name-$version
+    cp -v doc/{isa_abi_headache,configuration} doc/*.html \
+        /usr/share/doc/$name-$version
+}

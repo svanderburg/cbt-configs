@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gamin
+version=0.1.10
+group=Services
+license=LGPLv2
+description="File Alteration Monitor"
+src="g/gamin/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Gamin package contains a File Alteration Monitor which is useful for
+notifying applications of changes to the file system. Gamin is compatible with
+FAM.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/sbin
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    install -v -m755 -d /usr/share/doc/$name-$version
+    install -v -m644 doc/*.{html,fig,gif,txt} /usr/share/doc/$name-$version
+}

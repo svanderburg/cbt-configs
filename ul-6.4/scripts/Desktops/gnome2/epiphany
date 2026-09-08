@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=epiphany
+version=2.30.6
+group=Desktops/gnome2
+license=GPLv2
+description="Epiphany web browser"
+src="e/epiphany/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Epiphany is a GNOME web browser based on the WebKit rendering engine.
+The name meaning:
+"An intuitive grasp of reality through
+something (as an event) usually simple and striking"
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if which seed
+    then
+        extraArgs="--enable-seed"
+    fi
+
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --mandir=/opt/gnome-$gnome2Version/share/man \
+        --without-ca-file \
+	$extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

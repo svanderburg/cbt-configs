@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=hicolor-icon-theme
+version=0.10
+group=Libraries/Desktop
+license=GPLv2
+description="Hicolor Icon theme"
+src="h/hicolor-icon-theme/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the default fallback theme used by implementations of the icon theme
+specification.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=kbd
+version=1.14.1
+group=lfs-stage2
+description="Linux keyboard tools"
+license=GPLv2
+src="k/kbd/$name-$version.tar.bz2"
+patches=("k/kbd/$name-$version-backspace-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The kbd project contains utilities for managing Linux console (Linux console,
+virtual terminals, keyboard, etc.)
+
+Mainly, what they do is loading console fonts and keyboard maps. The utilities
+use kernel interfaces to load the keymap.
+EOF
+}
+
+buildPhase()
+{
+    # The instructions to build getkeycodes, setkeycodes and resizecons do not get passed over to the generated Makefile as they should
+    # This fixes it
+
+    sed -i -e '1i KEYCODES_PROGS = @KEYCODES_PROGS@' \
+        -e '1i RESIZECONS_PROGS = @RESIZECONS_PROGS@' src/Makefile.in
+
+    # Kbd will also install man pages for optional programs even if we don't use the --enable-optional-progs option to build them. Fix this behavior
+
+    var=OPTIONAL_PROGS
+    sed -i "s/ifdef $var/ifeq (\$($var),yes)/" man/Makefile.in
+    unset var
+
+    ./configure --prefix=/usr --datadir=/lib/kbd
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    mv -v /usr/bin/{kbd_mode,loadkeys,openvt,setfont} /bin
+    mkdir -pv /usr/share/doc/$name-$version
+    cp -R -v doc/* \
+         /usr/share/doc/$name-$version
+}

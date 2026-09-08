@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=module-init-tools
+version=3.4.1
+group=lfs-stage2
+description="Kernel module management tools"
+license=GPLv3
+src="m/module-init-tools/$name-$version.tar.bz2"
+patches=("m/module-init-tools/$name-$version-manpages-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The module-init-tools are used by modern 2.6 series Linux systems to provide
+userspace-side assistance in loading kernel modules and their dependencies.
+Originally written to replace the older "modutils", the utilities include
+the "modprobe" (load modules and their dependencies), "insmod" (load just
+a single module), "modinfo" (retrieve module information), and other related
+module management commands. These are intended to be relatively lightweight
+in their design, since 2.6 series kernels do much of the work internally.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/ --enable-zlib-dynamic --mandir=/usr/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make INSTALL=install install
+}

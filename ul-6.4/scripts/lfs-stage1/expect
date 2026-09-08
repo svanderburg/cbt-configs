@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=expect
+group=lfs-stage1
+version=5.43.0
+description="Expect tool"
+license=PD
+src="e/expect/$name-$version.tar.gz"
+patches=("e/expect/$name-$version-spawn-1.patch" "e/expect/$name-$version-tcl_8.5.5_fix-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Expect is a program that performs programmed dialogue with other interactive
+programs.
+EOF
+}
+
+buildPhase()
+{
+    cp -v configure{,.orig}
+    sed 's:/usr/local/bin:/bin:' configure.orig > configure
+
+    ./configure --prefix=/tools --with-tcl=/tools/lib \
+        --with-tclinclude=/tools/include --with-x=no
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make SCRIPTS="" install
+}

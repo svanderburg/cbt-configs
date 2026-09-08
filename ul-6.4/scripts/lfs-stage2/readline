@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=readline
+version=5.2
+group=lfs-stage2
+description="Readline library"
+license=GPLv2
+src="r/readline/$name-$version.tar.gz"
+patches=("r/readline/$name-$version-fixes-5.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Readline library provides a set of functions for use by applications
+that allow users to edit command lines as they are typed in. Both Emacs and vi
+editing modes are available.
+
+The Readline library includes additional functions to maintain a list of
+previously-entered command lines, to recall and perhaps reedit those lines, and
+perform csh-like history expansion on previous commands.
+EOF
+}
+
+buildPhase()
+{
+    # Reinstalling Readline will cause the old libraries to be moved to <libraryname>.old. We can suppress this:
+    sed -i '/MV.*old/d' Makefile.in
+    sed -i '/{OLDSUFF}/c:' support/shlib-install
+
+    ./configure --prefix=/usr --libdir=/lib
+    make $globalBuildOptions SHLIB_LIBS=-lncurses
+}
+
+installPhase()
+{
+    make install
+
+    # Move static libraries to the right location
+    mv -v /lib/lib{readline,history}.a /usr/lib
+
+    # Move shared libraries to /lib and relink them in /usr/lib
+    rm -v /lib/lib{readline,history}.so
+    ln -sfv ../../lib/libreadline.so.5 /usr/lib/libreadline.so
+    ln -sfv ../../lib/libhistory.so.5 /usr/lib/libhistory.so
+
+    # Install documentation
+    mkdir -pv /usr/share/doc/$name-$version
+    install -v -m644 doc/*.{ps,pdf,html,dvi} \
+        /usr/share/doc/$name-$version
+}

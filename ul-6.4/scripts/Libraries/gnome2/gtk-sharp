@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtk-sharp
+version=2.12.10
+group=Libraries/gnome2
+license=LGPLv2.1
+description="GTK .NET bindings"
+src="g/gtk-sharp/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Gtk# is a .NET language binding for the GTK+ toolkit and assorted GNOME
+libraries.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

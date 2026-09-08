@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+name=e2fsprogs
+version=1.41.3
+description="Ext2 filesystem programs"
+license=GPLv2
+src="e/e2fsprogs/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The e2fsprogs package provides the filesystem utilities for use with the ext2
+filesystem.
+EOF
+}

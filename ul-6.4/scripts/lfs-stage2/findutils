@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/findutils
+
+group=lfs-stage2
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/lib/findutils \
+        --localstatedir=/var/lib/locate
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    mv -v /usr/bin/find /bin
+    sed -i 's/find:=${BINDIR}/find:=\/bin/' /usr/bin/updatedb
+}

@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lbxproxy
+version=1.0.1
+group=Display/X11/app
+license=MIT
+description="lbxproxy"
+src="x/xorg/app/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated app package: lbxproxy
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,76 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=udev
+version=130
+group=lfs-stage2
+description="udev device loader"
+license=GPLv2
+srcs=("u/udev/$name-$version.tar.bz2" "u/udev/$name-config-20081015.tar.bz2")
+# This patch is described in the LFS 6.4 errata
+patches=("u/udev/$name-$version-security_fixes-1.patch")
+workDir=$name-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+The Udev package contains programs for dynamic creation of device nodes.
+EOF
+}
+
+preConfigurePhase()
+{
+    if [ ! -d /lib/udev ]
+    then
+        install -dv /lib/{firmware,udev/devices/{pts,shm}}
+        mknod -m0666 /lib/udev/devices/null c 1 3
+        mknod -m0600 /lib/udev/devices/kmsg c 1 11
+        ln -sv /proc/self/fd /lib/udev/devices/fd
+        ln -sv /proc/self/fd/0 /lib/udev/devices/stdin
+        ln -sv /proc/self/fd/1 /lib/udev/devices/stdout
+        ln -sv /proc/self/fd/2 /lib/udev/devices/stderr
+        ln -sv /proc/kcore /lib/udev/devices/core
+    fi
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+                --exec-prefix= \
+                --sysconfdir=/etc
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # udev's default configuration does not cover all devices.
+    # Install two extra rules files from Udev to help support device-mapper and RAID setups:
+    install -m644 -v rules/packages/64-*.rules \
+        /lib/udev/rules.d/
+
+    # Install a file to create symlinks for certain hand-held devices
+    install -m644 -v rules/packages/40-pilot-links.rules \
+    /lib/udev/rules.d/
+
+    # Install LFS-specific custom rules
+
+    cd ../udev-config-*
+    make install
+
+    # Install documentation that explains LFS-specific custom rules
+    make install-doc
+    make install-extra-doc
+
+    # Install the documentation that explains how to create custom Udev rules
+    cd ../$workDir
+    install -m644 -v -D docs/writing_udev_rules/index.html \
+        /usr/share/doc/$name-$version/index.html
+
+    # Install extra config file (not part of LFS) to configure public audio
+    # device permissions
+    install -m644 $cbtBaseDir/rules.d/24-audio.rules /etc/udev/rules.d
+}

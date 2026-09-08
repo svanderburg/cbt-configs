@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ilmbase
+version=1.0.2
+group=Libraries/Shared
+license=BSD-3
+description="Utility library, mainly used by OpenEXR"
+src="i/ilmbase/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Half is a class that encapsulates our 16-bit floating-point format.
+
+IlmThread is a thread abstraction library for use with OpenEXR
+and other software packages.  It currently supports pthreads and
+Windows threads.
+
+Imath implements 2D and 3D vectors, 3x3 and 4x4 matrices, quaternions
+and other useful 2D and 3D math functions.
+
+Iex is an exception-handling library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

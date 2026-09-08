@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nautilus
+version=2.32.1
+group=Desktops/gnome2
+license=LGPLv2
+description="Nautilus file manager"
+src="n/nautilus/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is Nautilus, the file manager for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/nautilus
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

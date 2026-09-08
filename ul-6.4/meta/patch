@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+name=patch
+version=2.5.4
+description="GNU Patch"
+license=GPLv2
+src="p/patch/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Patch takes a patch file containing a difference listing produced by the diff
+program and applies those differences to one or more original files, producing
+patched versions.
+EOF
+}

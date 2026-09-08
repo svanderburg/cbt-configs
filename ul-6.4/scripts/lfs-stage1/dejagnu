@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=dejagnu
+group=lfs-stage1
+version=1.4.4
+description="DejaGNU tool"
+license=GPLv2
+src="d/dejagnu/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+DejaGnu is a framework for testing other programs. Its purpose is to provide a
+single front end for all tests.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/tools
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

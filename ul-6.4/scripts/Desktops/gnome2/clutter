@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=clutter
+version=1.4.0
+group=Desktops/gnome2
+license=LGPLv2.1
+description="Clutter library"
+src="c/clutter/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Clutter is an open source software library for creating portable, fast,
+visually rich and animated graphical user interfaces.
+EOF
+}
+
+buildPhase()
+{
+    LIBS="-L/usr/X11R$xorgVersion/lib" \
+        ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

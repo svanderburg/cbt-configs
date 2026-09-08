@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=krusader
+version=1.90.0
+group=Desktops/kde
+license=GPLv2
+description="Twin panel file manager for KDE"
+src="k/krusader/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Krusader is an advanced twin panel (commander style) file manager for KDE Plasma
+and other desktops in the *nix world, similar to Midnight or Total Commander.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

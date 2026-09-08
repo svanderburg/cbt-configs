@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gst-plugins-ugly
+version=0.10.16
+group=Libraries/Multimedia
+license=LGPLv2
+description="GStreamer ugly plugins"
+src="g/gst-plugins-ugly/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+There are times when the world needs a color between black and white.
+Quality code to match the good's, but two-timing, backstabbing and ready to
+sell your freedom down the river.  These plug-ins might have a patent noose
+around their neck, or a lock-up license, or any other problem that makes you
+think twice about shipping them.
+
+We don't call them ugly because we like them less.  Does a mother love her
+son less because he's not as pretty as the other ones ? No  - she commends
+him on his great personality.  These plug-ins are the life of the party.
+And we'll still step in and set them straight if you report any unacceptable
+behaviour - because there are two kinds of people in the world, my friend:
+those with a rope around their neck and the people who do the cutting.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

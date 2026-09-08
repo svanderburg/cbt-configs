@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-speech
+version=0.4.25
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Speech"
+src="g/gnome-speech/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is GNOME Speech version 0.4.25.  It's purpose is to provide a
+simple general API for producing text-to-speech output.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

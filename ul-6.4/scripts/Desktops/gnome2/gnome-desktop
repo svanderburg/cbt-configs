@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-desktop
+version=2.32.1
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Desktop"
+src="g/gnome-desktop/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-desktop contains the libgnome-desktop library, the gnome-about
+program as well as some desktop-wide documents.
+
+The libgnome-desktop library provides API shared by several applications
+on the desktop, but that cannot live in the platform for various
+reasons. There is no API or ABI guarantee, although we are doing our
+best to provide stability. Documentation for the API is available with
+gtk-doc.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

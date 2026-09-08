@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libid3tag
+version=0.15.1b
+group=Libraries/FileFormats
+license=GPLv2
+description="ID3 tag manipulation library"
+src="l/libid3tag/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libid3tag is a library for reading and (eventually) writing ID3 tags, both
+ID3v1 and the various versions of ID3v2.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

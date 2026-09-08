@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/util-linux-ng
+
+group=lfs-stage2
+
+buildPhase()
+{
+    sed -e 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
+        -i $(grep -rl '/etc/adjtime' .)
+
+    ./configure --enable-arch --enable-partx --enable-write
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    mkdir -pv /var/lib/hwclock
+    make install
+}

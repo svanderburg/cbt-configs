@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=hhexen
+version=1.6.4
+group=Games
+license=GPLv2
+description="Hacked Hexen"
+src="h/hhexen/$name-$version.tar.gz"
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="HHexen"
+genericName="Shoot em up game"
+exec=/usr/local/bin/run-hhexen-gl
+comment="Hacked Hexen"
+categories="Game;Shooter;"
+
+showLongDescription()
+{
+    cat << "EOF"
+Hacked Hexen is a Linux port of the Hexen game and includes various
+improvements, such as an OpenGL renderer.
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    install hhexen-gl /usr/local/bin
+    cat > /usr/local/bin/run-hhexen-gl << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/hhexen
+exec /usr/local/bin/hhexen-gl "$@"
+EOF
+    chmod 755 /usr/local/bin/run-hhexen-gl
+}

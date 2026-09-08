@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pciutils
+version=3.1.3
+group=Hardware
+license=GPLv2
+description="PCI Utilities"
+src="p/pciutils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The PCI Utilities package contains a library for portable access to PCI bus
+configuration registers and several utilities based on this library.
+EOF
+}
+
+buildPhase()
+{
+    make PREFIX=/usr ZLIB=no
+}
+
+installPhase()
+{
+    make PREFIX=/usr install
+    install -v -m755 -d /usr/include/pci
+    install -v -m 644 lib/libpci.a /usr/lib
+    install -v -m 644 lib/*.h /usr/include/pci
+}

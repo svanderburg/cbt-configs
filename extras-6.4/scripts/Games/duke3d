@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=duke3d
+version=20090414
+group=Games
+license=GPLv2
+description="Duke Nukem 3D"
+src="d/duke3d/$name-$version.tar.gz"
+workDir=$name-$version/source
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="Duke Nukem 3D"
+genericName="Shoot em up game"
+exec=/usr/local/bin/run-duke3d
+comment="Duke Nukem 3D"
+categories="Game;Shooter;"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a Duke Nukem 3D port provided by icculus.org that supports
+various modern operating systems, including Linux. This port is the first source
+port of Duke Nukem 3D.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -m755 build duke3d /usr/local/bin
+    cat > /usr/local/bin/run-duke3d << "EOF"
+#!/bin/bash -e
+cd /usr/local/share/duke3d
+exec /usr/local/bin/duke3d "$@"
+EOF
+    chmod 755 /usr/local/bin/run-duke3d
+}

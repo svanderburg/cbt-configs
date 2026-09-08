@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gupnp
+version=0.14.1
+group=Desktops/gnome2
+license=LGPLv2
+description="API for managing UPnP devices"
+src="g/gupnp/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GUPnP is an object-oriented open source framework for creating UPnP devices and
+control points, written in C using GObject and libsoup. The GUPnP API is
+intended to be easy to use, efficient and flexible.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libwmf
+version=0.2.8.4
+group=Libraries/Image
+license=GPLv2
+description="WMF converter library"
+src="l/libwmf/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libwmf is a library for reading vector images in Microsoft's native Windows
+Metafile Format (WMF) and for either (a) displaying them in, e.g., an X window;
+or converting them to more standard/open file formats such as, e.g., the W3C's
+XML-based Scaleable Vector Graphic (SVG) format.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    
+    # Move GTK+ modules so that they are loaded dynamically
+    cp -av /usr/lib/gtk-2.0 /opt/gnome-$gnome2Version/lib
+    rm -rf /usr/lib/gtk-2.0
+}

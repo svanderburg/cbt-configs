@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=speex
+version=1.2rc1
+group=Libraries/Audio
+license=BSD-3
+description="Speex codec"
+src="s/speex/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Speex is an Open Source/Free Software patent-free audio compression format
+designed for speech. The Speex Project aims to lower the barrier of entry for
+voice applications by providing a free alternative to expensive proprietary
+speech codecs.
+
+Moreover, Speex is well-adapted to Internet applications and provides useful
+features that are not present in most other codecs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

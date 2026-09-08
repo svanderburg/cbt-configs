@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=emacs
+version=22.3
+group=Applications
+license=GPLv3
+description="Emacs editor"
+src="e/emacs/$name-$version.tar.gz"
+
+desktopTargetDir="/usr/share/applications"
+desktopFileName="emacs"
+desktopName="Emacs"
+genericName="Text editor"
+exec=emacs
+icon=/usr/share/emacs/$version/etc/images/icons/emacs_48.png
+comment="Text editor"
+categories="TextEditor;"
+mimeType="text/plain;"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Emacs is a text editor and suite of free software tools.
+
+The program's tagline is "the extensible self-documenting text editor". Most
+functionality in GNU Emacs is implemented in user-accessible Emacs Lisp,
+allowing deep extensibility directly by users and through community-contributed
+packages.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/lib --localstatedir=/var
+    make bootstrap
+}
+
+installPhase()
+{
+    make install
+    chown -v -R root:root /usr/share/emacs/$version
+}

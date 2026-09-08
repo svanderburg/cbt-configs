@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-keyring
+version=2.32.1
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Keyring"
+src="g/gnome-keyring/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-keyring is a program that keep password and other secrets for
+users. It is run as a damon in the session, similar to ssh-agent, and
+other applications locate it via an environment variable or a dbus.
+
+The program can manage several keyrings, each with its own master
+password, and there is also a session keyring which is never stored to
+disk, but forgotten when the session ends.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gnome-keyring
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

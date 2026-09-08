@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgnomeui
+version=2.24.4
+group=Libraries/gnome2
+license=LGPLv2
+description="GNOME library GUI parts"
+src="l/libgnomeui/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the gui parts of what was previously gnome-libs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/libgnomeui
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

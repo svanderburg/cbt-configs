@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=swfdec
+version=0.8.4
+group=Libraries/Desktop
+license=LGPLv2.1
+description="SWF decoder"
+src="s/swfdec/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Swfdec is a decoder/renderer for Macromedia Flash animations. The decoding and 
+rendering engine is provided in a library that can be used by other 
+applications.
+
+An additional library named swfdec-gtk is provided for easy integration of
+Swfdec into Gtk applications. This library is what developers most likely want 
+to target their applications at. Building this library can be disabled.
+
+Swfdec is intended to be used as a replacement for the default Flash player.
+While it is not yet a 100% complete replacement, a big focus is on stability
+and security. So it is deemed to be suitable for use in production 
+applications.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

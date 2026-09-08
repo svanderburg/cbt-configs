@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=slang
+version=2.2.2
+group=Programming
+license=GPLv2
+description="S-Lang interpreter and library"
+src="s/slang/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+S-Lang (slang) is an interpreted language that may be embedded into an
+application to make the application extensible. It provides facilities required
+by interactive applications such as display/screen management, keyboard input
+and keymaps.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make \
+        install_doc_dir=/usr/share/doc/slang-$version \
+        SLSH_DOC_DIR=/usr/share/doc/slang-$version/slsh \
+        install-all
+    chmod -v 755 /usr/lib/libslang.so.$version \
+        /usr/lib/slang/v2/modules/*.so
+}

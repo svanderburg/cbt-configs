@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtk-doc
+version=1.15
+group=Libraries/gnome2
+license=GPLv3
+description="GTK documentation tool"
+src="g/gtk-doc/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GTK-Doc is used to document C code. It is typically used to document the public
+API of libraries, such as the GTK+ and GNOME libraries, but it can also be
+used to document application code.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    ln -sfn /opt/gnome-$gnome2Version /opt/gnome2
+    mkdir -p /etc/opt/gnome-$gnome2Version
+    ln -sfn /etc/opt/gnome-$gnome2Version /etc/opt/gnome2
+
+    install -m755 $cbtBaseDir/profile.d/21gnome2.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/21gnome2.csh /etc/profile.d
+    fi
+}

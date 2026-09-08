@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=opencore-amr
+version=0.1.2
+group=Libraries/Audio
+license=ASLv2.0
+description="OpenCORE Adaptive Multi Rate speech codec"
+src="o/opencore-amr/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+OpenCORE Adaptive Multi Rate (AMR) speech codec library implementation.
+
+This library contains an implementation of the 3GPP TS 26.073 specification for
+the Adaptive Multi Rate (AMR) speech codec and an implementation for the
+3GPP TS 26.173 specification for the Adaptive Multi-Rate - Wideband (AMR-WB)
+speech decoder. The implementation is derived from the OpenCORE framework, part
+of the Google Android project.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

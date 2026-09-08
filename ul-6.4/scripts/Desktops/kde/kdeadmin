@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeadmin
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE administration tools"
+src="k/kdeadmin/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The kdeadmin package contains packages that usually only a system
+administrator might need:
+
+* kcmlinuz
+    Linux Kernel configurator
+
+* kcron
+    Editor for the cron command scheduler.
+
+* kdat
+    Tape backup tool.
+
+* kfile-plugins
+    Make Konquerer display additional info on about *.dep and *.rpm files.
+
+* kpackage
+    Manager for DEB, RPM and similar software packages.
+
+* ksysv
+    An editor for System V startup schemes.
+
+* kuser
+    An user manager.
+
+* kwuftpd
+    Front end to the wu-ftpd FTP daemon.
+
+* kxconfig
+    Configure X-Windows display properties.
+
+* lilo-config
+    A plugin for KControl to manage the Linux boot loader LILO.
+
+* secpolicy
+    A program to display PAM security policies.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

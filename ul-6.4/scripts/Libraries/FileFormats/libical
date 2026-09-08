@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libical
+version=0.44
+group=Libraries/FileFormats
+license=LGPLv2.1/MPLv1.1
+description="iCal library"
+src="l/libical/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+An implementation of iCalendar protocols and data formats.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if python --version
+    then
+        extraArgs="--enable-python"
+    fi
+
+    ./configure --prefix=/usr --enable-cxx --with-bdb4 $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=liberation-fonts
+version=1.04.93
+group=Fonts
+license=GPLv2
+description="Liberation fonts"
+src="l/liberation-fonts/$name-$version.devel.src.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Liberation Fonts are intended to be open font replacements for the three
+most commonly used fonts on Microsoft systems: Times New Roman, Arial, and
+Courier New.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    mkdir -p /usr/share/fonts/liberation
+    install -m644 build-area/ttf/*.ttf /usr/share/fonts/liberation
+}
+
+postConfigurePhase()
+{
+    sed -i -e "/^<\/fontconfig>/i\
+    <dir>/usr/share/fonts/liberation</dir>" /etc/fonts/local.conf
+
+    fc-cache -f -v
+}

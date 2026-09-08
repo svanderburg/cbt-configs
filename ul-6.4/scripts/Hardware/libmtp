@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libmtp
+version=1.0.3
+group=Hardware
+license=LGPLv2.1
+description="Media Transfer Protocol implementation"
+src="l/libmtp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libmtp is an Initiator implementation of the Media Transfer Protocol (MTP) in
+the form of a library suitable primarily for POSIX compliant operating systems.
+We implement MTP Basic, the stuff proposed for standardization.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

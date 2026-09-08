@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pygobject
+version=2.26.0
+group=Libraries/gnome2
+license=LGPLv2.1
+description="GLib Python bindings"
+src="p/pygobject/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Bindings for the GLib, GObject and GIO, to be used in Python. It is a fairly
+complete set of bindings, it's already rather useful, and is usable to write
+moderately complex programs.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

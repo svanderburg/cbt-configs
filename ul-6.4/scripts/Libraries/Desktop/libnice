@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libnice
+version=0.0.11
+group=Libraries/Desktop
+license=MPLv1.1/LGPLv2.1
+description="GLib ICE library"
+src="l/libnice/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libnice is a library that implements the Interactive Connectivity Establishment
+(ICE) standard (RFC 5245 & RFC 8445)!
+
+It provides a GLib-based library, libnice, as well as GStreamer elements to use
+it.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

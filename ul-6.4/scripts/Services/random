@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=random
+group=Services
+description="Random seed configuration script"
+
+showLongDescription()
+{
+    cat << "EOF"
+A configuration script that configures the random seed at boot up to increase
+security.
+EOF
+}
+
+installPhase()
+{
+    install -m754 $cbtBaseDir/init.d/random /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/random /usr/share/ul/ul-init
+}

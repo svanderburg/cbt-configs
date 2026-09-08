@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libcaca
+version=0.99.beta17
+group=Display
+license=WTFPLv2
+description="Color ASCII Art library"
+src="l/libcaca/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libcaca is a graphics library that outputs text instead of pixels, so that it
+can work on older video cards or text terminals. It is not unlike the famous
+AAlib library, with the following improvements:
+
+- Unicode support
+- 2048 available colours (some devices can only handle 16)
+- dithering of colour images
+- advanced text canvas operations (blitting, rotations) 
+EOF
+}
+
+buildPhase()
+{
+    # Fix java binding compilation
+    cd java
+    ln -s ../caca/caca.h
+    ln -s ../caca/caca_types.h
+    cd ..
+
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

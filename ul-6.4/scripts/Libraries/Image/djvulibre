@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=djvulibre
+version=3.5.23
+group=Libraries/Image
+license=GPLv2
+description="DJVU libre library"
+src="d/djvulibre/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+DjVu is a set of compression technologies, a file format, and a software
+platform for the delivery over the Web of digital documents, scanned documents,
+and high resolution images.
+
+DjVu documents download and display extremely quickly, and look exactly the
+same on all platforms. DjVu can be seen as superior alternative to PDF and
+Postscript for digital documents, to TIFF (and PDF) for scanned documents, to
+JPEG for photographs and pictures, and to GIF for large palettized
+images. DjVu is the only Web format that is practical for distributing
+high-resolution scanned documents in color. No other format comes close.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

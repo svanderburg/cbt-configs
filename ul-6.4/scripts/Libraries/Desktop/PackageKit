@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=PackageKit
+version=0.6.10
+group=Libraries/Desktop
+license=GPLv2
+description="Package Kit"
+src="p/PackageKit/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+PackageKit is a DBUS abstraction layer that allows the session user to manage
+packages in a secure way using a cross-distro, cross-architecture API.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+        --libexecdir=/usr/lib/PackageKit \
+        --localstatedir=/var/lib \
+        --disable-qt
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Move GTK+ modules so that they are loaded dynamically
+    cp -av /usr/lib/gtk-2.0 /opt/gnome-$gnome2Version/lib
+    rm -rf /usr/lib/gtk-2.0
+}

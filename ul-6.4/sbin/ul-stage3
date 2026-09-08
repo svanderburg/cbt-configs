@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+echo "Executing stage 3"
+
+cd /usr/src/ul-6.4
+cbt-run-seq sequences/lfs-stage3
+
+# To allow udev to find the right modules, we need an update module dependency tree
+depmod -a

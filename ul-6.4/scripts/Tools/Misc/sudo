@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sudo
+version=1.7.1
+group=Tools/Misc
+license=ISC
+description="sudo"
+src="s/sudo/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Sudo is a program designed to allow a sysadmin to give limited root privileges
+to users and log root activity. The basic philosophy is to give as few
+privileges as possible but still allow people to get their work done.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if ! which sendmail
+    then
+        extraArgs="$extraArgs --without-sendmail"
+    fi
+
+    ./configure --prefix=/usr --libexecdir=/usr/lib \
+        --with-ignore-dot --with-all-insults \
+        --enable-shell-sets-home --disable-root-sudo \
+        --with-logfac=auth
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

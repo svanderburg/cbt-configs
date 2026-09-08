@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=hamster-applet
+version=2.32.1
+group=Desktops/gnome2
+license=GPLv3
+description="Hamster applet"
+src="h/hamster-applet/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This applet allows you to keep track on where are you spending your time.
+EOF
+}
+
+buildPhase()
+{
+    ./waf --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        configure build
+}
+
+installPhase()
+{
+    ./waf install
+}

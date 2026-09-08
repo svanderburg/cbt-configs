@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=alacarte
+version=0.13.2
+group=Desktops/gnome2
+license=LGPLv2
+description="Alacarte menu editor"
+src="a/alacarte/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Alacarte is a menu editor for GNOME using the freedesktop.org menu
+specification.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

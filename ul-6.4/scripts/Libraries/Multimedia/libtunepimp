@@ -1,0 +1,62 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libtunepimp
+version=0.5.3
+group=Libraries/Multimedia
+license=GPLv2
+description="Framework for tagger applications"
+src="l/libtunepimp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This project contains the sources for building TunePimp (or libtunepimp), which
+provides a basic framework for tagger applications. Using this library, it is
+easy to write a complete tagging application -- only a UI layer needs to be
+added. This library handles all the tricky details of reading and writing
+metadata tags, looking up PUIDs from various audio formats, and matching the
+information extracted from the local digital audio files with the fingerprint
+information stored in MusicBrainz. Also includes Perl bindings.
+EOF
+}
+
+buildPhase()
+{
+    sed -i '1i\
+#include <stdlib.h>' lib/utf8/utf8util.cpp
+    sed -i '1i\
+#include <stdlib.h>' lib/tunepimp.cpp
+    sed -i '1i\
+#include <string.h>' include/tunepimp-0.5/metadata.h
+    sed -i '1i\
+#include <stdlib.h>' lib/metadata.cpp
+    sed -i '1i\
+#include <stdlib.h>' lib/c_wrapper.cpp
+    sed -i '1i\
+#include <stdlib.h>' lib/readmeta.cpp
+    sed -i -e '1i\
+#include <string.h>' \
+      -e '1i\
+#include <stdlib.h>' lib/fileio.cpp
+    sed -i '1i\
+#include <string.h>' lib/protocol.cpp
+    sed -i '1i\
+#include <stdlib.h>' plugins/wma/wma.cpp
+    sed -i '1i\
+#include <string.h>' plugins/wma/wmafile.cpp
+    sed -i '1i\
+#include <stdlib.h>' plugins/mp3/id3_meta.cpp
+    sed -i '1i\
+#include <stdlib.h>' plugins/mp3/id3_2_3_meta.cpp
+
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

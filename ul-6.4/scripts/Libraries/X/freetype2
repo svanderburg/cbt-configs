@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=freetype2
+version=2.3.9
+group=Libraries/X
+license=X11
+description="Freetype 2"
+src="f/freetype2/freetype-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+FreeType is written in C. It is designed to be small, efficient, and highly
+customizable while capable of producing high-quality output (glyph images) of
+most vector and bitmap font formats for digital typography. FreeType is a freely
+available and portable software library to render fonts.
+EOF
+}
+
+buildPhase()
+{
+    # When this package used to be mainstream (2010), several techniques of the
+    # bytecode interpreter were patented -- without a license, you were not
+    # allowed to use them. As a result, it was disabled by default.
+    #
+    # However, it is now more than 16 years later. These patents have expired.
+    # As a result, it is now allowed to use them
+    #
+    # These shell instructions enable the bytecode interpreter
+    sed -i -r -e 's:.*(#.*BYTE.*) .*:\1:' \
+              -e 's:.*(#.*SUBPIX.*) .*:\1:' \
+              include/freetype/config/ftoption.h
+
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

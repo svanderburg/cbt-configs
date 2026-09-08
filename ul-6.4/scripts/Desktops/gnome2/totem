@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=totem
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="Totem media player"
+src="t/totem/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Totem is movie player for the GNOME desktop based on GStreamer. It features a
+playlist, a full-screen mode, seek and volume controls, as well as complete
+keyboard navigation.
+
+Apart from a movie player, it also includes a Mozilla plugin, and a Nautilus
+thumbnailer and properties page.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/totem \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

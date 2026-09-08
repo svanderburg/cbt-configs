@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libunique
+version=1.1.6
+group=Desktops/gnome2
+license=LGPLv2.1
+description="Library for writing single instance apps"
+src="l/libunique/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+LibUnique is a library for writing single instance applications, that is
+applications that are run once and every further call to the same binary
+either exits immediately or sends a command to the running instance.
+
+LibUnique can be compiled against various backends, to allow the usage of
+different IPC mechanisms depending on the platform.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/libunique
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

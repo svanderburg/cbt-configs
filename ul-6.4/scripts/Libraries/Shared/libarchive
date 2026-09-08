@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libarchive
+version=2.8.4
+group=Libraries/Shared
+license=BSD-3
+description="Archive streaming library"
+src="l/libarchive/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This distribution bundle includes the following components:
+* libarchive: a library for reading and writing streaming archives
+* tar: the 'bsdtar' program is a full-featured 'tar'
+  replacement built on libarchive
+* cpio: the 'bsdcpio' program is a different interface to
+  essentially the same functionality
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-bsdtar --enable-bsdcpio
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

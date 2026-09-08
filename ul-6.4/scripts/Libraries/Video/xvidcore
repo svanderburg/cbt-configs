@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xvidcore
+version=1.2.2
+group=Libraries/Video
+license=GPLv2
+description="XviD core"
+src="x/xvidcore/$name-$version.tar.bz2"
+workDir="$name/build/generic"
+
+showLongDescription()
+{
+    cat << "EOF"
+Xvid (formerly XviD) is an MPEG-4 video codec, implementing MPEG-4 Simple
+Profile, Advanced Simple Profile, and Advanced Video Coding standards. It is
+written in C with assembler optimizations for quality and speed (including MMX,
+SSE, and 3Dnow! code for i386 and AltiVec for PowerPC), and is especially
+optimized towards offline, multi-pass compression for storage and archival
+purposes.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    chmod -v 755 /usr/lib/libxvidcore.so.4.2
+    ln -v -sf libxvidcore.so.4.2 /usr/lib/libxvidcore.so.4
+    ln -v -sf libxvidcore.so.4 /usr/lib/libxvidcore.so
+}

@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libbonobo
+version=2.32.0
+group=Libraries/gnome2
+license=LGPLv2.1
+description="Component and compound document system"
+src="l/libbonobo/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libbonobo is the non-GUI part of the bonobo component infrastructure,
+it is most useful for creating aggregate interfaces & doing IPC
+easily. It also contains a rather badly designed & implemented
+per-system activation system.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

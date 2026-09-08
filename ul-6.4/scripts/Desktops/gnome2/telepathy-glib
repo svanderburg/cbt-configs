@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=telepathy-glib
+version=0.13.9
+group=Desktops/gnome2
+license=LGPLv2.1
+description="Library for GLib-based Telepathy components"
+src="t/telepathy-glib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is a library for GLib-based Telepathy components.
+
+Telepathy is a D-Bus framework for unifying real time communication, including
+instant messaging, voice calls and video calls. It abstracts differences between
+protocols to provide a unified interface for applications.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if valac --version
+    then
+        extraArgs="--enable-vala-bindings"
+    fi
+
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/telepathy-glib $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

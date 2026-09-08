@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=goffice
+version=0.8.17
+group=Desktops/gnome2
+license=GPLv2
+description="glib/gtk set of document centric objects and utilities"
+src="g/goffice/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GOffice -- A glib/gtk set of document centric objects and utilities
+
+There are common operations for document centric applications that are
+conceptually simple, but complex to implement fully.
+- plugins
+- load/save documents
+- undo/redo
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/gzip
+
+group=lfs-stage2
+
+buildPhase()
+{
+    # The version of the function "futimens" used by Gzip is incompatible with the version that current Glibc provides, so we'll rename the function
+    sed -i 's/futimens/gl_&/' gzip.c lib/utimens.{c,h}
+
+    ./configure --prefix=/usr --bindir=/bin
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    mv -v /bin/{gzexe,zcmp,zdiff,zegrep} /usr/bin # uncompress is provided by ncompress
+    mv -v /bin/{zfgrep,zforce,zgrep,zless,zmore,znew} /usr/bin
+}

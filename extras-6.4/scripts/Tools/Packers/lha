@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=lha
+version=114i
+group=Tools/Packers
+license=lha
+description="LhA archiver"
+src="l/lha/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a UNIX port for LhA. LHA or LZH is a freeware compression
+utility and associated file format. Although no longer commonly in use on PCs,
+it is still the main archiving format used on the Amiga computer.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -v -m755 src/lha /usr/bin
+}

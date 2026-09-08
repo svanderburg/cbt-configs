@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=iana-etc
+version=2.30
+group=lfs-stage2
+description="services and protocols config files from IANA"
+license=OSLv3.0
+src="i/iana-etc/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The iana-etc package installs services(5) and protocols(5) using data from
+the Internet Assigned Numbers Authority <http://www.iana.org/>.  In future,
+other such files may be added.
+
+Included are snapshots of the data from the IANA, scripts to transform that
+data into the needed formats, and scripts to fetch the latest data.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgnomeprintui
+version=2.18.6
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GNOME printing library user-interface parts"
+src="l/libgnomeprintui/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libgnomeprintui package contains the libgnomeprintui library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

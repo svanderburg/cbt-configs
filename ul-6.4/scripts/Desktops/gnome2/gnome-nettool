@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-nettool
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME interface for various networking tools"
+src="g/gnome-nettool/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNOME Nettool is a set of front-ends to various networking command-line
+tools, like ping, netstat, ifconfig, whois, traceroute, finger.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

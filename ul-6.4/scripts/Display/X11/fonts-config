@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=X11-config
+group=Display/X11
+description="Configure fontconfig to use the OTF and TTF fonts of X11"
+
+execute()
+{
+    install -v -d -m755 /usr/share/fonts
+    ln -svn $XORG_PREFIX/lib/X11/fonts/OTF /usr/share/fonts/X11-OTF
+    ln -svn $XORG_PREFIX/lib/X11/fonts/TTF /usr/share/fonts/X11-TTF
+}

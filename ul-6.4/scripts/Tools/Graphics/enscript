@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=enscript
+version=1.6.5.2
+group=Tools/Graphics
+license=GPLv3
+description="ASCII to PostScript converter"
+src="e/enscript/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Enscript is a drop-in replacement for the enscript program.
+Enscript converts ASCII files to PostScript and stores generated
+output to a file or sends it directly to the printer.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc/enscript \
+        --localstatedir=/var
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

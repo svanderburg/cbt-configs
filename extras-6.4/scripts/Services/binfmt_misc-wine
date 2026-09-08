@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+name=binfmt_misc-wine
+group=Services
+license=GPLv2
+description="Windows executable binary support in Linux"
+
+execute()
+{
+    # Add Windows binaries support to the binfmt_misc loader
+    cat >> /etc/sysconfig/binfmt_misc << "EOF"
+:DOSWin:M::MZ::/opt/wine/bin/wine:
+EOF
+}

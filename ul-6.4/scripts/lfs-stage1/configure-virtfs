@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=configure-virtfs
+group=lfs-stage1
+description="Configures various virtual kernel filesystems"
+
+execute()
+{
+    mkdir -v $LFS/{dev,proc,sys}
+    mknod -m 600 $LFS/dev/console c 5 1
+    mknod -m 666 $LFS/dev/null c 1 3
+}

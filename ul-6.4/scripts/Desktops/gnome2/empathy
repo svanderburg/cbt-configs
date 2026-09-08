@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=empathy
+version=2.32.1
+group=Desktops/gnome2
+license=GPLv2
+description="Empathy"
+src="e/empathy/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Empathy is a messaging program which supports text, voice, video chat, and file
+transfers over many different protocols. You can tell it about your accounts on
+all those services and do all your chatting within one application.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/empathy
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

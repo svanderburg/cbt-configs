@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dbus-qt3
+version=0.62
+group=Libraries/kde
+license=AFLv2.0
+description="D-Bus Qt3 bindings"
+src="d/dbus-qt3/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Bindings for Qt3 applications to use D-Bus services.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Add symlink to allow this library to be properly detected
+    ln -s /opt/kde-$kdeVersion/include/dbus-1.0/dbus /opt/kde-$kdeVersion/include/dbus
+}

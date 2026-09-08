@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ruby
+version=1.8.7
+group=Programming
+license=GPLv2/ruby
+description="Ruby language interpreter"
+src="r/ruby/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Ruby is the interpreted scripting language for quick and easy object-oriented
+programming. It has many features to process text files and to do system
+management tasks (as in Perl). It is simple, straight-forward, and extensible.
+
+Features of Ruby:
+
+  + Simple Syntax
+  + *Normal* Object-Oriented features(ex. class, method calls)
+  + *Advanced* Object-Oriented features(ex. Mix-in, Singleton-method)
+  + Operator Overloading
+  + Exception Handling
+  + Iterators and Closures
+  + Garbage Collection
+  + Dynamic Loading of Object files(on some architecture)
+  + Highly Portable(works on many UNIX machines, and on DOS,
+    Windows, Mac, BeOS etc.)
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

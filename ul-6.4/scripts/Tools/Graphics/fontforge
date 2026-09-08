@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fontforge
+version=20100501
+group=Tools/Graphics
+license=BSD-3
+description="Tool to edit outline and bitmap fonts"
+src="f/fontforge/${name}_full-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+FontForge allows you to edit outline and bitmap fonts. You may create new ones
+or modify old ones. It is also a format converter and can interconvert between
+PostScript (ascii & binary Type1, some Type3, some Type0), TrueType, OpenType
+(Type2), CID, SVG.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,58 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=jfduke3d
+version=20051009
+group=Games
+license=GPLv2
+description="JFDuke3D port"
+srcs=("j/jfbuild/jfbuild_src_20051009.zip" "j/jfduke3d/${name}_src_${version}.zip")
+patches=("j/jfduke3d/${name}_src_${version}.patch")
+files=("j/jfbuild/jfbuild_src_20051009.patch")
+
+workDir="${name}_src_${version}"
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="JFDuke3D"
+genericName="Shoot em up game"
+exec=/usr/local/bin/run-jfduke3d
+icon=/usr/local/games/jfduke3d/96-duke3d.png
+comment="Duke Nukem 3D"
+categories="Game;Shooter;"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a Duke Nukem 3D port provided by JonoF that supports
+various modern operating systems, including Linux. It also supports
+Ken Silverman's Polymost renderer making OpenGL graphics possible.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    cd ..
+    ln -s jfbuild_src_20051009 build
+    cd jfbuild_src_20051009
+    cat $sourcesDir/${files[0]} | patch -p1
+    cd ../$workDir
+    make
+}
+
+installPhase()
+{
+    mkdir -p /usr/local/games/jfduke3d
+    install -m755 build duke3d /usr/local/games/jfduke3d
+    cat > /usr/local/bin/run-jfduke3d << "EOF"
+#!/bin/bash -e
+cd /usr/local/games/jfduke3d
+exec /usr/local/games/jfduke3d/duke3d "$@"
+EOF
+    chmod 755 /usr/local/bin/run-jfduke3d
+
+    install -m644 rsrc/96-duke3d.png /usr/local/games/jfduke3d
+}

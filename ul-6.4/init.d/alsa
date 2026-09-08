@@ -1,0 +1,38 @@
+#!/bin/sh
+# Begin $rc_base/init.d/alsa
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+if [ -f /etc/sysconfig/alsa ]
+then
+    source /etc/sysconfig/alsa
+fi
+
+case "$1" in
+	start)
+		if [ "$MIDIFONT" != "" ]
+		then
+		    echo "                    Loading MIDI font..."
+		    loadproc asfxload "$MIDIFONT"
+		fi
+		;;
+
+	stop)
+		boot_mesg "Stopping ALSA...    Saving volumes..."
+		loadproc /usr/sbin/alsactl store
+
+		if [ "$MIDIFONT" != "" ]
+		then
+			boot_mesg "                    Removing MIDI font..."
+			loadproc asfxload -i
+		fi
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/alsa

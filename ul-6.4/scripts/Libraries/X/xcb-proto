@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xcb-proto
+version=1.6
+group=Libraries/X
+license=X11
+description="XCB prototypes"
+src="x/xcb-proto/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+xcb-proto provides the XML-XCB protocol descriptions that libxcb uses to
+generate the majority of its code and API.
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -dv -m755 ${XORG_PREFIX}/share/doc/$name-$version
+    install -v -m644 doc/* ${XORG_PREFIX}/share/doc/$name-$version
+}

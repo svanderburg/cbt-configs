@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=farsight2
+version=0.0.21
+group=Libraries/Desktop
+license=LGPLv2.1
+description="Videoconferencing GStreamer modules"
+src="f/farsight2/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Farsight 2 is a collection of GStreamer modules and libraries for
+videoconferencing.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

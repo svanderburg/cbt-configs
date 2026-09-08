@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xf86-video-fbdev
+version=0.3.1
+group=Display/X11/driver
+license=MIT
+description="xf86-video-fbdev"
+src="x/xorg/driver/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated driver package: xf86-video-fbdev
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,76 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdebase
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE base"
+src="k/kdebase/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Provides a number of base libraries and programs to make a functional KDE
+desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --sysconfdir=/etc/opt/kde-$kdeVersion \
+        --disable-debug --disable-dependency-tracking
+    LD_LIBRARY_PATH="$KDE_PREFIX/lib" make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    ln -sfn /etc/opt/kde-$version /etc/opt/kde
+    
+    # Patch the startkde script to take the custom kde- menu prefix into account
+    sed -i '/#!\/bin\/sh/a\
+export XDG_MENU_PREFIX="kde-"' /opt/kde-$kdeVersion/bin/startkde
+
+    # Change kdm config to use session .desktop files from /etc/X11/sessions
+    sed -i '/#SessionsDirs=/a\
+SessionsDirs=/etc/X11/sessions' /opt/kde-$kdeVersion/share/config/kdm/kdmrc
+
+    # Add extra directory files
+
+    install -m644 $cbtBaseDir/xdg/desktop-directories/kde-emulators.directory \
+        $cbtBaseDir/xdg/desktop-directories/kde-games-shooter.directory \
+        $cbtBaseDir/xdg/desktop-directories/kde-gnome.directory \
+	/opt/kde-$kdeVersion/share/desktop-directories
+
+    # Add xinit script
+    cat > /etc/X11/xinit/xinitrc.kde << "EOF"
+#!/bin/sh
+
+exec dbus-launch --exit-with-session startkde
+EOF
+
+    # Add option for ul-xinit to select KDE
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/kde << "EOF"
+description="K Desktop Environment"
+EOF
+
+    # Add xsession option for non XDG compliant display managers
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/kde /usr/share/ul/ul-xsession/sessions
+
+    # Add xsession option for XDG compliant display managers
+    mkdir -p /etc/X11/sessions
+    cat > /etc/X11/sessions/kde.desktop <<EOF
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=dbus-launch --exit-with-session /opt/kde-$kdeVersion/bin/startkde
+Name=KDE
+Comment=The K Desktop Environment. A powerful Open Source graphical desktop environment
+EOF
+}

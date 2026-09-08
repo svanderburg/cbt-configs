@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=openssh
+version=5.1p1
+group=Network/Servers-Clients
+license=GPLv2
+description="OpenSSH"
+src="o/openssh/$name-$version.tar.gz"
+
+preConfigurePhase()
+{
+    install -v -m700 -d /var/lib/sshd
+    chown root:sys /var/lib/sshd
+    groupadd -g 50 sshd
+    useradd -c 'sshd PrivSep' -d /var/lib/sshd -g sshd -s /bin/false -u 50 sshd
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if which tcpd
+    then
+        extraArgs="--with-tcp-wrappers"
+    fi
+
+    ./configure --prefix=/usr --sysconfdir=/etc/ssh --datadir=/usr/share/sshd \
+        --libexecdir=/usr/lib/openssh --with-md5-passwords \
+        --with-privsep-path=/var/lib/sshd \
+        --with-xauth=/usr/X11$xorgVersion/bin/xauth \
+        --with-pam $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    install -v -m755 -d /usr/share/doc/$name-$version
+    install -v -m644 INSTALL LICENCE OVERVIEW README* WARNING.RNG \
+        /usr/share/doc/$name-$version
+
+    sed 's@d/login@d/sshd@g' /etc/pam.d/login > /etc/pam.d/sshd
+    chmod 644 /etc/pam.d/sshd
+
+    install -m754 $cbtBaseDir/init.d/openssh /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/openssh /usr/share/ul/ul-init
+}

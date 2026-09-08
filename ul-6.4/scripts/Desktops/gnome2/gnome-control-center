@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-control-center
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME Control Center"
+src="g/gnome-control-center/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The control center is GNOME's main interface for configuration of various
+aspects of your desktop.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/control-center
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

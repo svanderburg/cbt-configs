@@ -1,0 +1,7 @@
+#!/bin/sh
+
+PATH=$PATH:/opt/kde/bin
+XDG_DATA_DIRS=$XDG_DATA_DIRS${XDG_DATA_DIRS+:}/opt/kde/share
+XDG_CONFIG_DIRS=$XDG_CONFIG_DIRS${XDG_CONFIG_DIRS+:}/etc/opt/kde/xdg
+
+export PATH XDG_DATA_DIRS XDG_CONFIG_DIRS

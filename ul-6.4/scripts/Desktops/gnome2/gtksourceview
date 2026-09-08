@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtksourceview
+version=2.10.5
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GTK source view library"
+src="g/gtksourceview/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GtkSourceView is a text widget that extends the standard gtk+ 2.x
+text widget GtkTextView.
+
+It improves GtkTextView by implementing syntax highlighting and other
+features typical of a source code editor.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

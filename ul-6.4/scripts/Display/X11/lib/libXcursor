@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libXcursor
+version=1.1.9
+group=Display/X11/lib
+license=MIT
+description="libXcursor"
+src="x/xorg/lib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated lib package: libXcursor
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+}

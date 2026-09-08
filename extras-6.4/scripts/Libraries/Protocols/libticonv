@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=libticonv
+version=1.1.0
+group=Libraries/Protocols
+license=GPLv2
+description="TI charset conversion library"
+src="l/libticonv/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library is part of the TILP framework providing support for operations on
+Texas Instruments calculators charsets. All charsets for all calculators are
+supported; the library is also able to convert to/from UTF-8/UTF-16. 
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

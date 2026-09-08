@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=zlib
+version=1.2.3
+group=lfs-stage2
+description="zlib compression library"
+license=zlib
+src="z/zlib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+zlib is designed to be a free, general-purpose, legally unencumbered lossless
+data-compression library for use on virtually any computer hardware and
+operating system. The zlib data format is itself portable across platforms.
+
+This package provides a compiled shared library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --shared --libdir=/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    rm -v /lib/libz.so
+    ln -sfv ../../lib/libz.so.$version /usr/lib/libz.so
+}

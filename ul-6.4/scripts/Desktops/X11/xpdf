@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xpdf
+version=3.03
+group=Desktops/X11
+license=GPLv2
+description="X PDF"
+src="x/xpdf/$name-$version.tar.gz"
+patches=("x/xpdf/$name-$version-CVE-2012-2142.diff.gz" "x/xpdf/xpdf.XPDFViewer.diff.gz" "x/xpdf/xpdfrc.diff.gz")
+
+showLongDescription()
+{
+    cat << "EOF"
+Xpdf is a viewer for Portable Document Format (PDF) files.
+Xpdf is designed to be small and efficient. It can use standard X fonts.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+        --with-freetype2-includes=/usr/include/freetype2 \
+        --enable-opi \
+        --enable-multithreaded \
+        --enable-wordlist
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

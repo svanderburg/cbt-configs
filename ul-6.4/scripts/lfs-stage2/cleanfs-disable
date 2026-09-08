@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=cleanfs-disable
+group=lfs-stage2
+description="Temporarily disables cleanfs"
+
+execute()
+{
+    # We need to disable this script because the lfs-stage2 packages are stored
+    # in /tmp/cbt, which we need to retain for lfs-stage3 that must be executed
+    # after booting into the new system
+    rm /etc/rc.d/rcsysinit.d/S45cleanfs
+}

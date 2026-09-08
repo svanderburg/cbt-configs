@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=espgs
+version=8.15.4
+group=Libraries/Graphics
+license=GPLv2
+description="ESP Ghostscript"
+src="e/espgs/$name-$version-source.tar.bz2"
+files=("g/ghostscript-fonts/ghostscript-fonts-std-8.11.tar.gz" "g/gnu-gs-fonts-other/gnu-gs-fonts-other-6.0.tar.gz")
+patches=("e/espgs/$name-$version-bov_fix-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Ghostscript is a versatile processor for PostScript data with the ability to
+render PostScript to different targets. ESP Ghostscript is a customized version
+of GNU Ghostscript that includes an enhanced configuration script, the CUPS
+raster driver to support CUPS raster printer drivers, and additional patches and
+drivers from various Linux distributors.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-threads --without-omni
+    make
+    make so
+}
+
+installPhase()
+{
+    make install
+    install -d /usr/share/doc/$name-$version
+    ln -v -s ../../ghostscript/$version/doc /usr/share/doc/$name-$version
+    for INSTFILE in `ls doc`
+    do
+      if [ ! -f /usr/share/doc/$name-$version/$INSTFILE ]; then
+          install -v -m644 doc/$INSTFILE /usr/share/doc/$name-$version/
+      fi
+    done
+    make CFLAGS_SO='-fPIC $(ACDEFS)' so
+    make soinstall
+    install -v -d -m755 /usr/include/ps
+    install -v -m644 src/*.h /usr/include/ps
+    ln -v -s ps /usr/include/ghostscript
+
+    tar xfvz $sourcesDir/${files[0]} -C /usr/share/ghostscript
+    tar xfvz $sourcesDir/${files[1]} -C /usr/share/ghostscript
+    chown -v -R root:root /usr/share/ghostscript/fonts
+}

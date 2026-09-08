@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=librsvg
+version=2.32.1
+group=Libraries/gnome2
+license=LGPLv2
+description="SVG rendering library"
+src="l/librsvg/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A high performance SVG rendering library associated with the Gnome Project.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+name=tar113
+shortName=tar
+version=1.13
+description="GNU Tar 1.13"
+license=GPLv2
+src="t/tar/$shortName-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Tar provides the ability to create tar archives, as well as various other
+kinds of manipulation. For example, you can use Tar on previously created
+archives to extract files, to store additional files, or to update or list files
+which were already stored.
+
+This is an older version that is alongside the existing tar file in the /opt
+directory hierarchy. tar-1.13 is a hard requirement for Slackware's pktools,
+using a newer version is unstable and leads to problems, for example with
+installing files to symlinked directories, such as /usr/man that is symlinked
+to /usr/share/man.
+EOF
+}

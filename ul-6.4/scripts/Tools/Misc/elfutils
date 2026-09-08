@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=elfutils
+version=0.148
+group=Tools/Misc
+license=GPLv2
+description="ELF utilities"
+src="e/elfutils/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Elfutils is a collection of utilities, including ld (a linker),
+nm (for listing symbols from object files), size (for listing the
+section sizes of an object or archive file), strip (for discarding
+symbols), readelf (to see the raw ELF file structures), and elflint
+(to check for well-formed ELF files). Also included are numerous
+helper libraries which implement DWARF, ELF, and machine-specific ELF
+handling.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --program-prefix="eu-"
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

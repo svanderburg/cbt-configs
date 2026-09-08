@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gsm
+version=1.0.13
+group=Libraries/Audio
+license=BSD-3
+description="GSM 06.10 13 kbit/s RPE/LTP speech compression"
+src="g/gsm/$name-$version.tar.gz"
+patches=("g/gsm/libgsm-shared.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+GSM 06.10 compresses frames of 160 13-bit samples (8 kHz sampling
+rate, i.e. a frame rate of 50 Hz) into 260 bits; for compatibility
+with typical UNIX applications, our implementation turns frames of 160
+16-bit linear samples into 33-byte frames (1650 Bytes/s).
+The quality of the algorithm is good enough for reliable speaker
+recognition; even music often survives transcoding in recognizable 
+form (given the bandwidth limitations of 8 kHz sampling rate).
+
+The interfaces offered are a front end modelled after compress(1), and
+a library API. Compression and decompression run faster than realtime
+on most SPARCstations. The implementation has been verified against the
+ETSI standard test patterns.
+EOF
+}
+
+buildPhase()
+{
+    make INSTALL_ROOT=/usr
+}
+
+installPhase()
+{
+    make INSTALL_ROOT=/usr install
+    
+    # Install shared libraries
+    install -m755 lib/libgsm.so.$version /usr/lib
+    ln -s libgsm.so.$version /usr/lib/libgsm.so.1
+    ln -s libgsm.so.$version /usr/lib/libgsm.so
+
+    # Install headers
+    install -d -m755 /usr/include/gsm
+    chown -R root:root inc
+    cp -v inc/*.h /usr/include/gsm
+}

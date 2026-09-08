@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgnomecups
+version=0.2.3
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GNOME cups library"
+src="l/libgnomecups/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libgnomecups package contains a library used to wrap the CUPS API in a GLib
+fashion, so CUPS code can be cleanly integrated with GLib code.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

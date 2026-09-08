@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libmng
+version=1.0.10
+group=Libraries/Image
+license=zlib
+description="MNG library"
+src="l/libmng/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libmng libraries are used by programs wanting to read and write
+Multiple-image Network Graphics (MNG) files which are the animation equivalents
+to PNG files.
+EOF
+}
+
+buildPhase()
+{
+    cp makefiles/makefile.linux Makefile
+    make
+}
+
+installPhase()
+{
+    make prefix=/usr install
+    install -v -m644 doc/man/*.3 /usr/share/man/man3
+    install -v -m644 doc/man/*.5 /usr/share/man/man5
+    install -v -m755 -d /usr/share/doc/$name-$version
+    install -v -m644 doc/*.{png,txt} /usr/share/doc/$name-$version
+}

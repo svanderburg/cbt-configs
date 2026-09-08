@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gucharmap
+version=2.32.1
+group=Desktops/gnome2
+license=GPLv3
+description="Unicode character map"
+src="g/gucharmap/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gucharmap is a featureful unicode character map.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

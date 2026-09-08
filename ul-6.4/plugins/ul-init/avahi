@@ -1,0 +1,5 @@
+description="Avahi mDNS and DNS-SD service"
+startSequenceNumber=34
+stopSequenceNumber=28
+startRunLevels="3 4 5"
+stopRunLevels="0 1 2 6"

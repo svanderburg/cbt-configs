@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=tilem
+version=2.0
+license=LGPLv2.1
+group=Emulators
+description="TI 8x emulator"
+src="t/tilem/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+TilEm is an emulator and debugger for Texas Instruments Z80-based graphing
+calculators. It can emulate any of the following calculator models: TI-73,
+TI-73 Explorer, TI-76.fr, TI-81, TI-82, TI-82 STATS / TI-82 STATS.fr, TI-83,
+TI-83 Plus, TI-83 Plus Silver Edition, TI-83 Plus.fr, TI-84 Plus, TI-84 Plus
+Silver Edition, TI-84 pocket.fr, TI-85, TI-86.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Change categories to emulator only, which makes more sense
+    sed -i 's/Categories=Education;Science;Math;Emulator;/Categories=Emulator;/' /usr/share/applications/tilem2.desktop
+}

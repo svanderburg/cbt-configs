@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=system-tools-backends
+version=2.10.2
+group=Desktops/gnome2
+license=GPLv3
+description="System Tools Backends"
+src="s/system-tools-backends/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The system-tools-backends are a set of cross-platform scripts for Linux and
+other Unix systems. The backends provide a standard XML interface for modifying
+the configuration regardless of the distribution being used.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

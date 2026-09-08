@@ -1,0 +1,5 @@
+description="NFS server"
+startSequenceNumber=24
+stopSequenceNumber=48
+startRunLevels="3 4 5"
+stopRunLevels="0 1 2 6"

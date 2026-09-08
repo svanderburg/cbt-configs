@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-js-common
+version=0.1.2
+group=Desktops/gnome2
+license=GPLv3
+description="GNOME Common JavaScript modules"
+src="g/gnome-js-common/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains some JavaScript modules for use by GNOME JavaScript
+extensions.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,52 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtCommonDir/xdgDesktopItemFunctions
+source $cbtBaseDir/settings/extra-settings
+
+name=xtux
+version=20030306
+group=Games
+license=GPLv2
+description="XTux"
+src="x/xtux/$name-src-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+XTux is a multiplayer Gauntlet-style arcade game for X-windows featuring
+open-source mascots.
+EOF
+}
+
+buildPhase()
+{
+    make DATADIR=/usr/local/share/xtux
+}
+
+installPhase()
+{
+    chown -R root:root *
+    install -m755 -d /usr/local/share/xtux
+    cp -av data/* /usr/local/share/xtux
+    install -m755 xtux tux_serv /usr/local/bin
+
+    desktopTargetDir="/usr/local/share/applications"
+
+    desktopFileName="xtux-client"
+    desktopName="XTux client"
+    genericName="Shoot em up game"
+    exec=/usr/local/bin/xtux
+    comment="XTux client"
+    categories="Game;Shooter;"
+    installXDGDesktopItemsPhase
+
+    desktopFileName="xtux-server"
+    desktopName="XTux server"
+    genericName="Game server"
+    exec=/usr/local/bin/tux_serv
+    comment="XTux server"
+    categories="Game;Shooter;"
+    terminal=1
+    installXDGDesktopItemsPhase
+}

@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=polkit-gnome
+version=0.94
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME integrations for polkit"
+src="p/polkit-gnome/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+PolicyKit-gnome provides an Authentication Agent for PolicyKit that
+integrates well with the GNOME desktop environment
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/polkit-gnome
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

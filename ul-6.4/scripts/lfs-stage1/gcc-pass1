@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/gcc
+
+group=lfs-stage1
+srcs=("m/mpfr/mpfr-2.3.2.tar.bz2" "g/gmp/gmp-4.2.4.tar.bz2")
+workDir=$name-$version
+
+buildPhase()
+{
+    mv -v ../mpfr-2.3.2 mpfr
+    mv -v ../gmp-4.2.4 gmp
+
+    mkdir ../$name-build
+    cd ../$name-build
+
+    CC="gcc -B/usr/bin/" ../$name-$version/configure --prefix=/tools \
+        --with-local-prefix=/tools --disable-nls --disable-shared --disable-libssp \
+        --enable-languages=c
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd ../$name-build
+
+    make install
+    ln -vs libgcc.a `gcc -print-libgcc-file-name | \
+        sed 's/libgcc/&_eh/'`
+    ln -vs gcc /tools/bin/cc
+}

@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=nics-configure
+group=lfs-stage2
+description="Creates stable names for network interfaces"
+
+execute()
+{
+    for NIC in /sys/class/net/*
+    do
+        INTERFACE=${NIC##*/} udevadm test --action=add $NIC
+    done
+}

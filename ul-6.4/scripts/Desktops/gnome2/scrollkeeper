@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=scrollkeeper
+version=0.3.14
+group=Desktops/gnome2
+license=LGPLv2.1/GPLv2
+description="Scrollkeeper documentation catalog"
+src="s/scrollkeeper/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Scrollkeeper is an Open Documentation Cataloging System
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var \
+        --mandir=/opt/gnome-$gnome2Version/share/man \
+        --disable-static \
+        --with-omfdirs=/usr/share/omf:/opt/kde-$kdeVersion/share/omf:/opt/gnome-$gnome2Version/share/omf
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

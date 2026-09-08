@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtkhtml
+version=3.32.1
+group=Desktops/gnome2
+license=LGPLv2
+description="GTK HTML library"
+src="g/gtkhtml/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GtkHTML is a lightweight HTML rendering/printing/editing engine. It
+was originally based on KHTMLW, part of the KDE project, but is now
+being developed independently.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gtkhtml \
+        --disable-deprecated-warning-flags
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

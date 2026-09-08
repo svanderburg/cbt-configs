@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=json-glib
+version=0.12.6
+group=Desktops/gnome2
+license=LGPLv2.1
+description="JSON GLib"
+src="j/json-glib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+JSON-GLib implements a full JSON parser using GLib and GObject.
+
+Use JSON-GLib it is possible to parse and generate valid JSON data
+structures, using a DOM-like API. JSON-GLib also offers GObject
+integration, providing the ability to serialize and deserialize
+GObject instances to and from JSON data types.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

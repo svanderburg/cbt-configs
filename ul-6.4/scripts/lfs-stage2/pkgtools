@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=pkgtools
+version=12.1.0
+group=lfs-stage2
+description="Slackware package tools"
+license=BSD-1
+src="p/pkgtools/$name-$version-noarch-7.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains utilities for handling Slackware packages.
+Included are the command line utilities 'installpkg', 'removepkg',
+'makepkg', 'explodepkg', and 'upgradepkg' that install, remove,
+build, examine, and upgrade software packages.  Also included are 
+'pkgtool', a menu based program for installing packages, removing
+packages, or viewing the packages that are installed on the system,
+documentation (man pages), and a few other system admin scripts.
+This package contains utilities for handling Slackware packages.
+Included are the command line utilities 'installpkg', 'removepkg',
+'makepkg', 'explodepkg', and 'upgradepkg' that install, remove,
+build, examine, and upgrade software packages.  Also included are 
+'pkgtool', a menu based program for installing packages, removing
+packages, or viewing the packages that are installed on the system,
+documentation (man pages), and a few other system admin scripts.
+EOF
+}
+
+openWorkDirPhase()
+{
+    echo
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    cp -v sbin/{explodepkg,installpkg,makepkg,pkgtool,removepkg,upgradepkg} /sbin
+    cp -v usr/man/man8/{explodepkg,installpkg,makepkg,pkgtool,removepkg,upgradepkg}.8.gz /usr/share/man/man8
+}

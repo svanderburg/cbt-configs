@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nspr
+version=4.8.9
+group=Libraries/Shared
+license=MPLv1/LGPLv2.1/GPLv2
+description="Netscape Portable Runtime"
+src="n/nspr/$name-$version.tar.gz"
+patches=("n/nspr/$name-$version-pkgconfig-2.patch")
+workDir="$name-$version"
+
+showLongDescription()
+{
+    cat << "EOF"
+Netscape Portable Runtime (NSPR) provides a platform-neutral API for system
+level and libc like functions.
+EOF
+}
+
+buildPhase()
+{
+    cd mozilla/nsprpub
+
+    ./configure --prefix=/usr \
+        --with-mozilla \
+        --with-pthreads
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd mozilla/nsprpub
+
+    make install
+    cp -v -LR dist/include/nspr /usr/include
+    rm -v -f /usr/bin/{prerr.properties,compile-et.pl}
+}

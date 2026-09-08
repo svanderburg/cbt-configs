@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtkmm
+version=2.22.0
+group=Libraries/gnome2
+license=LGPLv2.1
+description="GTK+ C++ bindings"
+src="g/gtkmm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is gtkmm, a C++ API for GTK+.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

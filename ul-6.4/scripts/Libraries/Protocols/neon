@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=neon
+version=0.28.6
+group=Libraries/Protocols
+license=MIT
+description="WebDAV client library"
+src="n/neon/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+neon is an HTTP and WebDAV client library, with a C language API.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared --with-ssl
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

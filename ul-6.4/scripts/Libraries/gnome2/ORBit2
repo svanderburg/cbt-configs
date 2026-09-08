@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ORBit2
+version=2.14.19
+group=Libraries/gnome2
+license=LGPLv2
+description="CORBA object request broker"
+src="o/ORBit2/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The ORBit2 package contains a high-performance CORBA Object Request Broker.
+This allows programs to send requests and receive replies from other programs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

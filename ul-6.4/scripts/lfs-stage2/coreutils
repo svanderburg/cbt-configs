@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/coreutils
+
+group=lfs-stage2
+files=("c/coreutils/$name-$version-uname-1.patch" "c/coreutils/$name-$version-old_build_kernel-1.patch" "c/coreutils/$name-$version-i18n-2.patch")
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-install-program=hostname --enable-no-install-program=kill,uptime
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin
+    mv -v /usr/bin/{false,hostname,ln,ls,mkdir,mknod,mv,pwd,readlink,rm} /bin
+    mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin
+    mv -v /usr/bin/chroot /usr/sbin
+
+    mv -v /usr/bin/{head,sleep,nice} /bin
+}

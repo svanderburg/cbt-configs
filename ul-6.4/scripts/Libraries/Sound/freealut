@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=freealut
+version=1.1.0
+group=Libraries/Sound
+license=LGPLv2
+description="OpenAL utility toolkit"
+src="f/freealut/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+freealut is a free implementation of OpenAL's ALUT standard.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

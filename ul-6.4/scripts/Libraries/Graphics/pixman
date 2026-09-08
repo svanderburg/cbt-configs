@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=pixman
+version=0.18.4
+group=Libraries/Graphics
+license=MIT
+description="Pixel manager library"
+src="p/pixman/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+pixman is a library that provides low-level pixel manipulation
+features such as image compositing and trapezoid rasterization.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgdata
+version=0.6.6
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GLib data protocol library"
+src="l/libgdata/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libgdata is a GLib-based library for accessing online service APIs using the
+GData protocol --- most notably, Google's services. It provides APIs to access
+the common Google services, and has full asynchronous support.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

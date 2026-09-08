@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-screensaver
+version=2.30.2
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Screensaver"
+src="g/gnome-screensaver/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-screensaver is a screen saver and locker that aims to have
+simple, sane, secure defaults and be well integrated with the desktop.
+It is designed to support:
+
+* the ability to lock down configuration settings
+* translation into many languages
+* user switching
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gnome-screensaver \
+        --with-pam-prefix=/etc
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    cat > /etc/pam.d/gnome-screensaver << "EOF"
+# File: /etc/pam.d/gnome-screensaver
+auth        required    pam_unix.so
+account     required    pam_unix.so
+session     required    pam_unix.so
+password    required    pam_unix.so
+EOF
+    chmod -v 644 /etc/pam.d/gnome-screensaver
+}

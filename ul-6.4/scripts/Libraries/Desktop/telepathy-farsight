@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=telepathy-farsight
+version=0.0.16
+group=Libraries/Desktop
+license=LGPLv2.1
+description="Telepathy client library using Farsight"
+src="t/telepathy-farsight/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Telepathy Farsight is a Telepathy client library that uses Farsight2 
+to handle media streaming channels.
+
+Telepathy is a D-Bus framework for unifying real time communication,
+including instant messaging, voice calls and video calls. It abstracts
+differences between protocols to provide a unified interface for
+applications.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

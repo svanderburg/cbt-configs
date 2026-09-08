@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=abiword
+version=2.8.6
+group=Desktops/gnome2
+license=GPLv2
+description="Abiword word processor"
+src="a/abiword/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+AbiWord is a free and open-source word processor.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make
+}
+
+installPhase()
+{
+    make install
+}

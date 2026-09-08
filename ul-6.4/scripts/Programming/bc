@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=bc
+version=1.06
+group=Programming
+license=LGPLv2.1
+description="Arbitrary precision numeric processing"
+src="b/bc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+bc is an arbitrary precision numeric processing language. Syntax is similar
+to C, but differs in many substantial areas. It supports interactive execution
+of statements. bc is a utility included in the POSIX P1003.2/D11 draft standard.
+EOF
+}
+
+buildPhase()
+{
+    sed -i '/PROTO.*readline/d' bc/scan.l
+    sed -i '/flex -I8/s/8//' configure
+    sed -i '/stdlib/a #include <string.h>' lib/number.c
+    sed -i 's/program.*save/static &/' bc/load.c
+
+    ./configure --prefix=/usr --with-readline
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

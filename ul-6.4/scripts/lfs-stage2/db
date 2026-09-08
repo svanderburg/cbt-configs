@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=db
+version=4.7.25
+group=lfs-stage2
+license=BSD-3
+description="Berkeley Database version 4.7"
+src="d/db/$name-$version.tar.gz"
+patches=("d/db/$name-$version-upstream_fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Berkeley DB (BDB) is an embedded database software library for key/value data.
+Berkeley DB is written in C with API bindings for many other programming
+languages. BDB stores arbitrary key/data pairs as byte arrays and supports
+multiple data items for a single key.
+EOF
+}
+
+buildPhase()
+{
+    cd build_unix
+
+    ../dist/configure --prefix=/usr \
+      --enable-compat185 \
+      --enable-cxx
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd build_unix
+
+    chown -R root:root ../*
+    make docdir=/usr/share/doc/$name-$version install
+}

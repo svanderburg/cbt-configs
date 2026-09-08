@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fuse
+version=2.8.4
+group=Tools/Filesystems
+license=LGPLv2/GPLv2
+description="Filesystem in Userspace utilities"
+src="f/fuse/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+FUSE (Filesystem in Userspace) is a simple interface for userspace programs to
+export a virtual filesystem to the Linux kernel. FUSE also aims to provide a
+secure method for non privileged users to create and mount their own filesystem
+implementations.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # We can't use the include fuse script because it doesn't integrate well
+    rm /etc/init.d/fuse
+    rmdir --ignore-fail-on-non-empty /etc/init.d
+}

@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=font-cronyx-cyrillic
+version=1.0.0
+group=Display/X11/font
+license=MIT
+description="font-cronyx-cyrillic"
+src="x/xorg/font/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated font package: font-cronyx-cyrillic
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+}

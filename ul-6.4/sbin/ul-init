@@ -1,0 +1,80 @@
+#!/bin/bash -e
+
+allRunLevels="sysinit 0 1 2 3 4 5 6"
+
+queryInitScriptConfiguration()
+{
+    checkListItems=()
+
+    for initScriptConfig in /usr/share/ul/ul-init/*
+    do
+        local scriptName="$(basename "$initScriptConfig")"
+        local selected="off"
+        source "$initScriptConfig"
+
+        for rcDir in $allRunLevels
+        do
+            if [ -x /etc/rc.d/rc$rcDir.d/???$scriptName ]
+            then
+                selected="on"
+                break
+            fi
+        done
+
+        checkListItems=("${checkListItems[@]}" "$scriptName" "$description" "$selected")
+    done
+}
+
+exec 3>&1
+
+queryInitScriptConfiguration
+
+set +e
+selectedScripts=$(dialog --backtitle "UL" \
+  --title "Boot up service configuration" \
+  --checklist "Select the services to start on boot up" \
+  20 60 12 \
+  "${checkListItems[@]}" 2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -eq 0 ]
+then
+    # Clear previous configuration
+    for initScriptConfig in /usr/share/ul/ul-init/*
+    do
+        script="$(basename "$initScriptConfig")"
+
+        for runlevel in $allRunLevels
+        do
+            rm -f /etc/rc.d/rc$runlevel.d/???$script
+        done
+    done
+
+    # Generate new service configuration
+    for selectedOption in $selectedScripts
+    do
+        script="${selectedOption:1:${#selectedOption}-2}"
+        source /usr/share/ul/ul-init/$script
+
+        if [ $startSequenceNumber -lt 10 ]
+        then
+            startSequenceNumber="0$startSequenceNumber"
+        fi
+
+        if [ $stopSequenceNumber -lt 10 ]
+        then
+            stopSequenceNumber="0$stopSequenceNumber"
+        fi
+
+        for runlevel in $startRunLevels
+        do
+            ln -sf ../init.d/$script /etc/rc.d/rc$runlevel.d/S$startSequenceNumber$script
+        done
+
+        for runlevel in $stopRunLevels
+        do
+            ln -sf ../init.d/$script /etc/rc.d/rc$runlevel.d/K$stopSequenceNumber$script
+        done
+    done
+fi

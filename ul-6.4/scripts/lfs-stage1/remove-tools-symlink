@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=remove-tools-symlink
+group=lfs-stage1
+description="Removes /tools symlink"
+
+execute()
+{
+    rm /tools
+}

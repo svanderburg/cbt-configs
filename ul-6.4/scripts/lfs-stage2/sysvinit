@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=sysvinit
+version=2.86
+group=lfs-stage2
+description="sysvinit"
+license=GPLv2
+src="s/sysvinit/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This System V style init is used by a variety of operating systems, particularly
+GNU/Linux distributions, which initializes and shuts down the system and well as
+managing runlevels.
+EOF
+}
+
+buildPhase()
+{
+    sed -i 's@Sending processes@& configured via /etc/inittab@g' \
+        src/init.c
+
+    # Suppress the installation of the wall program, because a better version was provided by util-linux
+    sed -i -e 's/utmpdump wall/utmpdump/' \
+       -e 's/mountpoint.1 wall.1/mountpoint.1/' src/Makefile
+
+    make -C src
+}
+
+installPhase()
+{
+    make -C src install
+}

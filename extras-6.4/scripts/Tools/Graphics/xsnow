@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=xsnow
+version=1.42
+group=Tools/Graphics
+license=freely_distributable
+description="Snows snow animations"
+src="x/xsnow/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Xsnow is the X-windows application that will let it snow on the root, in
+between and on windows.
+EOF
+}
+
+buildPhase()
+{
+    xmkmf
+    make
+}
+
+installPhase()
+{
+    make install
+}

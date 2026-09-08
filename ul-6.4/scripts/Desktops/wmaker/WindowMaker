@@ -1,0 +1,62 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=WindowMaker
+version=0.92.0
+group=Desktops/wmaker
+license=GPLv2
+description="WindowMaker"
+src="w/WindowMaker/$name-$version.tar.bz2"
+patches=("w/WindowMaker/$name-$version-asm-gcc4.patch")
+defaultPatchLevel=0
+
+showLongDescription()
+{
+    cat << "EOF"
+Window Maker is an X11 window manager originally designed to provide integration
+support for the GNUstep Desktop Environment, although it can run stand alone.
+In every way possible, it reproduces the elegant look and feel of the NeXTSTEP
+user interface.
+EOF
+}
+
+buildPhase()
+{
+    autoreconf -f -i
+    ./configure --prefix=/usr --sysconfdir=/etc --enable-shared
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Add xinitrc option
+    cat > /etc/X11/xinit/xinitrc.wmaker << "EOF"
+#!/bin/sh
+
+exec wmaker
+EOF
+
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/wmaker << "EOF"
+description="Window Maker"
+EOF
+
+    # Add xsession option for non XDG compliant display managers
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/windowmaker /usr/share/ul/ul-xsession/sessions
+
+    # Add xsession option for XDG compliant display managers
+    mkdir -p /etc/X11/sessions
+    cat > /etc/X11/sessions/wmaker.desktop << "EOF"
+[Desktop Entry]
+Type=XSession
+Exec=wmaker
+TryExec=wmaker
+Name=WindowMaker
+Comment=A simple window manager that resembles the NeXTStep look very closely
+EOF
+}

@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libwnck
+version=2.30.6
+group=Desktops/gnome2
+license=LGPLv2
+description="Window Navigator Construction Kit"
+src="l/libwnck/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libwnck is Window Navigator Construction Kit, i.e. a library to use
+for writing pagers and taskslists and stuff.  
+
+libwnck is not supported in the devel platform, which means OS vendors
+won't guarantee the API/ABI long-term, but authors of open source apps
+should feel free to use libwnck as users can always recompile against
+a new version. The API/ABI has historically changed very little: we are
+not changing it gratuitously or without soname increments.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

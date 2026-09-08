@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xulrunner-config
+group=Applications
+description="Global configuration settings for XUL runner"
+
+execute()
+{
+    echo "/opt/xulrunner/lib/xulrunner-$xulRunnerVersion" >> /etc/ld.so.conf
+    ldconfig
+}

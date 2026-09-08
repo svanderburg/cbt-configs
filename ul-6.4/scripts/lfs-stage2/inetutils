@@ -1,0 +1,88 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=inetutils
+version=1.5
+group=lfs-stage2
+description="Various network utilities, services and clients"
+license=GPLv3
+src="i/inetutils/$name-$version.tar.gz"
+patches=("i/inetutils/$name-$version-no_server_man_pages-2.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Inetutils is a collection of common network programs.
+EOF
+}
+
+buildPhase()
+{
+    # Fix GCC 4.3.2 compilation issue
+    sed -i 's@<sys/types.h>@<sys/types.h>\n#include <stdlib.h>@' \
+        libicmp/icmp_timestamp.c
+
+    ./configure --prefix=/usr --libexecdir=/usr/sbin \
+        --sysconfdir=/etc --localstatedir=/var \
+        --disable-ifconfig --disable-logger --disable-syslogd \
+        --disable-whois # Servers have been enabled. In the LFS book, they have been disabled
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    mv -v /usr/bin/ping /bin
+
+    # Not part of the LFS book: add xinetd config files so that we can deploy the servers
+    mkdir -p /etc/xinetd.d
+
+    cat > /etc/xinetd.d/telnet << "EOF"
+service telnet
+{
+  disable        = yes
+  socket_type    = stream
+  wait           = no
+  user           = root
+  server         = /usr/sbin/telnetd
+  bind           = 127.0.0.1
+  log_on_failure += USERID
+}
+EOF
+
+    cat > /etc/xinetd.d/talk << "EOF"
+service talk
+{
+    disable     = yes
+    socket_type = dgram
+    wait        = yes
+    user        = root
+    server      = /usr/sbin/talkd
+}
+EOF
+
+    cat > /etc/xinetd.d/ntalk << "EOF"
+service ntalk
+{
+    disable     = yes
+    socket_type = dgram
+    wait        = yes
+    user        = root
+    server      = /usr/sbin/talkd
+}
+EOF
+
+    cat > /etc/xinetd.d/tftp << "EOF"
+service tftp
+{
+    disable     = yes
+    socket_type = dgram
+    wait        = yes
+    user        = root
+    server      = /usr/sbin/tftpd
+}
+EOF
+
+}

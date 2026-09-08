@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=Mupen64Plus
+version=1.5
+license=GPLv2
+group=Emulators
+description="Nintendo 64 emulator"
+src="m/Mupen64Plus/$name-1-5-src.tar.gz"
+patches=("m/Mupen64Plus/$name-1-5-src-gtk-fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Mupen64Plus is a cross-platform plugin-based N64 emulator which is capable of
+accurately playing many games.
+EOF
+}
+
+buildPhase()
+{
+    sed -i -e "s|/usr/X11R6|/usr/X11R$xorgVersion|" pre.mk
+    make all
+}
+
+installPhase()
+{
+    make PREFIX=/usr install
+    sed -i -e "s|/usr/local/share|/usr/share|" \
+           -e "s|Qt;Game;|Application;Emulator;|" /usr/share/applications/mupen64plus.desktop
+}

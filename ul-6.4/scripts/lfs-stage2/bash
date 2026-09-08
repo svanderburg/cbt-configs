@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/bash
+
+group=lfs-stage2
+files=("b/bash/$name-doc-$version.tar.gz")
+
+buildPhase()
+{
+    tar xfvz $sourcesDir/${files[0]}
+
+    sed -i "s|htmldir = @htmldir@|htmldir = /usr/share/doc/$name-$version|" \
+        Makefile.in
+
+    ./configure --prefix=/usr --bindir=/bin \
+        --without-bash-malloc --with-installed-readline ac_cv_func_working_mktime=yes
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    mkdir -p /usr/lib/ul-adduser
+    cat > /usr/lib/ul-adduser/bash << "EOF"
+shellPath=/bin/bash
+description="Bourne Again SHell"
+EOF
+
+    cat > /usr/lib/ul-adduser/sh << "EOF"
+shellPath=/bin/sh
+description="Generic Bourne-compatible shell"
+EOF
+}

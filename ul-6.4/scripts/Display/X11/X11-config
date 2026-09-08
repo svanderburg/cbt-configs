@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=X11-config
+group=Display/X11
+description="Global configuration settings for X11"
+
+execute()
+{
+    echo "MANDATORY_MANPATH /usr/X11$xorgVersion/share/man" >> /etc/man_db.conf
+    echo "/usr/X11R$xorgVersion/lib" >> /etc/ld.so.conf
+    ldconfig
+
+    # Create a /usr/include/X11 symlink for backwards compatibility reasons
+    ln -sf /usr/X11R$xorgVersion/include/X11 /usr/include/X11
+
+    # Create symlinks to /etc/X11 for backwards compatibility reasons
+    install -v -m755 -d \
+        /etc/X11/{app-defaults,fs,twm,xdm,xinit,xkb,xsm}
+
+    install -v -m755 -d $XORG_PREFIX/lib/X11
+
+    for link in \
+        /etc/X11/{app-defaults,fs,twm,xdm,xinit,xkb,xsm}
+    do
+        ln -sv $link $XORG_PREFIX/lib/X11
+    done
+
+    # Create a /usr/X11R6 symlink for backwards compatibility reasons
+    ln -sf X11R7.3 /usr/X11R6
+
+    # Add profile link
+    install -m755 $cbtBaseDir/profile.d/10X11.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/10X11.csh /etc/profile.d
+    fi
+}

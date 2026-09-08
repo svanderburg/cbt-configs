@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xinit
+version=1.0.5
+group=Display/X11/app
+license=MIT
+description="xinit"
+src="x/xorg/app/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated app package: xinit
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Rename xinitrc so that TWM becomes an option
+    mv /etc/X11/xinit/xinitrc /etc/X11/xinit/xinitrc.twm
+
+    # Add option to ul-xinit
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/twm << "EOF"
+description="Tab Window Manager"
+EOF
+
+    # Add xsession option for non XDG compliant display managers
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/xsession /usr/share/ul/ul-xsession/sessions
+
+    # Add xsession option for XDG compliant display managers
+    mkdir -p /etc/X11/sessions
+    cat > /etc/X11/sessions/xsession.desktop << "EOF"
+[Desktop Entry]
+Type=XSession
+Exec=xsm
+TryExec=xsm
+Name=X Session
+Comment=X Session Manager
+EOF
+
+}

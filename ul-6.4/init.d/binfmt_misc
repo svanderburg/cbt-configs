@@ -1,0 +1,43 @@
+#!/bin/sh
+
+source /etc/sysconfig/rc
+source $rc_functions
+
+case "$1" in
+	start)
+		echo "Mounting binfmt_misc filesystem..."
+		mount -t binfmt_misc none /proc/sys/fs/binfmt_misc
+		evaluate_retval
+		
+		if [ -f /etc/sysconfig/binfmt_misc ]
+		then
+			echo "Register filetypes..."
+	
+			while IFS= read -r line
+			do
+			    echo "$line" > /proc/sys/fs/binfmt_misc/register
+			done < /etc/sysconfig/binfmt_misc
+	
+			evaluate_retval
+		fi
+		;;
+
+	stop)
+		echo "Unmounting binfmt_misc filesystem..."
+		umount /proc/sys/fs/binfmt_misc
+		evaluate_retval
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/binfmt_misc

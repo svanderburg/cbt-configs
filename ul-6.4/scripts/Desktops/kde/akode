@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=akode
+version=2.0.2
+group=Desktops/kde
+license=LGPLv2
+description="Akode multimedia extensions"
+src="a/akode/30375-$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Additional multimedia programs for KDE.
+EOF
+}
+
+buildPhase()
+{
+    # Fix compilation errors
+    sed -i '1i\
+#include <stdlib.h>
+' akode/lib/auto_sink.cpp
+    sed -i '1i\
+#include <string.h>
+' akode/lib/player.cpp
+    sed -i '1i\
+#include <string.h>
+' akode/lib/magic.cpp
+    sed -i '1i\
+#include <stdlib.h>
+' akode/akodeplay/akodeplay.cpp
+
+    ./configure --prefix=/opt/kde-$kdeVersion --without-ffmpeg \
+        --disable-debug --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

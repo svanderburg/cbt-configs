@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=orc
+version=0.4.11
+group=Tools/Development
+license=BSD-2
+description="The Oil Runtime Compiler"
+src="o/orc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Entropy Wave Inc (http://entropywave.com/) presents Orc, the sucessor
+to Liboil - The Library of Optimized Inner Loops.
+
+Orc is a library and set of tools for compiling and executing
+very simple programs that operate on arrays of data.  The "language"
+is a generic assembly language that represents many of the features
+available in SIMD architectures, including saturated addition and
+subtraction, and many arithmetic operations.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

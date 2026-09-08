@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=avahi
+version=0.6.28
+group=Network/Servers-Clients
+license=BSD
+description="Avahi zeroconf implementation"
+src="a/avahi/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Avahi is a free zero-configuration networking (zeroconf) implementation,
+including a system for multicast DNS and DNS Service Discovery.
+EOF
+}
+
+preConfigurePhase()
+{
+    groupadd -g 84 avahi
+    useradd -c "Avahi Daemon Owner" -d /dev/null -u 84 -g avahi -s /bin/false avahi
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+	--localstatedir=/var \
+        --with-distro=none \
+        --disable-qt4 \
+        --disable-gtk3 \
+        --disable-pygtk \
+        --disable-mono
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -m754 $cbtBaseDir/init.d/avahi /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/avahi /usr/share/ul/ul-init
+}

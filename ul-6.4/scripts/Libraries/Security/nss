@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nss
+version=3.12.11
+group=Libraries/Security
+license=MPLv1/LGPLv2.1/GPLv2
+description="Network Security Services"
+src="n/nss/$name-$version.tar.gz"
+patches=("n/nss/$name-3.12.8-standalone-2.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The Network Security Services (NSS) package is a set of libraries designed to
+support cross-platform development of security-enabled client and server
+applications.
+
+Applications built with NSS can support SSL v2 and v3, TLS, PKCS #5, PKCS #7,
+PKCS #11, PKCS #12, S/MIME, X.509 v3 certificates, and other security standards.
+This is useful for implementing SSL and S/MIME or other Internet security
+standards into an application.
+EOF
+}
+
+buildPhase()
+{
+    export BUILD_OPT=1
+    export NSS_USE_SYSTEM_SQLITE=1
+    export NSPR_INCLUDE_DIR=/usr/include/nspr
+    export USE_SYSTEM_ZLIB=1
+    export ZLIB_LIBS=-lz
+
+    make -C mozilla/security/nss nss_build_all
+}
+
+installPhase()
+{
+    export NSS_LINUXDIR=$(basename `ls -d $PWD/mozilla/dist/Linux*`)
+    cd mozilla/dist
+    install -v -m755 $NSS_LINUXDIR/lib/*.so /usr/lib
+    install -v -m644 $NSS_LINUXDIR/lib/{*.chk,libcrmf.a} /usr/lib
+    install -v -m755 -d /usr/include/nss
+    install -v -m755 $NSS_LINUXDIR/bin/{certutil,nss-config,pk12util} /usr/bin
+    install -v -m644 $NSS_LINUXDIR/lib/pkgconfig/nss.pc /usr/lib/pkgconfig
+    cp -v -RL {public,private}/nss/* /usr/include/nss
+    chmod 644 /usr/include/nss/*
+}

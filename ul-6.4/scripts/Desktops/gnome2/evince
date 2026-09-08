@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=evince
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="Evince viewer"
+src="e/evince/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Evince is a document viewer capable of displaying multiple and single page
+document formats like PDF and Postscript.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/evince \
+        --localstatedir=/var/lib \
+        --mandir=/opt/gnome-$gnome2Version/share/man \
+        --enable-pixbuf
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

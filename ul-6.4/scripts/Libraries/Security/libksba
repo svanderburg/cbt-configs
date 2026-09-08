@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libksba
+version=1.0.8
+group=Libraries/Security
+license=GPLv3
+description="Library making X.509 certificates accessible"
+src="l/libksba/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+KSBA (pronounced Kasbah) is a library to make X.509 certificates as well as the
+CMS easily accessible by other applications. Both specifications are building
+blocks of S/MIME and TLS.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

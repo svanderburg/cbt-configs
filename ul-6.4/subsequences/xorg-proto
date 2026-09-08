@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+protoXorgScripts="\
+Display/X11/proto/applewmproto \
+Display/X11/proto/bigreqsproto \
+Display/X11/proto/compositeproto \
+Display/X11/proto/damageproto \
+Display/X11/proto/dmxproto \
+Display/X11/proto/evieext \
+Display/X11/proto/fixesproto \
+Display/X11/proto/fontcacheproto \
+Display/X11/proto/fontsproto \
+Display/X11/proto/glproto \
+Display/X11/proto/inputproto \
+Display/X11/proto/kbproto \
+Display/X11/proto/printproto \
+Display/X11/proto/randrproto \
+Display/X11/proto/recordproto \
+Display/X11/proto/renderproto \
+Display/X11/proto/resourceproto \
+Display/X11/proto/scrnsaverproto \
+Display/X11/proto/trapproto \
+Display/X11/proto/videoproto \
+Display/X11/proto/windowswmproto \
+Display/X11/proto/xcmiscproto \
+Display/X11/proto/xextproto \
+Display/X11/proto/xf86bigfontproto \
+Display/X11/proto/xf86dgaproto \
+Display/X11/proto/xf86driproto \
+Display/X11/proto/xf86miscproto \
+Display/X11/proto/xf86rushproto \
+Display/X11/proto/xf86vidmodeproto \
+Display/X11/proto/xineramaproto \
+Display/X11/proto/xproto \
+Display/X11/proto/xproxymanagementprotocol \
+"

@@ -1,0 +1,5 @@
+description="RPC portmapper"
+startSequenceNumber=22
+stopSequenceNumber=49
+startRunLevels="3 4 5"
+stopRunLevels="0 1 2 6"

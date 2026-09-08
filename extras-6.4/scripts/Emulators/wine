@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=wine
+version=1.2.3
+license=LGPLv2.1
+group=Emulators
+description="WINE Is Not an Emulator"
+src="w/wine/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Wine is a program making it possible to run Microsoft Windows programs on UNIX.
+It consists of a program loaded which loads and executes a Microsoft Windows
+binrary and a library (called winelib) that implements Windows API calls using
+their UNIX or X11 equivalents. The library may also be used for porting Win32
+code into native UNIX executables.
+EOF
+}
+
+buildPhase()
+{
+    # Linking to -lncurses causes it to use libncursesw. Fix the detection
+    sed -i 's/libncurses/libncursesw/g' configure
+
+    CPPFLAGS='-I/usr/include/gsm' \
+        LIBS='-L/opt/unixODBC/lib' \
+        ./configure --prefix=/opt/$name-$version \
+        --mandir=/opt/$name-$version/share/man
+    make depend
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    ln -s /opt/$name-$version /opt/$name
+
+    # Install profile scripts
+    install -m755 $cbtBaseDir/profile.d/40wine.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/40wine.csh /etc/profile.d
+    fi
+}

@@ -1,0 +1,246 @@
+#!/bin/bash -e
+
+queryKeymaps()
+{
+    cd /lib/kbd/keymaps/i386
+
+    find . -type f | grep -v './include/' | sort | while read file
+    do
+        echo "$(basename "$file" .map.gz)"
+        echo "-"
+    done
+}
+
+configureKeymap()
+{
+    set +e
+    KEYMAP=$(dialog --backtitle "UL" \
+      --title "Console configuration" \
+      --menu "Select keyboard layout" \
+      20 70 12 \
+      "(none)" "Use in-kernel keyboard layout" \
+      $(queryKeymaps) \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        return
+    fi
+
+    if [ -f /etc/sysconfig/console ]
+    then
+        sed -i '/^KEYMAP=/d' /etc/sysconfig/console
+    fi
+
+    if [ "$KEYMAP" = "(none)" ]
+    then
+        unset KEYMAP
+    else
+        echo "KEYMAP=\"$KEYMAP\"" >> /etc/sysconfig/console
+    fi
+}
+
+queryKeymapCorrections()
+{
+    cd /lib/kbd/keymaps/i386/include
+
+    find . -type f | sort | while read file
+    do
+        echo "$(basename "$file" .map.gz)"
+        echo "-"
+    done
+}
+
+configureKeymapCorrection()
+{
+    set +e
+    KEYMAP_CORRECTION=$(dialog --backtitle "UL" \
+      --title "Console configuration" \
+      --menu "Select keyboard correction" \
+      20 70 12 \
+      "(none)" "No keyboard correction" \
+      $(queryKeymapCorrections) \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        return
+    fi
+
+    if [ -f /etc/sysconfig/console ]
+    then
+        sed -i '/^KEYMAP_CORRECTION=/d' /etc/sysconfig/console
+    fi
+
+    if [ "$KEYMAP_CORRECTION" = "(none)" ]
+    then
+        unset KEYMAP_CORRECTION
+    else
+        echo "KEYMAP_CORRECTION=\"$KEYMAP_CORRECTION\"" >> /etc/sysconfig/console
+    fi
+}
+
+queryFonts()
+{
+    cd /lib/kbd/consolefonts
+
+    find . -type f | sort | while read file
+    do
+        echo "$(basename "$file" .gz)"
+        echo "-"
+    done
+}
+
+queryConsoleMaps()
+{
+    cd /lib/kbd/unimaps
+
+    find . -type f | sort | while read file
+    do
+        echo "$(basename "$file" .uni)"
+        echo "-"
+    done
+}
+
+configureFont()
+{
+    set +e
+    FONT=$(dialog --backtitle "UL" \
+      --title "Console configuration" \
+      --menu "Select font" \
+      20 70 12 \
+      "(none)" "Use default font" \
+      $(queryFonts) \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        return
+    fi
+
+    if [ "$FONT" = "(none)" ]
+    then
+        unset FONT
+    else
+        set +e
+        fontSuffix=$(dialog --backtitle "UL" \
+          --title "Console configuration" \
+          --menu "Select console map file" \
+          20 70 12 \
+          $(queryConsoleMaps) \
+          2>&1 1>&3)
+        exitStatus=$?
+        set -e
+
+        if [ "$exitStatus" -ne 0 ]
+        then
+            return
+        fi
+
+        FONT="$FONT -m $fontSuffix"
+    fi
+
+    if [ -f /etc/sysconfig/console ]
+    then
+        sed -i '/^FONT=/d' /etc/sysconfig/console
+    fi
+
+    if [ "$FONT" != "" ]
+    then
+        echo "FONT=\"$FONT\"" >> /etc/sysconfig/console
+    fi
+}
+
+configureUnicode()
+{
+    set +e
+    dialog --backtitle "UL" \
+      --title "Console configuration" \
+      --yesno "Do you want to enable UTF-8?" \
+      5 50
+    exitStatus=$?
+    set -e
+
+    sed -i '/^UNICODE=/d' /etc/sysconfig/console
+
+    if [ $exitStatus -eq 0 ]
+    then
+        echo "UNICODE=1" >> /etc/sysconfig/console
+    fi
+}
+
+configureLegacyCharset()
+{
+    set +e
+    LEGACY_CHARSET=$(dialog --backtitle "UL" \
+      --title "Console configuration" \
+      --inputbox "Specify legacy charset (leave empty for none):" \
+      8 50 "iso-8859-15" \
+      2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ $exitStatus -ne 0 ]
+    then
+        return
+    fi
+
+    sed -i '/^LEGACY_CHARSET=/d' /etc/sysconfig/console
+
+    if [ "$LEGACY_CHARSET" != "" ]
+    then
+        echo "LEGACY_CHARSET=\"$LEGACY_CHARSET\"" >> /etc/sysconfig/console
+    fi
+}
+
+if [ -f /etc/sysconfig/console ]
+then
+    source /etc/sysconfig/console
+fi
+
+exec 3>&1
+
+while true
+do
+    set +e
+    option=$(dialog --backtitle "UL" \
+            --title "Console configuration" \
+            --menu "Pick configuration option" 16 60 6 \
+            "keymap"            "Select keymap" \
+            "keymap_correction" "Configure keymap correction" \
+            "font"              "Configure font" \
+            "unicode"           "Enable or disable UTF-8 mode" \
+            "legacy_charset"    "Configure legacy charset" \
+            2>&1 1>&3)
+    exitStatus=$?
+    set -e
+
+    if [ "$exitStatus" -ne 0 ]
+    then
+        exit
+    fi
+
+    case "$option" in
+        keymap)
+            configureKeymap
+            ;;
+        keymap_correction)
+            configureKeymapCorrection
+            ;;
+        font)
+            configureFont
+            ;;
+        unicode)
+            configureUnicode
+            ;;
+        legacy_charset)
+            configureLegacyCharset
+            ;;
+    esac
+done

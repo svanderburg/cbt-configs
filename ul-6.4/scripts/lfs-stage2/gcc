@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/gcc
+
+group=lfs-stage2
+workDir=$name-$version
+
+buildPhase()
+{
+    # Suppress the installation of libiberty.a. The version of libiberty.a provided by Binutils will be used instead
+    sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
+
+    # Non-bootstrap builds omit this flag by default, so apply the following sed to use it in order to ensure consistent compiler builds:
+    sed -i 's/^XCFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in
+
+    # As the headers installed by GCC-4.3.x and Glibc-2.8-20080929 are known to not require fixing, issue the following command to prevent the fixincludes script from running: 
+    sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
+
+    mkdir ../$name-build
+    cd ../$name-build
+
+    ../$name-$version/configure --prefix=/usr \
+        --libexecdir=/usr/lib --enable-shared \
+        --enable-threads=posix --enable-__cxa_atexit \
+        --enable-clocale=gnu --enable-languages=c,c++ \
+        --disable-bootstrap
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    chown -R root:root *
+
+    cd ../$name-build
+    chown -R root:root *
+
+    make install
+    ln -sfv ../usr/bin/cpp /lib
+    ln -sfv gcc /usr/bin/cc
+}

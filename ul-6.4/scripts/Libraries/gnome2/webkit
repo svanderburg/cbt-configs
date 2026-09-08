@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=webkit
+version=1.2.7
+group=Libraries/gnome2
+license=BSD-2/LGPLv2
+description="Webkit layout engine"
+src="w/webkit/$name-$version.tar.gz"
+patches=("w/webkit/$name-$version-introspection-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+WebKit is a browser engine primarily used in Apple's Safari web browser. It is
+also used by various GNOME components.
+
+WebKit started as a fork of the KHTML and KJS libraries from KDE and has since
+been further developed by KDE contributors, Apple, Google, Nokia, Bitstream,
+BlackBerry, Sony, Igalia, and others.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --enable-introspection
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

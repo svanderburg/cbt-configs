@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=man-db
+version=2.5.2
+group=lfs-stage2
+description="man-db"
+license=GPLv2+
+src="m/man-db/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Man-DB package contains programs for finding and viewing man pages.
+EOF
+}
+
+buildPhase()
+{
+    # LFS creates /usr/man and /usr/local/man as symlinks. Remove them from the man_db.conf file to prevent redundant results when using programs such as whatis: 
+    sed -i -e '\%\t/usr/man%d' -e '\%\t/usr/local/man%d' src/man_db.conf.in
+
+    ./configure --prefix=/usr --libexecdir=/usr/lib \
+        --sysconfdir=/etc --disable-setuid \
+        --enable-mb-groff --with-browser=/usr/bin/lynx \
+        --with-col=/usr/bin/col --with-vgrind=/usr/bin/vgrind \
+        --with-grap=/usr/bin/grap
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Add convert-mans script to assist in the conversion of the manual pages to the proper encoding for the directory
+    # in which they are installed
+
+    cat >> convert-mans << "EOF"
+#!/bin/sh -e
+FROM="$1"
+TO="$2"
+shift ; shift
+while [ $# -gt 0 ]
+do
+        FILE="$1"
+        shift
+        iconv -f "$FROM" -t "$TO" "$FILE" >.tmp.iconv
+        mv .tmp.iconv "$FILE"
+done
+EOF
+
+    install -m755 convert-mans  /usr/bin
+}

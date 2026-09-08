@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xsane
+version=0.998
+group=Hardware
+license=GPLv2
+description="XSane"
+src="x/xsane/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+XSane is a graphical scanning frontend. It uses the SANE library to talk to
+scanners.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Install GIMP plugin
+    if [ -x /opt/gnome-$gnome2Version/bin/gimp ]
+    then
+        ln -sf /usr/bin/xsane /opt/gnome-$gnome2Version/lib/gimp/2.0/plug-ins
+    fi
+}

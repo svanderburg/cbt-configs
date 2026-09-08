@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-mag
+version=0.16.3
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Magnifier"
+src="g/gnome-mag/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This directory contains the gnome-mag magnification service definition and
+sample implementation.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

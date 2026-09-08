@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gstreamer
+version=0.10.31
+group=Libraries/Multimedia
+license=LGPLv2
+description="GStreamer framework"
+src="g/gstreamer/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The GStreamer package contains a streaming media framework that enables
+applications to share a common set of plugins for things like video decoding and
+encoding, audio encoding and decoding, audio and video filters, audio
+visualisation, Web streaming and anything else that streams in real-time or
+otherwise. It is modelled after research software worked on at the Oregon
+Graduate Institute.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --libexecdir=/usr/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

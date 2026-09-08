@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=boost
+version=1.44.0
+actualVersion=1_44_0
+group=Libraries/Shared
+license=boost
+description="Boost C++ libraries"
+src="b/boost/${name}_${actualVersion}.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Boost C++ Libraries are open source, peer-reviewed, portable and free.
+EOF
+}
+
+buildPhase()
+{
+    ./bootstrap.sh --prefix=/usr --with-toolset=gcc --with-bjam=/usr/bin/bjam
+    bjam
+}
+
+installPhase()
+{
+    bjam install
+}

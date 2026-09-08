@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/binutils
+
+group=lfs-stage1
+patches=("b/binutils/$name-$version-configure-1.patch")
+workDir=$name-$version
+
+buildPhase()
+{
+    mkdir ../$name-build
+    cd ../$name-build
+
+    CC="gcc -B/usr/bin/" ../$name-$version/configure \
+        --prefix=/tools --disable-nls --disable-werror
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd ../$name-build
+    make install
+
+    # Prepare the linker for the adjusting phase later on
+    make -C ld clean
+    make -C ld LIB_PATH=/tools/lib
+    cp -v ld/ld-new /tools/bin
+}

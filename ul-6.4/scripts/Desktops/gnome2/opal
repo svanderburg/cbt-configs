@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=opal
+version=3.6.8
+group=Desktops/gnome2
+license=MPLv1.0
+description="Open Phone Abstraction Library"
+src="o/opal/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Open Phone Abstraction Library (OPAL) continues the open-source openh323
+project to support a wide range of commonly used protocols used to send voice,
+video and fax data over IP networks rather than being tied to the H.323
+protocol. Initially, from 2007, OPAL supported the H.323 and Session Initiation
+Protocol (SIP) protocols, but it has grown to include Asterisk IAX2. 
+EOF
+}
+
+buildPhase()
+{
+    # Remove non-compiling plugins (they are not compatible with our version of ffmpeg)
+    rm -rf plugins/video/H.264
+    rm -rf plugins/video/H.263-1998
+    rm -rf plugins/video/MPEG4-ffmpeg
+
+    LIBS='-L/opt/unixODBC/lib' \
+        ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

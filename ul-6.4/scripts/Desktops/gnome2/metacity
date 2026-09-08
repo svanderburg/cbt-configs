@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=metacity
+version=2.30.3
+group=Desktops/gnome2
+license=GPLv2
+description="Metacity window manager"
+src="m/metacity/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Metacity package contains a window manager.
+
+Metacity is not a meta-City as in an urban center, but rather
+Meta-ness as in the state of being meta. i.e. metacity : meta as
+opacity : opaque. Also it may have something to do with the Meta key
+on UNIX keyboards.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/metacity \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --with-gconf-schema-file-dir=/etc/opt/gnome-$gnome2Version/gconf/schemas
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

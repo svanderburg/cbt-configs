@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=rarian
+version=0.8.1
+group=Libraries/Desktop
+license=LGPLv2.1
+description="Rarian metadata library"
+src="r/rarian/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Rarian is a documentation metadata library based on the proposed Freedesktop.org
+spec.
+
+Rarian is designed to be a replacement for scrollkeeper. It is
+currently undergoing heavy development. As of writing, rarian can be
+installed in place of scrollkeeper and everything will work okay (as
+far as my testing indicates)
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --localstatedir=/var
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

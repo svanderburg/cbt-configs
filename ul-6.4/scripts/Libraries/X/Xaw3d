@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=Xaw3d
+version=1.5E
+group=Libraries/X
+license=MIT
+description="X Athena Widgets 3D library"
+src="x/Xaw3d/$name-$version.tar.gz"
+patches=("x/Xaw3d/$name-$version.diff.gz" "x/Xaw3d/$name-1.5-debian-fixes.diff.gz")
+workDir=.
+
+showLongDescription()
+{
+    cat << "EOF"
+Xaw3d is based on X.Org's X11R6.3 Athena toolkit, with bits and pieces thrown in
+from other sources. It is intended to be a general-purpose replacement for the
+Athena (Xaw) toolkit.
+
+In general, you should be able to link almost any Athena-based application to
+this Xaw3d Athena toolkit, for a three-dimensional appearance on most of the
+widgets. On systems with shared libraries, you might be able replace your shared
+libXaw.* with libXaw3d.* to obtain the appearance without even relinking, but
+the odds of this working is slim, and not recommended.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    cd xc/lib/Xaw3d
+
+    mkdir X11
+    cd X11
+    ln -fs .. Xaw3d
+    cd ..
+
+    sed -i 's/XCOMM EXTRA_INCLUDES/EXTRA_INCLUDES/' Imakefile
+
+    xmkmf
+    make depend
+    make
+}
+
+installPhase()
+{
+    cd xc/lib/Xaw3d
+
+    make install
+}

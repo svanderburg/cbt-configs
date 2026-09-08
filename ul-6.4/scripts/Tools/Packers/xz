@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xz
+version=5.0.0
+group=Tools/Packers
+license=PD/LGPLv2.1/GPLv2
+description="xz compressor and decompressor"
+src="x/xz/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+XZ Utils provide a general-purpose data compression library and command line
+tools. The native file format is the .xz format, but also the legacy .lzma
+format is supported. The .xz format supports multiple compression algorithms,
+which are called "filters" in context of XZ Utils. The primary filter is
+currently LZMA2. With typical files, XZ Utils create about 30 % smaller files
+than gzip.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    install -m644 $cbtBaseDir/cbt/unpack-plugins/xz /usr/share/cbt/unpack-plugins
+}

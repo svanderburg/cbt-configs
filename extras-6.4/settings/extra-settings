@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+xorgVersion=7.3
+gnome2Version=2.32.1
+kdeVersion=3.5.10
+
+sourcesDir=/mnt/source
+
+set +h
+umask 022

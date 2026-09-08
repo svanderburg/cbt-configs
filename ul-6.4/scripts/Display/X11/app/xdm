@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xdm
+version=1.1.6
+group=Display/X11/app
+license=MIT
+description="xdm"
+src="x/xorg/app/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+X.org generated app package: xdm
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG --with-xorg-module-dir=/usr/X11R7.3/lib/X11/modules
+    make
+}
+
+installPhase()
+{
+    make install
+
+    # Create pam.d entry
+
+    cat > /etc/pam.d/xdm << "EOF"
+auth        required     pam_unix.so
+auth        requisite    pam_nologin.so
+account     required     pam_unix.so
+password    required     pam_unix.so
+session     required     pam_unix.so
+EOF
+
+    # Change shebang line to load profile settings in each X session
+    sed -i 's|#!/bin/sh|#!/bin/bash --login|' /etc/X11/xdm/Xsession
+
+    # Prevent 'XDM authorization key matches an existing client!' error
+    echo 'DisplayManager*authName: MIT-MAGIC-COOKIE-1' >> /etc/X11/xdm/xdm-config
+}

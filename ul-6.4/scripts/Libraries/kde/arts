@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=arts
+version=1.5.10
+group=Libraries/kde
+license=LGPLv2
+description="Arts audio server"
+src="a/arts/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Analog Real-time Synthesizer (aRts) provides sound support for KDE and
+necessary libraries for kdelibs.
+EOF
+}
+
+buildPhase()
+{
+    # Fix compiliation error
+    sed -i '1i\
+#include <linux/limits.h>
+' mcop/mcoputils.cc
+
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    ln -sfn /opt/kde-$kdeVersion /opt/kde
+
+    install -m755 $cbtBaseDir/profile.d/23kde.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/23kde.csh /etc/profile.d
+    fi
+}

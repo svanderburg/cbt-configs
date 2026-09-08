@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mc
+version=4.6.1
+group=Applications
+license=GPLv2
+description="Midnight Commander"
+src="m/mc/$name-$version.tar.gz"
+patches=("m/mc/$name-$version-bash32-1.patch" "m/mc/$name-$version-debian_fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU Midnight Commander (also referred to as MC) is a user shell with
+text-mode full-screen interface.  It can be run on the OS console,
+in xterm and other terminal emulators.
+
+GNU Midnight Commander allows you to manage files while making most of
+you screen and giving you a clear representation of the filesystem, yet
+it's simple enough to be run over a telnet or ssh session.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    CPPFLAGS="-DUTF8" ./configure --prefix=/usr --enable-charset
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    chmod 1755 /usr/lib/mc/cons.saver
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gettext
+version=1.04
+group=Libraries/Shared
+license=GPLv2
+description="Perl 5 module giving access to gettext"
+src="g/gettext/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is a perl5 module quickly written to gain access to
+the C library functions for internatialization. They
+work just like the C versions.
+EOF
+}
+
+buildPhase()
+{
+    perl Makefile.PL
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

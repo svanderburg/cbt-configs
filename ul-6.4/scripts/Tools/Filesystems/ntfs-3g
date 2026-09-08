@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ntfs-3g
+version=2009.4.4
+group=Tools/Filesystems
+license=GPLv2
+description="Full NTFS filesystem support"
+src="n/ntfs-3g/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The NTFS-3G driver is an open source, freely available read/write NTFS driver 
+for Linux, FreeBSD, Mac OS X, NetBSD, Solaris and Haiku. It provides safe and 
+fast handling of the Windows XP, Windows Server 2003, Windows 2000, Windows 
+Vista, and Windows Server 2008 file systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

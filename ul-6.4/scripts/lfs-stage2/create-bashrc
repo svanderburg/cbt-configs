@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=create-bashrc
+group=lfs-stage2
+description="Creates a basic bashrc config"
+
+execute()
+{
+    cat > /etc/bashrc << "EOF"
+# Begin /etc/bashrc
+
+# Provides a colored /bin/ls command
+alias ls='ls --color=auto'
+
+# Configure prompt
+
+NORMAL="\[\e[0m\]"
+RED="\[\e[1;31m\]"
+GREEN="\[\e[1;32m\]"
+
+if [[ $EUID == 0 ]]
+then
+    PS1="$RED\u [ $NORMAL\w$RED ]# $NORMAL"
+else
+    PS1="$GREEN\u [ $NORMAL\w$GREEN ]\$ $NORMAL"
+fi
+
+# End /etc/bashrc
+EOF
+
+    mkdir -p /etc/skel
+
+    cat > /etc/skel/.bashrc << "EOF"
+# Begin ~/.bashrc
+
+if [ -f "/etc/bashrc" ]
+then
+    source /etc/bashrc
+fi
+
+# End ~/.bashrc
+EOF
+
+    cp /etc/skel/.bashrc /root
+}

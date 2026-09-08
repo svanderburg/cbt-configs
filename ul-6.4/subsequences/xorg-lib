@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+libXorgScripts="\
+Display/X11/lib/xtrans \
+Display/X11/lib/libX11 \
+Display/X11/lib/libXext \
+Display/X11/lib/libAppleWM \
+Display/X11/lib/libFS \
+Display/X11/lib/libICE \
+Display/X11/lib/libSM \
+Display/X11/lib/libWindowsWM \
+Display/X11/lib/libXScrnSaver \
+Display/X11/lib/libXt \
+Display/X11/lib/libXTrap \
+Display/X11/lib/libXmu \
+Display/X11/lib/libXpm \
+Display/X11/lib/libXaw \
+Display/X11/lib/libXfixes \
+Display/X11/lib/libXcomposite \
+Display/X11/lib/libXrender \
+Display/X11/lib/libXcursor \
+Display/X11/lib/libXdamage \
+Display/X11/lib/libXevie \
+Display/X11/lib/libfontenc \
+Display/X11/lib/libXfont \
+Display/X11/lib/libXfontcache \
+Display/X11/lib/libXft \
+Display/X11/lib/libXi \
+Display/X11/lib/libXinerama \
+Display/X11/lib/libXp \
+Display/X11/lib/libXprintUtil \
+Display/X11/lib/libXprintAppUtil \
+Display/X11/lib/libXrandr \
+Display/X11/lib/libXres \
+Display/X11/lib/libXtst \
+Display/X11/lib/libXv \
+Display/X11/lib/libXvMC \
+Display/X11/lib/libXxf86dga \
+Display/X11/lib/libXxf86misc \
+Display/X11/lib/libXxf86vm \
+Display/X11/lib/libdmx \
+Display/X11/lib/liblbxutil \
+Display/X11/lib/liboldX \
+Display/X11/lib/libxkbfile \
+Display/X11/lib/libxkbui \
+"

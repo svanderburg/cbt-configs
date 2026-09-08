@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=audacious-plugins
+version=2.4.5
+group=Applications
+license=BSD-3
+description="Audacious plugins"
+src="a/audacious-plugins/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Various plugins enhancing the functionality of the Audacious player.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if [ "$audaciousAllowSSE2" = "" ] || [ "$audaciousAllowSSE2" = "0" ]
+    then
+        extraArgs="--disable-sse2"
+    fi
+
+    LIBS="-L/usr/X11R$xorgVersion/lib" \
+        ./configure --prefix=/usr $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

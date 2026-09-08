@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libbs2b
+version=3.1.0
+group=Libraries/Sound
+license=MIT
+description="Bauer stereophonic-to-binaural DSP library"
+src="l/libbs2b/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Bauer stereophonic-to-binaural DSP (bs2b) is designed to improve headphone
+listening of stereo audio records.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

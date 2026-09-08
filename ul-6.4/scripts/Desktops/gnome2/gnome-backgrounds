@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-backgrounds
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME Backgrounds"
+src="g/gnome-backgrounds/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This module contains a set of backgrounds packaged with the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

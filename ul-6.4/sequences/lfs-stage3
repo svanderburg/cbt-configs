@@ -1,0 +1,65 @@
+#!/bin/bash -e
+
+optional="false"
+
+scripts="\
+Tools/Additional/checkinstall \
+Tools/Base/linux-headers \
+Tools/Base/man-pages \
+Tools/Base/glibc \
+Tools/Base/binutils \
+Tools/Base/gmp \
+Tools/Base/mpfr \
+Tools/Base/gcc \
+Tools/Base/db \
+Tools/Base/sed \
+Tools/Base/e2fsprogs \
+Tools/Base/coreutils \
+Tools/Base/iana-etc \
+Tools/Base/m4 \
+Tools/Base/bison \
+Tools/Base/ncurses \
+Tools/Base/procps \
+Tools/Base/libtool \
+Tools/Base/zlib \
+Tools/Base/zlib-static \
+Tools/Base/perl \
+Tools/Base/readline \
+Tools/Base/autoconf \
+Tools/Base/automake \
+Tools/Base/bash \
+Tools/Base/bzip2 \
+Tools/Base/diffutils \
+Tools/Base/file \
+Tools/Base/gawk \
+Tools/Base/findutils \
+Tools/Base/flex \
+Tools/Base/grub \
+Tools/Base/gettext \
+Tools/Base/grep \
+Tools/Base/groff \
+Tools/Base/gzip \
+Tools/Base/inetutils \
+Tools/Base/iproute2 \
+Tools/Base/kbd \
+Tools/Base/less \
+Tools/Base/make \
+Tools/Base/man-db \
+Tools/Base/module-init-tools \
+Tools/Base/patch \
+Tools/Base/psmisc \
+Tools/Base/Linux-PAM \
+Tools/Base/shadow \
+Tools/Base/sysklogd \
+Tools/Base/sysvinit \
+Tools/Base/tar \
+Tools/Base/texinfo \
+Tools/Base/udev \
+Tools/Base/util-linux-ng \
+Tools/Base/vim \
+Tools/Base/lfs-bootscripts \
+Tools/Additional/dialog \
+Tools/Additional/tar113 \
+Tools/Additional/pkgtools \
+Tools/Additional/which \
+"

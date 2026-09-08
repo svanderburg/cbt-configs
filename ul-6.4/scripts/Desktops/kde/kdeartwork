@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeartwork
+version=3.5.10
+group=Desktops/kde
+license=GFDLv1.2
+description="KDE artwork"
+src="k/kdeartwork/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains additional
+
+* themes,
+* screensaver,
+* sounds,
+* wallpapers,
+* widget styles and
+* window styles
+
+for KDE. We placed them into this module so that kdebase won't be too bloated.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

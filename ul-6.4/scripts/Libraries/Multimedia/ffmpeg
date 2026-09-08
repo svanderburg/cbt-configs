@@ -1,0 +1,93 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ffmpeg
+version=0.6.1
+group=Libraries/Multimedia
+license=GPLv2
+description="FFmpeg library"
+src="f/ffmpeg/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A complete, cross-platform solution to record, convert and stream audio and
+video.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if pkg-config --libs vorbis
+    then
+        extraArgs="--enable-libvorbis"
+    fi
+
+    if pkg-config --libs theora
+    then
+        extraArgs="$extraArgs --enable-libtheora"
+    fi
+
+    if pkg-config --libs speex
+    then
+        extraArgs="$extraArgs --enable-libspeex"
+    fi
+
+    if which faac
+    then
+        extraArgs="$extraArgs --enable-libfaac"
+    fi
+    
+    if which faad
+    then
+        extraArgs="$extraArgs --enable-libfaad"
+    fi
+
+    if lame --help > /dev/null
+    then
+        extraArgs="$extraArgs --enable-libmp3lame"
+    fi
+
+    if [ -f /usr/include/xvid.h ]
+    then
+        extraArgs="$extraArgs --enable-libxvid"
+    fi
+
+    if x264 --help > /dev/null
+    then
+        extraArgs="$extraArgs --enable-libx264"
+    fi
+
+    if pkg-config --libs opencore-amrnb
+    then
+        extraArgs="$extraArgs --enable-libopencore-amrnb --enable-version3"
+    fi
+
+    if pkg-config --libs opencore-amrwb
+    then
+        extraArgs="$extraArgs --enable-libopencore-amrwb"
+    fi
+
+    if toast -h > /dev/null
+    then
+        extraArgs="$extraArgs --enable-libgsm"
+    fi
+
+    ./configure --prefix=/usr \
+        --enable-shared \
+        --enable-pthreads \
+        --enable-gpl \
+        --enable-postproc --enable-x11grab \
+        --enable-nonfree \
+	$extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=thunderbird-config
+group=Applications
+description="Global configuration settings for Thunderbird"
+
+execute()
+{
+    echo "/opt/thunderbird/lib/thunderbird-$thunderbirdVersion" >> /etc/ld.so.conf
+    ldconfig
+}

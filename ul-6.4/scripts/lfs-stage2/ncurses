@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/ncurses
+
+group=lfs-stage2
+patches=("n/ncurses/$name-$version-coverity_fixes-1.patch")
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-shared --without-debug --enable-widec
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    chmod -v 644 /usr/lib/libncurses++w.a
+    mv -v /usr/lib/libncursesw.so.5* /lib
+    ln -sfv ../../lib/libncursesw.so.5 /usr/lib/libncursesw.so
+
+    for lib in curses ncurses form panel menu
+    do
+        rm -vf /usr/lib/lib${lib}.so
+        echo "INPUT(-l${lib}w)" >/usr/lib/lib${lib}.so
+        ln -sfv lib${lib}w.a /usr/lib/lib${lib}.a
+    done
+    ln -sfv libncurses++w.a /usr/lib/libncurses++.a
+
+    rm -vf /usr/lib/libcursesw.so
+    echo "INPUT(-lncursesw)" >/usr/lib/libcursesw.so
+    ln -sfv libncurses.so /usr/lib/libcurses.so
+    ln -sfv libncursesw.a /usr/lib/libcursesw.a
+    ln -sfv libncurses.a /usr/lib/libcurses.a
+
+    mkdir -pv /usr/share/doc/$name-$version
+    cp -v -R doc/* /usr/share/doc/$name-$version
+}

@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sqlite3
+version=3.7.5
+pkgVersion=3070500
+group=Libraries/Storage
+license=PD
+description="Embedded SQL database"
+src="s/sqlite3/sqlite-autoconf-$pkgVersion.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+SQLite is a C-language library that implements a small, fast, self-contained,
+high-reliability, full-featured, SQL database engine.
+EOF
+}
+
+buildPhase()
+{
+    CFLAGS="$CFLAGS -DSQLITE_SECURE_DELETE -DSQLITE_ENABLE_UNLOCK_NOTIFY=1" \
+        ./configure --prefix=/usr \
+        --enable-threadsafe \
+        --enable-readline \
+        --enable-dynamic-extensions
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

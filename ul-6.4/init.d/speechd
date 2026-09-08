@@ -1,0 +1,39 @@
+#!/bin/sh
+# Begin $rc_base/init.d/xinetd
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+export PATH=$PATH:/opt/festival/bin
+
+case "$1" in
+	start)
+		boot_mesg "Starting speech daemon..."
+		loadproc /usr/bin/speechd
+		;;
+
+	stop)
+		boot_mesg "Stopping speech daemon..."
+		killproc /usr/bin/speechd
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/bin/speechd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/speechd

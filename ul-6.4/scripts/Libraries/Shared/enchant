@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=enchant
+version=1.6.0
+group=Libraries/Shared
+license=LGPLv2.1
+description="Enchant spell checker library"
+src="e/enchant/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libenchant aims to provide an efficient extensible abstraction for dealing with
+different spell checking libraries.
+
+Enchant is meant to provide a generic interface into various existing
+spell checking libaries. These include, but are not limited to:
+* Aspell/Pspell
+* Ispell
+* Hspell
+* Uspell
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,144 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gcc295
+name2=gcc
+version=2.95.3
+group=Tools/Development
+license=GPLv2
+description="GNU Compiler Collection"
+srcs=("g/gcc/$name2-$version.tar.gz" "g/glibc/glibc-2.8-20080929.tar.bz2")
+patches=("g/gcc/$name2-$version-2.patch.bz2" "g/gcc/$name2-$version-no_fixinc-1.patch" "g/gcc/$name2-$version-returntype-fix.patch")
+workDir=$name2-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+Fortran, and Java well as libraries for these languages (libstdc++,...).
+
+GCC was originally written as the compiler for the GNU operating system.
+
+This old version of the compiler is included for these libraries:
+
+libstdc++-libc6.1-1.so.2
+libstdc++-libc6.2-2.so.3
+libstdc++-libc6.3-2.so.3
+
+These libraries can still provide ABI compatibility with old binary programs
+written in C++, such as games from Loki entertainment, such as
+Unreal Tournament.
+EOF
+}
+
+buildPhase()
+{
+    # Force using GCC 3.4.6
+    export PATH=/opt/gcc-3.4.6/bin:$PATH
+    export CC=/opt/gcc-3.4.6/bin/gcc
+    
+    # The GCC build procedure relies on old behaviour of the tail command that
+    # is invalid with newer versions. Using this environment variable makes it
+    # possible to follow an old POSIX standard to fix it
+    export _POSIX2_VERSION=199209
+
+    # This version has incompatibilities with certain glibc headers
+    # We make copies of them, modify them, and then include the fixed versions
+    # Inspiration is from: https://www.trevorpounds.com/blog/?p=111
+
+    mkdir -pv glibc-workaround/include/bits
+    cp -v ../glibc-2.8-20080929/bits/stdio-lock.h glibc-workaround/include/bits
+    cp -v ../glibc-2.8-20080929/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h glibc-workaround/include/bits
+    cp -v ../glibc-2.8-20080929/nptl/lowlevellock.h glibc-workaround/include
+
+    sed -i -n '1h;1!H;${;g;s/\(__pthread_slist_t __list;\n[ \t]*}\)/\1 __gcc_295_workaround__/g;p;}' glibc-workaround/include/bits/pthreadtypes.h
+
+    sed -i 's|GCC_CFLAGS=|GCC_CFLAGS=-I$(srcdir)/../glibc-workaround/include $(CFLAGS_FOR_TARGET) |' gcc/Makefile.in
+    sed -i 's|-D_IO_MTSAFE_IO|-D_IO_MTSAFE_IO -D__extern_inline='"'"'extern __inline'"'"' -I${srcdir}/../glibc-workaround/include|' libio/config/mtsafe.mt
+    sed -i 's|-D_IO_MTSAFE_IO|-D_IO_MTSAFE_IO -D__extern_inline='"'"'extern __inline'"'"' -I${srcdir}/../glibc-workaround/include|' libstdc++/config/linux.mt
+
+    # Some C++ modules in the libio/ directory indirectly call the functions:
+    # _pthread_cleanup_push_defer and _pthread_cleanup_pop_restore . These
+    # functions are not declared in any public headers. In C++ code, function
+    # names get mangled by default. As a result, running a C++ binary fails
+    # with the following runtime error:
+    #
+    # symbol lookup error: /usr/lib/libstdc++-libc6.1-1.so.2: undefined symbol: _pthread_cleanup_push_defer__FP23_pthread_cleanup_bufferPFPv_vPv 
+    #
+    # To circumvent this problem, we must make sure the name of this function
+    # name doesn't get mangled. We add an extern "C" prototype declaration to
+    # the beginning of the affected modules, so that the normal C function name
+    # is used. This trick prevents the error.
+
+    sed -i '1i\
+#include <pthread.h>\
+extern "C" void _pthread_cleanup_push_defer(struct _pthread_cleanup_buffer *, void (*)(void *), void*);\
+extern "C" void _pthread_cleanup_pop_restore(_pthread_cleanup_buffer *, int);
+' libio/osform.cc
+    sed -i '1i\
+#include <pthread.h>\
+extern "C" void _pthread_cleanup_push_defer(struct _pthread_cleanup_buffer *, void (*)(void *), void*);\
+extern "C" void _pthread_cleanup_pop_restore(_pthread_cleanup_buffer *, int);
+' libio/isscan.cc
+    sed -i '1i\
+#include <pthread.h>\
+extern "C" void _pthread_cleanup_push_defer(struct _pthread_cleanup_buffer *, void (*)(void *), void*);\
+extern "C" void _pthread_cleanup_pop_restore(_pthread_cleanup_buffer *, int);
+' libio/iostream.cc
+    sed -i '1i\
+#include <pthread.h>\
+extern "C" void _pthread_cleanup_push_defer(struct _pthread_cleanup_buffer *, void (*)(void *), void*);\
+extern "C" void _pthread_cleanup_pop_restore(_pthread_cleanup_buffer *, int);
+' libio/isgetline.cc
+    sed -i '1i\
+#include <pthread.h>\
+extern "C" void _pthread_cleanup_push_defer(struct _pthread_cleanup_buffer *, void (*)(void *), void*);\
+extern "C" void _pthread_cleanup_pop_restore(_pthread_cleanup_buffer *, int);
+' libio/isgetsb.cc
+
+    # Perform the build
+
+    export CFLAGS="-I$(pwd)/glibc-workaround/include"
+    unset CXXFLAGS || true
+
+    mkdir ../$name2-build
+    cd ../$name2-build
+
+    ../$name2-$version/configure --prefix=/opt/$name2-$version \
+        --enable-shared --enable-languages=c,c++ \
+        --enable-threads=posix --mandir=/opt/$name2-$version/share/man \
+	--infodir=/opt/$name2-$version/share/info
+    make bootstrap
+}
+
+installPhase()
+{
+    # Force using GCC 3.4.6
+    export PATH=/opt/gcc-3.4.6/bin:$PATH
+    export CC=/opt/gcc-3.4.6/bin/gcc
+
+    cd ../$name2-build
+
+    make install
+
+    # Take note of all libstdc++ library variants
+    L=`find /opt/gcc-2.95.3/lib -name "*libstdc++*.so" -type f`
+    IL=`basename $L`
+
+    # Move the C++ libraries to /usr/lib so that they can be found by the dynamic linker
+    for i in /opt/gcc-2.95.3/lib/*.so*
+    do
+        mv -f $i /usr/lib
+        ln -sf /usr/lib/`basename $i` /opt/gcc-2.95.3/lib
+    done
+
+    # Create the symlinks to facilitate libraries required by binary packages
+    ln -sf $IL /usr/lib/libstdc++-libc6.1-1.so.2
+    ln -sf $IL /usr/lib/libstdc++-libc6.2-2.so.3
+    ln -sf $IL /usr/lib/libstdc++-libc6.3-2.so.3
+
+    # Fix permisions
+    chown -R root:root /opt/$name2-$version/lib/gcc-lib
+}

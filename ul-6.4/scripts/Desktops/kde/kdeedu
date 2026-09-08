@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdeedu
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE eduntainment"
+src="k/kdeedu/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of entertaining educational applications for the KDE desktop:
+
+* blinken: the KDE version of the well-known game Simon Says
+* kalzium: periodic table of elements
+* kanagram: an anagram game
+* kbruch: fraction excercise trainer
+* keduca: creation and revision of form-based tests and exams.
+* kgeography: geography learning program
+* khangman: hangman game. The child should guess a word letter by letter.
+* kig: interactive geometry
+* kiten: japanese reference tool
+* klatin: aims to help revise or learn Latin
+* klettres: helps child to learn the alphabet and to read some syllables
+* kmplot: mathematical function plotter
+* kpercentage: math application to improve skills in calculating percentages
+* kstars: desktop planetarium
+* ktouch: program for learning touch typing
+* kturtle: educational programming environment using the Logo programming
+  language
+* kverbos: tudy Spanish verb forms
+* kvoctrain: vocabulary trainer
+* kwordquiz: a powerful way to master new vocabularies
+EOF
+}
+
+buildPhase()
+{
+    # Fix python detection
+    sed -i 's/python2.5/python2.6/' configure
+
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

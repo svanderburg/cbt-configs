@@ -1,0 +1,67 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=lesstif
+version=0.95.2
+group=Libraries/X
+license=LGPLv2.1
+description="Motif compatible implementation"
+src="l/lesstif/$name-$version.tar.bz2"
+patches=("l/lesstif/$name-$version-testsuite_fix-1.patch")
+showLongDescription()
+{
+    cat << "EOF"
+LessTif is the Hungry Programmers' version of the OSF/Motif GUI toolkit. It aims
+to be source compatible meaning that the same source code should compile with
+both and work exactly the same!
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    sed -i -e '/ShellP/d' \
+       -e '/XMLIBEXPORT extern Cardinal/i#include <X11/ShellP.h>\n' \
+    include/Motif-2.1/Xm/VendorSP.h
+
+    ./configure --prefix=/usr/X11R$xorgVersion \
+        --sysconfdir=/etc/X11 \
+        --disable-debug \
+        --enable-production \
+        --with-xdnd
+    make $globalBuildOptions rootdir=/usr/share/doc/$name-$version
+}
+
+installPhase()
+{
+    make rootdir=/usr/share/doc/$name-$version install
+
+    # Add xinitrc option
+    cat > /etc/X11/xinit/xinitrc.mwm << "EOF"
+#!/bin/sh
+
+exec mwm
+EOF
+
+    mkdir -p /usr/share/ul/ul-xinit
+    cat > /usr/share/ul/ul-xinit/mwm << "EOF"
+description="Lesstif (Motif) Window Manager"
+EOF
+
+    # Add xsession option for non XDG compliant display managers
+    mkdir -p /usr/share/ul/ul-xsession/sessions
+    install -m755 $cbtBaseDir/plugins/ul-xsession/sessions/mwm /usr/share/ul/ul-xsession/sessions
+
+    # Add xsession option for XDG compliant display managers
+    mkdir -p /etc/X11/sessions
+    cat > /etc/X11/sessions/mwm.desktop << "EOF"
+[Desktop Entry]
+Type=XSession
+Exec=mwm
+Name=MWM
+Comment=The Motif Window Manager
+EOF
+}

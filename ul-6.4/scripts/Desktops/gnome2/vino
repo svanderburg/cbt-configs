@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=vino
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="VNC server for GNOME"
+src="v/vino/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The package contains an integrated VNC server for GNOME.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/vino
+    make
+}
+
+installPhase()
+{
+    make install
+}

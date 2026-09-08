@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dhcpcd
+version=4.0.11
+group=Network/Clients
+license=GPLv2
+description="DHCP client"
+src="d/dhcpcd/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The dhcpcd package contains the dhcpcd client. This is useful for connecting
+your computer to a network which uses DHCP to assign network addresses.
+EOF
+}
+
+buildPhase()
+{
+    make PREFIX= \ LIBEXECDIR=/lib/dhcpcd DBDIR=/var/lib/dhcpcd SYSCONFDIR=/etc/dhcpcd
+}
+
+installPhase()
+{
+    make PREFIX= \ LIBEXECDIR=/lib/dhcpcd DBDIR=/var/lib/dhcpcd SYSCONFDIR=/etc/dhcpcd install
+    sed -i "s;/var/lib/dhcpcd-;/var/lib/dhcpcd/dhcpcd-;g" \
+        dhcpcd-hooks/50-dhcpcd-compat
+        install -v -m 644 dhcpcd-hooks/50-dhcpcd-compat /lib/dhcpcd/dhcpcd-hooks/
+
+    # Install extra service making it possible to use dhcpcd to configure network interfaces
+    install -m754 $cbtBaseDir/services/dhcpcd /etc/sysconfig/network-devices/services
+}

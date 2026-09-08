@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=atk
+version=1.32.0
+group=Libraries/gnome2
+license=LGPLv2
+description="Accessibility toolkit"
+src="a/atk/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The ATK package contains the ATK libraries. They are useful for allowing
+accessibility solutions to be available for all GTK2 applications.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

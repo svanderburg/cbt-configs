@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gimp-help
+version=2.6.2
+group=Applications
+license=GFDLv1.2
+description="GNU Image Manipulation Program help files"
+src="g/gimp-help/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GIMP-Help is a help system designed for use with the internal GIMP help
+browser, external web browser and HTML renderers, and human eyeballs. 
+Docbook is used to create a highly customizable system for all needs. 
+EOF
+}
+
+buildPhase()
+{
+    ./configure
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+
+    make install
+}

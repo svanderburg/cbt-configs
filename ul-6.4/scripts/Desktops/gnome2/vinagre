@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=vinagre
+version=2.30.3
+group=Desktops/gnome2
+license=GPLv3
+description="Vinagre remote desktop viewer"
+src="v/vinagre/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is vinagre, a remote desktop viewer for the GNOME Desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/vinagre-1
+    make
+}
+
+installPhase()
+{
+    make install
+}

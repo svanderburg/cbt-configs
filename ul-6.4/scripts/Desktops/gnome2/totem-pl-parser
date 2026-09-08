@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=totem-pl-parser
+version=2.32.0
+group=Desktops/gnome2
+license=LGPLv2
+description="Totem playlist parser"
+src="t/totem-pl-parser/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+totem-pl-parser is a simple GObject-based library to parse a host of
+playlist formats, as well as save those
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

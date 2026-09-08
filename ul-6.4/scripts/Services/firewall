@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployTrivialPackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=firewall
+group=Services
+description="Firewall script"
+
+showLongDescription()
+{
+    cat << "EOF"
+A script making it possible to configure a firewall. It supports a personal
+firewall and router configuration. Incoming ports can also be configured.
+EOF
+}
+
+installPhase()
+{
+    install -m754 $cbtBaseDir/init.d/firewall /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/firewall /usr/share/ul/ul-init
+}

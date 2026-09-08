@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libbonoboui
+version=2.24.4
+group=Libraries/gnome2
+license=LGPLv2.1
+description="Component and compound document system GUI parts"
+src="l/libbonoboui/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains GUI related parts to libbonobo.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

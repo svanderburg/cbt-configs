@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cheese
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="Cheese webcam recorder"
+src="c/cheese/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Take photos and videos with your webcam, with fun graphical effects.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/cheese
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

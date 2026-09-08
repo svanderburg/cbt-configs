@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=vte
+version=0.26.2
+group=Desktops/gnome2
+license=LGPLv2
+description="Virtual Terminal Emulator"
+src="v/vte/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+VTE is a library (libvte) implementing a terminal emulator widget for GTK+,
+and a minimal sample application (vte) using that.  Vte is mainly used in
+gnome-terminal, but can also be used to embed a console/terminal in games,
+editors, IDEs, etc.
+
+VTE supports Unicode and character set conversion, as well as emulating any
+terminal known to the system's terminfo database.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    sed -i 's%\\177:%&kh=\\EOH:@7=\\EOF:%' termcaps/xterm
+
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/vte
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

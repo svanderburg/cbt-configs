@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=p7zip
+version=9.13
+group=Tools/Packers
+license=PD/LGPLv2
+description="Portable 7zip"
+src="p/p7zip/${name}_${version}_src_all.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+p7zip is a port of the Windows programs 7z.exe and 7za.exe provided by 7-zip.
+
+7-zip is a file archiver with the highest compression ratio.
+Homepage : www.7-zip.org
+EOF
+}
+
+buildPhase()
+{
+    make DEST_HOME=/usr all3
+}
+
+installPhase()
+{
+    make DEST_HOME=/usr install
+}

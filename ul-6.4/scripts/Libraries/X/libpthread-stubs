@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libpthread-stubs
+version=0.1
+group=Libraries/X
+license=X11
+description="libpthread-stubs"
+src="l/libpthread-stubs/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library provides weak aliases for pthread functions not provided in libc
+or otherwise available by default.
+
+Libraries like libxcb rely on pthread stubs to use pthreads optionally, becoming
+thread-safe when linked to libpthread, while avoiding any performance hit when
+running single-threaded. libpthread-stubs supports this behavior even on
+platforms which do not supply all the necessary pthread stubs.
+
+On platforms which already supply all the necessary pthread stubs, this package
+ships only the pkg-config file pthread-stubs.pc, to allow libraries to
+unconditionally express a dependency on pthread-stubs and still obtain correct
+behavior.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=$XORG_PREFIX
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

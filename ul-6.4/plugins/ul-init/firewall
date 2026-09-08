@@ -1,0 +1,5 @@
+description="Network firewall"
+startSequenceNumber=21
+stopSequenceNumber=79
+startRunLevels="3 4 5"
+stopRunLevels="0 1 2 6"

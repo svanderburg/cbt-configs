@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdemultimedia
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE multimedia"
+src="k/kdemultimedia/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection of multimedia applications for KDE, such as:
+
+* noatun: a multimedia player for sound and movies, very extensible due to
+          it's plugin interface
+* aktion: a player specialiced on movies, needs xanim
+* kaudiocreator: CD ripper and audio encoder frontend.
+* kaboodle: light media player
+* kmid: A standalone and embeddable midi player, includes a karaoke-mode
+* kmidi: midi player, can use sound patch files and create a WAV file
+* kmix: the audio mixer as a standalone program and Kicker applet
+* kscd: A CD player with an interface to the internet CDDB database
+* krec: A recording frontend using aRts
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --sysconfdir=/etc/opt/kde-$kdeVersion \
+        --disable-debug --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

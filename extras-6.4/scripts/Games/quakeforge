@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=quakeforge
+version=0.5.5
+group=Games
+license=GPLv2
+description="Quake port"
+src="q/quakeforge/$name-$version.tar.bz2"
+patches=("q/quakeforge/$name-$version-gcc4.patch" "q/quakeforge/$name-$version-fbdev.patch")
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="Quakeforge"
+genericName="Shoot em up game"
+exec=/usr/local/bin/nq-sdl
+comment="Quake port"
+categories="Game;Shooter;"
+
+showLongDescription()
+{
+    cat << "EOF"
+QuakeForge is a 3D first-person shooter game engine based on id Software's
+legendary Quake and QuakeWorld game engines. Its purpose is to improve the state
+of the game by improving the engine, making a good base for game and engine
+modifications, and making it accessible to a large number of players.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    # We're missing a constant INFINITY. This simulates it
+    #sed -i '1i\
+#define INFINITY 1e10000f' tools/qfcc/source/expr.c
+
+    ./configure
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

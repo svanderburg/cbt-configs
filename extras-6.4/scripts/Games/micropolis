@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=micropolis
+version=noversion
+group=Games
+license=GPLv3
+description="City simulation game"
+src="m/micropolis/$name-activity-source.tgz"
+patches=("m/micropolis/${name}_git.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Micropolis is the result of the SimCity for X11 source code release under the
+GPLv3 or later license for the One Laptop Per Child (OLPC) program. The game
+was renamed to Micropolis for trademark reasons.
+EOF
+}
+
+buildPhase()
+{
+    make LIBEXECDIR=/usr/local/lib/micropolis
+}
+
+installPhase()
+{
+    make LIBEXECDIR=/usr/local/lib/micropolis install
+}

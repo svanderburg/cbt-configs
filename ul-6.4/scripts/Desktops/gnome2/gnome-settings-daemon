@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-settings-daemon
+version=2.32.1
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GNOME Settings Daemon"
+src="g/gnome-settings-daemon/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-settings-daemon provides many session-wide services and functions that
+require a long-running process. Among the services implemented by
+gnome-settings-daemon are an XSettings manager, which provides theming, font and
+other settings to GTK+ applications, and a clipboard manager, which preserves
+clipboard contents when an application exits. Many user interface elements of
+gnome-shell and gnome-control-center rely on gnome-settings-daemon for their
+functionality.
+EOF
+}
+
+buildPhase()
+{
+    LIBS="-L/usr/X11R$xorgVersion/lib" \
+        ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gnome-settings-daemon-2.0 \
+        --localstatedir=/var/lib \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

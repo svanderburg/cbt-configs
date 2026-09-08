@@ -1,0 +1,98 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gdm
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME Display Manager"
+src="g/gdm/$name-$version.tar.bz2"
+patches=("g/gdm/$name-$version-fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNOME Display Manager is a system service that is responsible for
+providing graphical log-ins and managing local and remote displays.
+EOF
+}
+
+preConfigurePhase()
+{
+    groupadd -g 21 gdm
+    useradd -c "GDM Daemon Owner" -d /var/lib/gdm -g gdm -s /bin/bash -u 21 gdm
+}
+
+buildPhase()
+{
+    # Regenerate configure script to have D-Bus daemon directory option
+    mkdir m4
+    sed -i '1i\
+AC_CONFIG_MACRO_DIRS([/opt/gnome2/share/aclocal])' configure.ac
+    sed -i '1i\
+ACLOCAL_AMFLAGS = -I m4 -I /opt/gnome2/share/aclocal' Makefile.am
+    autoreconf -f -v -i
+
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gdm \
+        --mandir=/opt/gnome-$gnome2Version/share/man \
+        --with-pam-prefix=/etc \
+	--with-dbus-daemon-dir=/usr/bin
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Create symlinks to helper executables
+    ln -fsv /opt/gnome-$gnome2Version/lib/gnome-settings-daemon-2.0/gnome-settings-daemon /opt/gnome-$gnome2Version/lib/gdm
+    ln -fsv /usr/lib/ConsoleKit/ck-get-x11-display-device /opt/gnome-$gnome2Version/lib/gdm
+    ln -fsv /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 /opt/gnome-$gnome2Version/lib/gdm
+    ln -fsv /opt/gnome-$gnome2Version/lib/at-spi/at-spi-registryd /opt/gnome-$gnome2Version/lib/gdm
+
+    # Configure PAM modules
+cat > /etc/pam.d/gdm << "EOF"
+auth        required     pam_unix.so
+auth        requisite    pam_nologin.so
+account     required     pam_unix.so
+password    required     pam_unix.so
+session     required     pam_unix.so
+EOF
+
+    cat > /etc/pam.d/gdm-autologin << "EOF"
+auth        required     pam_env.so
+auth        requisite    pam_nologin.so
+auth        required     pam_permit.so
+account     required     pam_unix.so
+password    required     pam_unix.so
+session     required     pam_unix.so
+EOF
+
+    # GDM launches various applications that require access to icons.
+    # The unfortunate thing is that the environment is configured in such a
+    # way that it expects all icons to reside in the "hicolor" icon theme
+    # and it only searches in standard directories, such as
+    # /usr/share/icons/hicolor and ~/.icons/hicolor .
+    #
+    # metacity crashes because of this: it can neither find the window icon
+    # nor the gtk-missing-image (the fallback) in any of the icon search
+    # directories. As a result, it aborts with the following error message:
+    #
+    # metacity:ERROR:ui/ui.c:752:meta_ui_get_default_window_icon:assertion failed: (default_icon)
+    #
+    # Furthermore, GDM ends up being stuck in a crash-retry loop with metacity
+    #
+    # The following trick creates a symlink in the GDM home directory to force
+    # GDM to use the proper icons from the "gnome" theme. This is an ugly trick
+    # but it works
+
+    cd /var/lib/gdm
+    mkdir -p /var/lib/gdm/.icons
+    chown gdm:gdm /var/lib/gdm/.icons
+    ln -sfn /opt/gnome-$gnome2Version/share/icons/gnome /var/lib/gdm/.icons/hicolor
+}

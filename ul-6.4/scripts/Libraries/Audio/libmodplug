@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libmodplug
+version=0.8.8.1
+group=Libraries/Audio
+license=PD
+description="Modplug library"
+src="l/libmodplug/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Olivier Lapicque, author of Modplug, which is arguably the best quality
+MOD-playing software available, has placed his sound rendering code in the
+public domain. This library and plugin is based on that code.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

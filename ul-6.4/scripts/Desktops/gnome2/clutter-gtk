@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=clutter-gtk
+version=0.10.8
+group=Desktops/gnome2
+license=LGPLv2.1
+description="Clutter GTK+ integration library"
+src="c/clutter-gtk/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Clutter-GTK is a library providing facilities to integrate Clutter into GTK+
+applications. It provides a GTK+ widget, GtkClutterEmbed, for embedding the
+default ClutterStage into any GtkContainer.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    sed -i 's|^INCLUDES = |INCLUDES = -I/opt/gnome2/include/gtk-2.0 -I/opt/gnome2/lib/gtk-2.0/include |' clutter-gtk/Makefile
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

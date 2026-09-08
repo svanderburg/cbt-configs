@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xbitmaps
+version=1.0.1
+group=Display/X11/data
+license=MIT
+description="xbitmaps"
+src="x/xorg/data/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The xbitmaps package contains bitmap images used by multiple X.org applications
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

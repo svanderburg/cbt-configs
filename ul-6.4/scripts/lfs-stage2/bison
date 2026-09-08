@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=bison
+version=2.3
+group=lfs-stage2
+description="GNU Bison"
+license=GPLv2
+src="b/bison/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Bison is a general-purpose parser generator that converts an annotated
+context-free grammar into a deterministic LR or generalized LR (GLR) parser
+employing LALR(1) parser tables. As an experimental feature, Bison can also
+generate IELR(1) or canonical LR(1) parser tables.
+
+Bison is upward compatible with Yacc: all properly-written Yacc grammars ought
+to work with Bison with no change.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    echo '#define YYENABLE_NLS 1' >> config.h
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

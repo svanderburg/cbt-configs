@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libsigc++
+version=2.2.8
+group=Libraries/gnome2
+license=LGPLv2.1
+description="Typesafe callback system for standard C++"
+src="l/libsigc++/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libsigc++ implements a typesafe callback system for standard C++. It allows you
+to define signals and to connect those signals to any callback function, either
+global or a member function, regardless of whether it is static or virtual.
+
+libsigc++ is used by gtkmm to wrap the GTK+ signal system. It does not depend on
+GTK or gtkmm.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

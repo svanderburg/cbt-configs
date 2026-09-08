@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gmime
+version=2.4.9
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GMime parsing library"
+src="g/gmime/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GMime is a C/C++ library for parsing and creating messages using the
+Multipurpose Internet Mail Extension (MIME)
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    
+    # Move Mono libraries to GAC
+    if [ -d /opt/gnome-$gnome2Version/lib/mono ]
+    then
+        ln -sfn /opt/gnome-$gnome2Version/lib/mono/gmime-sharp-* /usr/lib
+    fi
+}

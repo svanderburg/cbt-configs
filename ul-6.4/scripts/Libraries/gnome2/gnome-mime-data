@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-mime-data
+version=2.18.0
+group=Libraries/gnome2
+license=GPLv2
+description="GNOME Mime Data"
+src="g/gnome-mime-data/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This module contains the base MIME and Application database for GNOME.
+It is meant to be accessed through the MIME functions in GnomeVFS.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

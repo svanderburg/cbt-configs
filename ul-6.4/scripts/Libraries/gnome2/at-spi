@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=at-spi
+version=1.32.0
+group=Libraries/gnome2
+license=LGPLv2
+description="Assistive Technology Service Provider Interface"
+src="a/at-spi/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The AT SPI package contains the Assistive Technology Service Provider Interface.
+This is useful for redirecting UI events to accessible applications and
+adaptive/assistive technologies.
+EOF
+}
+
+buildPhase()
+{
+    LIBS="-L/usr/X11R$xorgVersion/lib" \
+        ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/at-spi
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

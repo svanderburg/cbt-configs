@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-stage1-settings
+
+name=change-ownership
+group=lfs-stage1
+description="Changes ownership of the bootstrap system to the root user"
+
+execute()
+{
+    chown -R root:root $LFS/tools
+}

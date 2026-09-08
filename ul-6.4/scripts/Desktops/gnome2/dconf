@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dconf
+version=0.5.1
+group=Desktops/gnome2
+license=LGPLv2.1
+description="DConf"
+src="d/dconf/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+dconf is a low-level configuration system. Its main purpose is to provide a
+backend to GSettings on platforms that don't already have configuration storage
+systems.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/dconf
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

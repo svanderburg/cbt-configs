@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=x264
+version=20101231_2245
+actualVersion=20101231-2245
+group=Libraries/Video
+license=GPLv2
+description="x264 library"
+src="x/x264/$name-snapshot-$actualVersion.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+x264 is a free software library and application for encoding video streams into
+the H.264/MPEG-4 AVC compression format.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --enable-shared
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

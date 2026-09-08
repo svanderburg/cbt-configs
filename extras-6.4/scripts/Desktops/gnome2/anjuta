@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=anjuta
+version=2.32.1.1
+group=Desktops/gnome2
+license=GPLv2
+description="Anjuta IDE"
+src="a/anjuta/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Anjuta DevStudio is a versatile Integrated Development Environment (IDE)
+on GNOME Desktop Environment and features a number of advanced
+programming facilities. These include project management, application and
+class wizards, an on-board interactive debugger, powerful source editor,
+syntax highlighting, intellisense autocompletions, symbol navigation,
+version controls, integrated GUI designing and other tools.
+
+Anjuta is an effort to marry the flexibility and power of text-based 
+command-line tools with the ease-of-use of the GNOME graphical user 
+interface. We thrive to make it very usable by eleminating developers
+burden with mudane programming tasks.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make
+}
+
+installPhase()
+{
+    make install
+}

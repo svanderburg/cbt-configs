@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gnome-commander
+version=1.2.8.9
+group=Desktops/gnome2
+license=GPLv2
+description="Twin panel file manager for GNOME"
+src="g/gnome-commander/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNOME Commander is a fast and powerful twin-panel file manager for the GNOME
+desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

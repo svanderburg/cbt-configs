@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libdv
+version=1.0.0
+group=Libraries/Video
+license=LGPLv2.1
+description="DV library"
+src="l/libdv/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Quasar DV codec (libdv) is a software codec for DV video, the encoding
+format used by most digital camcorders, typically those that support the IEEE
+1394 (a.k.a. FireWire or i.Link) interface. Libdv was developed according to the
+official standards for DV video: IEC 61834 and SMPTE 314M. 
+EOF
+}
+
+buildPhase()
+{
+    LIBS="-L/usr/X11R$xorgVersion/lib" \
+        ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -v -m755 -d /usr/share/doc/$name-$version
+    install -v -m644 README* /usr/share/doc/$name-$version
+}

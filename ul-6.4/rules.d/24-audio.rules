@@ -1,0 +1,24 @@
+# ALSA devices go in their own subdirectory
+
+KERNEL=="controlC[0-9]*",        MODE="0666",	GROUP="audio",  NAME="snd/%k"
+KERNEL=="hwC[0-9]*D[0-9]*",      MODE="0666",	GROUP="audio",  NAME="snd/%k"
+KERNEL=="pcmC[0-9]*D[0-9]*[cp]", MODE="0666",	GROUP="audio",  NAME="snd/%k"
+KERNEL=="midiC[0-9]*D[0-9]*",    MODE="0666",	GROUP="audio",  NAME="snd/%k"
+KERNEL=="timer",                 MODE="0666",	GROUP="audio",  NAME="snd/%k"
+KERNEL=="seq",                   MODE="0666",	GROUP="audio",  NAME="snd/%k"
+
+# Sound devices
+
+KERNEL=="admmidi*",     MODE="0666",	GROUP="audio"
+KERNEL=="adsp*",        MODE="0666",	GROUP="audio"
+KERNEL=="aload*",       MODE="0666",	GROUP="audio"
+KERNEL=="amidi*",       MODE="0666",	GROUP="audio"
+KERNEL=="amixer*",      MODE="0666",	GROUP="audio"
+KERNEL=="audio*",       MODE="0666",	GROUP="audio"
+KERNEL=="dmfm*",        MODE="0666",	GROUP="audio"
+KERNEL=="dmmidi*",      MODE="0666",	GROUP="audio"
+KERNEL=="dsp*",         MODE="0666",	GROUP="audio"
+KERNEL=="midi*",        MODE="0666",	GROUP="audio"
+KERNEL=="mixer*",       MODE="0666",	GROUP="audio"
+KERNEL=="music",        MODE="0666",	GROUP="audio"
+KERNEL=="sequencer*",   MODE="0666",	GROUP="audio"

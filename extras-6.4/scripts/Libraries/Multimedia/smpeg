@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=smpeg
+version=0.4.4
+group=Libraries/Multimedia
+license=LGPLv2
+description="SDL MPEG"
+src="s/smpeg/$name-$version.tar.gz"
+patches=("s/smpeg/$name-$version-gcc41.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+smpeg is an mpeg decoding library, which runs on just about any platform.
+It comes with two sample decoders, plaympeg (console, no UI), and gtv, a simple
+GTK+ interface.
+EOF
+}
+
+buildPhase()
+{
+    sed -i 's/-lsmpeg/-lsmpeg -lstdc++/' smpeg-config.in
+    ./configure --prefix=/usr
+    sed -i -e 's/$(plaympeg_LDADD) $(LIBS)/$(plaympeg_LDADD) $(LIBS) -lstdc++/' \
+      -e 's/gtv_LDADD = /gtv_LDADD = -lstdc++ /' Makefile
+
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

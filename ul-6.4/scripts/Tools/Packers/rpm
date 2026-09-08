@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=rpm
+version=4.7.2
+group=Tools/Packers
+license=GPLv2/LGPLv2
+description="RPM package manager"
+src="r/rpm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+RPM (RPM Package Manager) is a free and open-source package management system.
+The name RPM refers to the .rpm file format and the package manager program
+itself. RPM was intended primarily for Linux distributions; the file format is
+the baseline package format of the Linux Standard Base.
+EOF
+}
+
+buildPhase()
+{
+    CFLAGS="$CFLAGS -I/usr/include/nspr -I/usr/include/nss" \
+        LIBS='-L/usr/lib/nss' \
+        ./configure --prefix=/usr --with-external-db --without-lua --localstatedir=/var/lib/rpm
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    mkdir -p /var/lock/rpm
+    rpm --initdb root=/
+    rpm --rebuilddb root=/
+}

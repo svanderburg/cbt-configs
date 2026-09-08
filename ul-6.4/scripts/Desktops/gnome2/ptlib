@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ptlib
+version=2.6.7
+group=Desktops/gnome2
+license=MPLv1.0
+description="Portable Tools Library"
+src="p/ptlib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+PTLib (Portable Tools Library) is a moderately large class library that has it's
+genesis many years ago as PWLib (portable Windows Library), a method to product
+applications to run on both Microsoft Windows and Unix systems. It has also been
+ported to other systems such as Mac OSX, VxWorks and other embedded systems
+
+Since then the system has grown to include many classes that assist in writing
+complete multi-platform applications. Classes for I/O portability, multi-
+threading portability, aid in producing unix daemons and NT services portably
+and all sorts of internet protocols were added over the years. So it became a
+Portable Tools Library and was renamed to PTLib.
+
+All this over and above basic "container" classes such as arrays, linear lists,
+sorted lists (RB Tree) and dictionaries (hash tables) which were all created
+before STL was standardized. Future versions of PTLib will see many of these
+classes replaced or supplemented by STL.
+
+The library was used extensively for all our in-house products. Then we decided
+to support the Open H323 project by throwing in some of the code written for
+one of our products. Thus, required PTLib so it got thrown into the open source
+world as well.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    # Add ODBC constants to prevent typedef problems that are not allowed in ISO C++
+    sed -i -e '1i\
+#define ODBCINT64 long long
+' \
+    -e '1i\
+#define UODBCINT64 unsigned long long
+' src/ptclib/podbc.cxx
+
+    # Add missing unixODBC lib path
+    sed -i '/ENDLDLIBS := /i\
+EXTLIBS += -L\/opt\/unixODBC\/lib' make/lib.mak
+
+    CPPFLAGS='-I/opt/unixODBC/include' \
+        LIBS='-L/opt/unixODBC/lib' \
+        ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

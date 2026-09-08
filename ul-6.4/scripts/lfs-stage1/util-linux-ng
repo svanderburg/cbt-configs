@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/util-linux-ng
+
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure --prefix=/tools
+    make BLKID_LIBS="-lblkid -luuid" -C mount mount umount
+    make -C text-utils more
+    make -C lib
+    make -C getopt # Not covered in the instructions, but the cbt tools need it
+}
+
+installPhase()
+{
+    cp -v mount/{,u}mount text-utils/more /tools/bin
+    cp -v getopt/getopt /tools/bin # Not covered in the instructions
+}

@@ -1,0 +1,86 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sendmail
+version=8.14.3
+group=Network/Servers
+license=sendmail
+description="SMTP server"
+src="s/sendmail/$name.$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Sendmail is a general purpose internetwork email routing facility that supports
+many kinds of mail-transfer and delivery methods, including the
+Simple Mail Transfer Protocol (SMTP) used for email transport over the Internet.
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 26 smmsp
+    useradd -c "Sendmail Daemon" -g smmsp -d /dev/null \
+        -s /bin/false -u 26 smmsp
+    chmod -v 1777 /var/mail
+    install -v -m700 -d /var/spool/mqueue
+}
+
+buildPhase()
+{
+    cat > devtools/Site/site.config.m4 << "EOF"
+APPENDDEF(`confENVDEF',`-DSTARTTLS -DTCPWRAPPERS -DSASL -DLDAPMAP')
+APPENDDEF(`confLIBS', `-lssl -lcrypto -lwrap -lsasl2 -lldap -llber')
+APPENDDEF(`confINCDIRS', `-I/usr/include/sasl')
+define(`confMANGRP',`root')
+define(`confMANOWN',`root')
+define(`confSBINGRP',`root')
+define(`confUBINGRP',`root')
+define(`confUBINOWN',`root')
+EOF
+    cd sendmail
+    sh Build
+    cd ../cf/cf
+    cp generic-linux.mc sendmail.mc
+    sh Build sendmail.mc
+}
+
+installPhase()
+{
+    cd cf/cf
+
+    install -v -d -m755 /etc/mail
+    sh Build install-cf
+
+    cd ../..
+    sh Build install
+
+    install -v -m644 cf/cf/{submit,sendmail}.mc /etc/mail
+    cp -v -R cf/* /etc/mail
+    install -v -m755 -d /usr/share/doc/$name-$version/{cf,sendmail}
+    install -v -m644 \
+        CACerts FAQ KNOWNBUGS LICENSE PGPKEYS README RELEASE_NOTES \
+        /usr/share/doc/$name-$version
+    install -v -m644 sendmail/{README,SECURITY,TRACEFLAGS,TUNING} \
+        /usr/share/doc/$name-$version/sendmail
+    install -v -m644 cf/README /usr/share/doc/$name-$version/cf
+
+    for manpage in sendmail editmap mailstats makemap praliases smrsh
+    do
+        install -v -m444 $manpage/$manpage.8 /usr/share/man/man8
+    done
+
+    install -v -m444 sendmail/aliases.5 /usr/share/man/man5
+    install -v -m444 sendmail/mailq.1 /usr/share/man/man1
+    install -v -m444 sendmail/newaliases.1 /usr/share/man/man1
+    install -v -m444 vacation/vacation.1 /usr/share/man/man1
+
+    # TODO: build ops guide + install it
+
+    install -m754 $cbtBaseDir/init.d/sendmail /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/sendmail /usr/share/ul/ul-init
+}

@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-bluetooth
+version=2.32.0
+group=Desktops/gnome2
+license=LGPLv2.1/GPLv2
+description="GNOME Bluetooth"
+src="g/gnome-bluetooth/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-bluetooth is a fork of bluez-gnome focused on integration with
+the GNOME desktop environment.
+EOF
+}
+
+
+buildPhase()
+{
+    # NOTE: mobilin support is disabled. Moblin is a discontinued Linux-based
+    # operating system for mobile devices. We don't need it
+
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

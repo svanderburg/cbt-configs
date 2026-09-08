@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=imlib2
+version=1.4.4
+group=Libraries/Image
+license=imlib
+description="Image loading and manipulation library"
+src="i/imlib2/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the Imlib 2 library - a library that does image file loading and
+saving as well as rendering, manipulation, arbitrary polygon support, etc.
+
+It does ALL of these operations FAST. Imlib2 also tries to be highly
+intelligent about doing them, so writing naive programs can be done
+easily, without sacrificing speed.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

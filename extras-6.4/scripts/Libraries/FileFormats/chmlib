@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=chmlib
+version=0.40
+group=Libraries/FileFormats
+license=LGPLv2.1
+description="ITSS parser library"
+src="c/chmlib/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+chmlib is a small library designed for accessing MS ITSS files. The ITSS file
+format is used for Microsoft Html Help files (.chm), which have been the
+predominant medium for software documentation from Microsoft during the past
+several years, having superceded the previously used .hlp file format.
+
+Note that this is NOT the same as the OLE structured storage file format used
+by MS Excel, Word, and so on.  Instead, it is a different file format which
+fulfills a similar purpose.  Both file formats may be accessed via instances
+of the IStorage COM interface, which is essentially an "acts like a
+filesystem" interface.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libproxy
+version=0.3.1
+group=Libraries/Shared
+license=LGPLv2.1
+description="Proxy configuration library"
+src="l/libproxy/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libproxy exists to answer the question: Given a network resource, how do I reach
+it? It handles all the details, enabling you to get back to programming.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=unixODBC
+version=2.2.14
+group=Services
+license=LGPLv2.1
+description="ODBC implementation for UNIX-like systems"
+src="u/unixODBC/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+unixODBC is an Open Source ODBC sub-system and an ODBC SDK for Linux, Mac OSX,
+and UNIX.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/$name-$version --sysconfdir=/etc/opt/unixODBC \
+        --enable-tldllib --enable-fdb --with-qt-dir=/opt/qt
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    ln -sf /opt/$name-$version /opt/$name
+
+    install -m755 $cbtBaseDir/profile.d/34unixODBC.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/34unixODBC.csh /etc/profile.d
+    fi
+}

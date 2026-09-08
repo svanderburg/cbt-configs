@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtk-engines
+version=2.20.2
+group=Desktops/gnome2
+license=LGPLv2.1
+description="GTK Engines"
+src="g/gtk-engines/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gtk-engines provides a central location for commonly used GTK+ engines.
+
+It currently supplies several engines and default themes for those which have
+one.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

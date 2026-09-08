@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libXau
+version=1.0.3
+group=Display/X11/lib2
+license=MIT
+description="libXau"
+src="x/xorg/lib2/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Handles X11 authentication protocol requests.
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

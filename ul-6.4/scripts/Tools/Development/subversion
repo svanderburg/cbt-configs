@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=subversion
+version=1.6.9
+group=Tools/Development
+license=subversion
+description="Subversion"
+src="s/subversion/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Apache Subversion (often abbreviated SVN, after its command name svn) is a
+version control system. Software developers use Subversion to maintain current
+and historical versions of files such as source code, web pages, and
+documentation.
+
+Its goal is to be a mostly compatible successor to the widely used Concurrent
+Versions System (CVS).
+EOF
+}
+
+preConfigurePhase()
+{
+    groupadd -g 56 svn
+    useradd -c "SVN Owner" -d /home/svn -m -g svn -s /bin/false -u 56 svn
+}
+
+buildPhase()
+{
+    sed -i 's/@SVN_APR_INCLUDES@/& @CPPFLAGS@/' \
+        subversion/bindings/swig/perl/native/Makefile.PL.in
+    ./configure --prefix=/usr \
+        --with-neon=/usr \
+        --disable-neon-version-check
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    cat >> /etc/xinetd.d/svn << "EOF"
+# Begin /etc/xinetd.d/svn
+
+service svn {
+    port = 3690
+    socket_type = stream
+    protocol = tcp
+    wait = no
+    user = svn
+    server = /usr/bin/svnserve
+    server_args = -i -r /srv/svn/repositories
+}
+
+# End /etc/xinetd.d/svn
+EOF
+
+    install -d -m0755 /srv
+    install -d -m0755 -o svn -g svn /srv/svn/repositories
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libpst
+version=0.6.49
+group=Libraries/FileFormats
+license=GPLv2
+description="Outlook PST access library"
+src="l/libpst/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Library for accessing data from Microsoft Outlook PST files.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --enable-dii \
+        --enable-libpst-shared
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=twolame
+version=0.3.12
+group=Libraries/Audio
+license=LGPLv2.1
+description="TwoLAME MP2 ripper"
+src="t/twolame/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+TwoLAME is an optimized MPEG Audio Layer 2 (MP2) encoder. 
+It is based heavily on:
+
+- tooLAME by Michael Cheng
+- the ISO dist10 code 
+- improvement to algorithms as part of the LAME project (lame.sf.net)
+- other contributors (see AUTHORS)
+
+TwoLAME should be able to be used as a drop-in replacement for
+LAME (a MPEG Layer 3 encoder). The frontend takes very similar
+command line options to LAME, and the backend library has a very
+similar API to LAME.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

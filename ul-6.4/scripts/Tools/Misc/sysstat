@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=sysstat
+version=9.0.4
+group=Tools/Misc
+license=GPLv2
+description="Sysstat performance monitoring tools"
+src="s/sysstat/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The sysstat utilities are a collection of performance monitoring tools for
+Linux. These include mpstat, iostat, pidstat, sar, sadc, sadf and sa tools.
+EOF
+}
+
+buildPhase()
+{
+    sa_lib_dir=/usr/lib/sa sa_dir=/var/log/sa conf_dir=/etc/sysconfig \
+        ./configure --prefix=/usr \
+        --disable-man-group
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

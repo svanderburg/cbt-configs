@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+name=binfmt_misc-mono
+group=Services
+license=GPLv2
+description="Mono/.NET CLR executable binary support in Linux"
+
+execute()
+{
+    # Add Mono/.NET binaries support to the binfmt_misc loader
+    cat >> /etc/sysconfig/binfmt_misc << "EOF"
+:CLR:M::MZ::/usr/bin/mono:
+EOF
+}

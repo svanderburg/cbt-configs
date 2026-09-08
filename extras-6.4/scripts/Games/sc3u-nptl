@@ -1,0 +1,52 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=sc3u-nptl
+version=20251109
+group=Games
+license=MIT
+description="Sim City 3000 NPTL patch"
+src="s/sc3u-nptl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is a hack that allows you to run the old native Linux version of Sim City
+3000 (SC3U) released by Loki Software in 2000, on your current Linux
+distribution using NPTL threading rather than Linux Threads.
+
+After deploying the package, you should use the following wrapper scripts to
+start Sim City 3000:
+
+run-sc3u
+run-sc3bat
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    install -m755 sc3u-nptl.so /usr/local/lib
+
+    cat > /usr/local/bin/run-sc3u << "EOF"
+#!/bin/sh
+
+export LD_PRELOAD=/usr/local/lib/sc3u-nptl.so
+exec /usr/local/bin/sc3u "$@"
+EOF
+
+    cat > /usr/local/bin/run-sc3bat << "EOF"
+#!/bin/sh
+
+export LD_PRELOAD=/usr/local/lib/sc3u-nptl.so
+exec /usr/local/bin/sc3bat "$@"
+EOF
+
+    chmod 755 /usr/local/bin/{run-sc3u,run-sc3bat}
+}

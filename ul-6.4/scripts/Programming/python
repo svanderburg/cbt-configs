@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=python
+version=2.6.2
+group=Programming
+license=python
+description="Python programming language"
+src="p/python/Python-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Python is a high-level, general-purpose programming language. Its design
+philosophy emphasizes code readability with the use of significant indentation.
+Python is dynamically type-checked and garbage-collected. It supports multiple
+programming paradigms, including structured (particularly procedural),
+object-oriented and functional programming.
+EOF
+}
+
+buildPhase()
+{
+    if which xmlwf
+    then
+        local extraArgs="--with-system-expat"
+    fi
+
+    # Fix gdbm compatibility
+    sed -i "s/ndbm_libs = \[\]/ndbm_libs = ['gdbm', 'gdbm_compat']/" \
+        setup.py &&
+
+    # Fix urllib module
+    sed -i "s/www.python.invalid./sadflkjsasf.i.nvali.d/" \
+        Lib/test/test_urllib2_localnet.py \
+        Lib/test/test_urllibnet.py &&	
+
+    ./configure --prefix=/usr --enable-shared $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=jdk
+version=6u45
+jdkVersion=1.6.0_45
+group=Programming
+license=sun
+description="Java development kit"
+src="j/jdk/jdk-$version-linux-i586.bin"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the Java Development Kit for Java version 6u45. It contains a copy
+of the Java Runtime Environment and a collection of development tools.
+EOF
+}
+
+unpackPhase()
+{
+    mkdir bin
+    ln -s /bin/cat bin/more
+    export PATH=$PWD/bin:$PATH
+    yes | bash $sourcesDir/$src
+    rm bin/more
+    rmdir bin
+}
+
+buildPhase()
+{
+    true
+}
+
+installPhase()
+{
+    cp -av ../$name$jdkVersion /opt
+    chown -R root:root /opt/$name$jdkVersion
+    ln -sf $name$jdkVersion /opt/$name
+
+    install -m755 $cbtBaseDir/profile.d/04jdk.sh /etc/profile.d
+    if which csh
+    then
+        install -m755 $cbtBaseDir/profile.d/04jdk.csh /etc/profile.d
+    fi
+}

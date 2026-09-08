@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtk-vnc
+version=0.4.4
+group=Desktops/gnome2
+license=LGPLv2.1
+description="VNC/RFB client library for GTK+ applications"
+src="g/gtk-vnc/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gtk-vnc is a project providing client side APIs for the RFB protocol / VNC
+remote desktop technology.
+
+It is built using coroutines allowing it to be completely asynchronous while
+remaining single threaded. It provides two core C libraries, libgvnc for
+interacting with the core RFB protocol and libgtk-vnc for a GTK display widget.
+
+There is a traditional Python binding built on PyGTK, and evolving support for
+arbitrary languages via the GObject Introspection system.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    sed -i 's/PKG_CONFIG_PATH=/PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):/g' src/Makefile
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

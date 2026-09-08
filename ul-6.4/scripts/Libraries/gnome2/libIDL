@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libIDL
+version=0.8.14
+group=Libraries/gnome2
+license=LGPLv2
+description="CORBA IDL file generator library"
+src="l/libIDL/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libIDL is a library licensed under the GNU LGPL for creating trees of
+CORBA Interface Definition Language (IDL) files, which is a
+specification for defining portable interfaces. libIDL was initially
+written for ORBit (the ORB from the GNOME project, and the primary
+means of libIDL distribution).  However, the functionality was
+designed to be as reusable and portable as possible.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

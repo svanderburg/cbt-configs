@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=hosts-configure
+group=lfs-stage2
+description="Creates a basic modprobe.d config"
+
+execute()
+{
+    install -v -m755 -d /etc/modprobe.d
+
+    # Entry that automaitcally loads USB drivers first so that USB devices can be detected
+
+    cat > /etc/modprobe.d/usb.conf << "EOF"
+# Begin /etc/modprobe.d/usb.conf
+
+install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true
+install uhci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i uhci_hcd ; true
+
+# End /etc/modprobe.d/usb.conf
+EOF
+}

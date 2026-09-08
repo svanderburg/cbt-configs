@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=k3b
+version=1.0.5
+group=Applications
+license=GPLv2
+description="CD creator for KDE"
+src="k/k3b/$name-$version.tar.bz2"
+patches=("k/k3b/$name-$version-ffmpeg-fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+K3b is a highly usable and very userfriendly cd writing program.
+
+Features:
+
+* Supports CD, DVD, and Blu-ray burning
+* Burn iso, cue, and cdrdao images
+* Create audio, data, mixed mode, video cd, video dvd, and emovix projects
+* Rip audio CDs to wav, ogg, flac, mp3, and more
+* Rip Video DVDs to mpeg4
+* Copy CD, DVD, and Blu-ray media 1-to-1
+* Copy write protected Video DVDs with libdvdcss<
+* CDDB support
+* and more...
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

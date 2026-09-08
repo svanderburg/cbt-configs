@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=samba
+version=3.4.2
+group=Network/Servers-Clients
+license=GPLv3
+description="SMB compatible server and client"
+src="s/samba/$name-$version.tar.gz"
+workDir=$name-$version/source3
+
+showLongDescription()
+{
+    cat << "EOF"
+Samba is the most feature-rich Open Source implementation of the SMB and
+Active Directory protocols for Linux and UNIX-like systems.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=""
+
+    if python --version
+    then
+        extraArgs="--with-python"
+    fi
+
+    ./configure \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --localstatedir=/var \
+        --with-piddir=/var/run \
+        --with-pammodulesdir=/lib/security \
+        --with-fhs \
+        --with-smbmount \
+        --with-pam $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install &&
+    cd .. &&
+    install -m755 nsswitch/libnss_win{s,bind}.so /lib &&
+    ln -sf libnss_winbind.so /lib/libnss_winbind.so.2 &&
+    ln -sf libnss_wins.so /lib/libnss_wins.so.2 &&
+    cp examples/smb.conf.default /etc/opt/samba &&
+
+    # Allow non-privileged users to mount
+    chmod -v 4755 /usr/sbin/{,u}mount.cifs
+
+    if which lp
+    then
+        # Allows CUPS printing over SMB
+        ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
+    fi
+
+    install -m754 $cbtBaseDir/init.d/samba /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/samba /usr/share/ul/ul-init
+}

@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nasm
+version=2.05.01
+group=Tools/Development
+license=LGPLv2.1
+description="Netwide assembler"
+src="n/nasm/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Netwide Assembler (NASM) is an assembler for the x86 CPU architecture portable
+to nearly every modern platform, and with code generation for many platforms old
+and new.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+    make -C rdoff/doc
+    make -C rdoff/doc html
+}
+
+installPhase()
+{
+    make install
+    make install_rdf
+    install -v -m644 rdoff/doc/rdoff.info /usr/share/info
+    install -v -m755 -d /usr/share/doc/nasm/html
+    install -v -m644 rdoff/doc/v1-v2.txt /usr/share/doc/nasm
+    cp -v -R rdoff/doc/rdoff /usr/share/doc/nasm/html
+}

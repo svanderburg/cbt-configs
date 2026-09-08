@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ekiga
+version=3.2.7
+group=Desktops/gnome2
+license=GPLv2
+description="Ekiga conferencing tool"
+src="e/ekiga/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Ekiga is a VoIP, IP Telephony, and Video Conferencing application that
+allows you to make audio and video calls to remote users with SIP or
+H.323 compatible hardware and software. It supports many audio and
+video codecs and all modern VoIP features for both SIP and H.323.
+Ekiga is the first Open Source application to support both H.323 and
+SIP, as well as audio and video. Ekiga was formerly known as
+GnomeMeeting.
+EOF
+}
+
+buildPhase()
+{
+    LIBS='-L/opt/unixODBC/lib' \
+        ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

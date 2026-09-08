@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/binutils
+
+group=lfs-stage2
+patches=("b/binutils/$name-$version-configure-1.patch" "b/binutils/$name-$version-GCC43-1.patch")
+workDir=$name-$version
+
+buildPhase()
+{
+    # Suppress the installation of an outdated standards.info file as a newer one is installed later on in the Autoconf instructions
+    rm -fv etc/standards.info
+    sed -i.bak '/^INFO/s/standards.info //' etc/Makefile.in
+
+    mkdir ../$name-build
+    cd ../$name-build
+    ../$name-$version/configure --prefix=/usr \
+        --enable-shared
+    make tooldir=/usr $globalBuildOptions
+}
+
+installPhase()
+{
+    cd ../$name-build
+    make tooldir=/usr install
+    cp -v ../$name-$version/include/libiberty.h /usr/include
+}

@@ -1,0 +1,46 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=tilp2
+version=1.11
+group=Applications
+description="TI Linking Program"
+license=GPLv2
+src="t/tilp2/$name-$version.tar.gz"
+
+desktopTargetDir="/usr/share/applications"
+desktopName="TiLP"
+exec=tilp
+comment="TI Linking Program"
+icon=/usr/share/tilp2/icons/Application.ico
+categories="System;"
+
+showLongDescription()
+{
+    cat << "EOF"
+TiLP is a linking program for Texas Instruments' graphing calculators. TiLP
+works on several platforms (UNIX, Windows, Macintosh). It can handle any TI
+calculator (from TI73 to V200) with any link cable. TiLP has all the functions
+of a linking program and even more.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    # Fix a problem with the 'signals' keyword when including the GTK+ library
+    # from a module that also uses Qt
+    sed -i '/#include <gtk\/gtkmain.h>/i\
+#undef signals' src/kde.cpp
+
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

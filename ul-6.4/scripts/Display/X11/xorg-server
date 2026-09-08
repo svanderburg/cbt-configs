@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xorg-server
+version=1.4.2
+mesaVersion=7.0.4
+group=Display/X11
+license=MIT
+description="X.Org server"
+src="x/xorg/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The X.Org server is the core of the X Window System.
+EOF
+}
+
+buildPhase()
+{
+    ./configure $XORG_CONFIG \
+        --with-mesa-source=/usr/src/Mesa-$mesaVersion \
+        --with-module-dir=$XORG_PREFIX/lib/X11/modules \
+        --with-xkb-output=/var/lib/xkb \
+        --enable-install-setuid \
+        --disable-config-hal
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}
+
+postConfigurePhase()
+{
+    rm -rf /usr/src/Mesa-$mesaVersion
+}
+

@@ -1,0 +1,58 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=jfsw
+version=20051009
+group=Games
+license=GPLv2
+description="JFSW port"
+srcs=("j/jfbuild/jfbuild_src_20051009.zip" "j/jfsw/${name}_src_${version}.zip")
+patches=("j/jfsw/${name}_src_${version}.patch")
+files=("j/jfbuild/jfbuild_src_20051009.patch")
+
+workDir="${name}_src_${version}"
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="JFSW"
+genericName="Shoot em up game"
+exec=/usr/local/bin/run-jfsw
+icon=/usr/local/games/jfsw/game.bmp
+comment="Shadow Warrior"
+categories="Game;Shooter;"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package provides a Shadow Warrior port provided by JonoF that supports
+various modern operating systems, including Linux. It also supports
+Ken Silverman's Polymost renderer making OpenGL graphics possible.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    cd ..
+    ln -s jfbuild_src_20051009 build
+    cd jfbuild_src_20051009
+    cat $sourcesDir/${files[0]} | patch -p1
+    cd ../$workDir
+    make
+}
+
+installPhase()
+{
+    mkdir -p /usr/local/games/jfsw
+    install -m755 build sw /usr/local/games/jfsw
+    cat > /usr/local/bin/run-jfsw << "EOF"
+#!/bin/bash -e
+cd /usr/local/games/jfsw
+exec /usr/local/games/jfsw/sw "$@"
+EOF
+    chmod 755 /usr/local/bin/run-jfsw
+
+    install -m644 rsrc/game.bmp /usr/local/games/jfsw
+}

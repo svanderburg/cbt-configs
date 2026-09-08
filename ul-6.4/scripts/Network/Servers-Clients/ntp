@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ntp
+version=4.2.6p2
+group=Network/Servers-Clients
+license=MIT
+description="NTP utilities"
+src="n/ntp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The NTP package contains a client and server to keep the time synchornized
+between various computers over a network. This package is the official
+reference implementation of the NTP protocol.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --sysconfdir=/etc --with-binsubdir=sbin
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -v -m755 -d /usr/share/doc/$name-$version
+    cp -v -R html/* /usr/share/doc/$name-$version
+
+    install -m754 $cbtBaseDir/init.d/ntpd /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/ntpd /usr/share/ul/ul-init
+}

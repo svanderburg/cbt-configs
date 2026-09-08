@@ -1,0 +1,53 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libcanberra
+version=0.24
+group=Libraries/Desktop
+license=LGPLv2.1
+description="XDG Sound Theme and Name implementation"
+src="l/libcanberra/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+libcanberra is an implementation of the XDG Sound Theme and Name Specifications,
+for generating event sounds on free desktops, such as GNOME. 
+EOF
+}
+
+buildPhase()
+{
+    # We disable OSS, because we have ALSA
+
+    ./configure --prefix=/usr \
+        --disable-oss \
+        --with-gconf-schema-file-dir=/etc/opt/gnome-$gnome2Version/gconf/schemas
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    
+    # Move GTK+ modules so that they are loaded dynamically
+    cp -av /usr/lib/gtk-2.0 /opt/gnome-$gnome2Version/lib
+    rm -rf /usr/lib/gtk-2.0
+
+    # Move GNOME-specific files to GNOME folders
+    mkdir -p /opt/gnome-$gnome2Version/share/gnome/autostart
+    mv /usr/share/gnome/autostart/libcanberra-login-sound.desktop /opt/gnome-$gnome2Version/share/gnome/autostart
+    rmdir --ignore-fail-on-non-empty /usr/share/gnome/autostart
+
+    mkdir -p /opt/gnome-$gnome2Version/share/gnome/shutdown
+    mv /usr/share/gnome/shutdown/libcanberra-logout-sound.sh /opt/gnome-$gnome2Version/share/gnome/shutdown
+    rmdir --ignore-fail-on-non-empty /usr/share/gnome/shutdown
+
+    mkdir -p /opt/gnome-$gnome2Version/share/gdm/autostart/LoginWindow
+    mv /usr/share/gdm/autostart/LoginWindow/libcanberra-ready-sound.desktop /opt/gnome-$gnome2Version/share/gdm/autostart/LoginWindow
+    rmdir --ignore-fail-on-non-empty /usr/share/gdm/autostart/LoginWindow
+    rmdir --ignore-fail-on-non-empty /usr/share/gdm/autostart
+    rmdir --ignore-fail-on-non-empty /usr/share/gdm
+}

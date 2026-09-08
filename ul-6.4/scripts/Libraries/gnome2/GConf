@@ -1,0 +1,74 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=GConf
+version=2.32.0
+group=Libraries/gnome2
+license=LGPLv2
+description="Configuration database system"
+src="g/GConf/$name-$version.tar.bz2"
+patches=("g/GConf/$name-2.28.1-sysconfdir-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+GConf is a configuration database system, functionally similar to the
+Windows registry but lots better. :-) It's being written for the GNOME
+desktop but does not require GNOME; configure should notice if GNOME
+is not installed and compile the basic GConf library anyway.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Fix configuration directory permissions so that unprivileged user
+    # don't have a failing GConf sanity check
+    install -d -m755 /etc/opt/gnome-$gnome2Version/gconf/gconf.xml.system
+
+    # Adjust D-Bus system bus config to also include GNOME system services
+
+    cat > /etc/dbus-1/system-local.conf << "EOF"
+<!DOCTYPE busconfig PUBLIC
+ "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+
+  <!-- Search for .conf files in /etc/opt/gnome2/dbus-1/system.d -->
+  <includedir>/etc/opt/gnome2/dbus-1/system.d</includedir>
+
+  <!-- Search for .service files in /opt/gnome2/share/dbus-1/system-services -->
+  <servicedir>/opt/gnome2/share/dbus-1/system-services</servicedir>
+
+</busconfig>
+EOF
+
+    # Adjust D-Bus session bus config to also include GNOME services
+
+    cat > /etc/dbus-1/session-local.conf << "EOF"
+<!DOCTYPE busconfig PUBLIC
+ "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+
+  <!-- Search for .service files in /opt/gnome2/share/dbus-1/services -->
+  <servicedir>/opt/gnome2/share/dbus-1/services</servicedir>
+
+</busconfig>
+EOF
+}

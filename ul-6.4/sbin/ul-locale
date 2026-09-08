@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+if [ -f /etc/sysconfig/locale ]
+then
+    source /etc/sysconfig/locale
+else
+    LOCALE="C"
+fi
+
+# Display menu
+
+exec 3>&1
+
+ls /usr/share/locale > /tmp/status
+
+dialog --backtitle "UL" \
+        --title "Localization" \
+        --textbox /tmp/status 20 50
+
+set +e
+LOCALE=$(dialog --backtitle "UL" \
+       --title "Localization" \
+       --inputbox "Enter language code" 8 40 $LOCALE \
+       2>&1 1>&3)
+exitStatus=$?
+set -e
+
+if [ $exitStatus -ne 0 ]
+then
+    exit 1
+fi
+
+# Save settings
+
+echo "LOCALE=$LOCALE" > /etc/sysconfig/locale
+if which csh
+then
+    echo "set LOCALE=$LOCALE" > /etc/sysconfig/locale.csh
+fi

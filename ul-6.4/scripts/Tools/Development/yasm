@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=yasm
+version=1.0.1
+group=Tools/Development
+license=BSD
+description="Yasm Modular Assembler"
+src="y/yasm/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Yasm is a complete rewrite of the NASM-2.10.09 assembler. It supports the x86
+and AMD64 instruction sets, accepts NASM and GAS assembler syntaxes and outputs
+binary, ELF32 and ELF64 object formats.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

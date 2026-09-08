@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=dos2unix
+version=5.1.1
+group=Tools/Misc
+license=BSD-2
+description="dos2unix"
+src="d/dos2unix/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+dos2unix is program that converts plain text files in DOS/MAC format to UNIX
+format. unix2dos, that is also included with this package, does exactly the
+opposite.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,59 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=zsnes
+version=1.51
+license=GPLv2
+group=Emulators
+description="SNES emulator"
+src="z/zsnes/zsnes151src.tar.bz2"
+workDir=zsnes_1_51/src
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="ZSNES"
+genericName="SNES emulator"
+exec=zsnes
+comment="ZSNES emulator"
+mimeType="application/vnd.nintendo.snes.rom"
+categories="Emulator;"
+
+showLongDescription()
+{
+    cat << "EOF"
+ZSNES is an emulator for the Super Nintendo Entertainment System released as
+free software.
+EOF
+}
+
+buildPhase()
+{
+    sed -i -e '/#include <string>/a\#include <string.h>' tools/strutil.h
+    sed -i -e '/#include <string>/a\#include <stdlib.h>' \
+        -e 's/size_t argc/int argc/' tools/depbuild.cpp
+    sed -i -e '/#include <string>/a\#include <string.h>' \
+        -e 's/size_t argc/int argc/' parsegen.cpp
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > snes.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Super NES ROM
+MimeType=application/vnd.nintendo.snes.rom
+Icon=binary
+Patterns=*.sfc;*.SFC;*.sfc.gz;*.SFC.gz;*.smc;*.SMC;*.smc.gz;*.SMC.gz;*.swc;*.SWC;*.swc.gz;*.SWC.gz
+EOF
+    fi
+}

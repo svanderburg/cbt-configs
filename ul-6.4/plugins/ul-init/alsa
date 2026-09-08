@@ -1,0 +1,5 @@
+description="ALSA configuration"
+startSequenceNumber=40
+stopSequenceNumber=35
+startRunLevels="2 3 4 5"
+stopRunLevels="0 1 6"

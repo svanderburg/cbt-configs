@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dbExtended
+name2=db
+version=4.7.25
+group=Libraries/Storage
+license=BSD-3
+description="Berkeley Database version 4.7"
+src="d/db/$name2-$version.tar.gz"
+patches=("d/db/$name2-$version-upstream_fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Berkeley DB (BDB) is an embedded database software library for key/value data.
+Berkeley DB is written in C with API bindings for many other programming
+languages. BDB stores arbitrary key/data pairs as byte arrays and supports
+multiple data items for a single key.
+
+This package variant provides more features that the base package -- it also
+enabled Tcl and Java bindings.
+EOF
+}
+
+buildPhase()
+{
+    if which java
+    then
+        extraArgs="--enable-java"
+    fi
+
+    if which tclsh
+    then
+        extraArgs="$extraArgs --enable-tcl --with-tcl=/usr/lib"
+    fi
+
+    cd build_unix
+
+    ../dist/configure --prefix=/usr \
+      --enable-compat185 \
+      --enable-cxx \
+      $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd build_unix
+
+    chown -R root:root ../*
+    make docdir=/usr/share/doc/$name2-$version install
+}

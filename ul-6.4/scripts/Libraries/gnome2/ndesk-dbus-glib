@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ndesk-dbus-glib
+version=0.4.1
+group=Libraries/gnome2
+license=MIT
+description="D-Bus for .NET GLib integration module"
+src="n/ndesk-dbus-glib/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This code provides GLib main loop integration for Managed D-Bus.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

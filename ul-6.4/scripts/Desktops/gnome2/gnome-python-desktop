@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-python-desktop
+version=2.32.0
+group=Desktops/gnome2
+license=LGPLv2/GPLv2
+description="GNOME Python Desktop modules"
+src="g/gnome-python-desktop/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains a few python modules that used to live in
+gnome-python-extras:
+
+  - gnomeapplet
+  - gnomeprint, gnomeprint.ui
+  - gtksourceview
+  - wnck
+  - totem.plparser
+  - gtop
+  - nautilusburn
+  - mediaprofiles
+  - metacity
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

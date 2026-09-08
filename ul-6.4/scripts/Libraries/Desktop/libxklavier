@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libxklavier
+version=5.0
+group=Libraries/Desktop
+license=LGPLv2
+description="libxklavier"
+src="l/libxklavier/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libxklavier - utility library to make XKB stuff easier
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

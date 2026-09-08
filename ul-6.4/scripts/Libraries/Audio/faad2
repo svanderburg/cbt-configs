@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=faad2
+version=2.7
+group=Libraries/Audio
+license=GPLv2
+description="Freeware Advanced Audio Decoder"
+src="f/faad2/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+FAAD2 is a decoder for a lossy sound compression scheme specified in MPEG-2 Part
+7 and MPEG-4 Part 3 standards and known as Advanced Audio Coding (AAC).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --with-drm
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

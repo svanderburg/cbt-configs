@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=koffice-l10n-nl
+version=1.6.3
+group=Desktops/kde-i18n
+license=GPLv2
+description="KOffice Dutch internationalization"
+src="k/koffice-l10n/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Dutch localization settings for KOffice.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --sysconfdir=/etc/opt/kde-$kdeVersion \
+        --disable-debug --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

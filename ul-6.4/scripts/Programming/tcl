@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+source $cbtBaseDir/meta/tcl
+
+group=Programming
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+            --enable-threads \
+            --mandir=/usr/share/man
+    make $globalBuildOptions
+
+    # The Tcl package expects that its source tree is
+    # preserved so that packages depending on it for their compilation
+    # can utilize it. This command removes the references to the
+    # build directory and replaces them with saner system-wide locations.
+
+    sed -i \
+        -e "s@^\(TCL_SRC_DIR='\).*@\1/usr/include'@" \
+        -e "/TCL_B/s@='\(-L\)\?.*unix@='\1/usr/lib@" \
+        -e "/SEARCH/s/=.*/=''/" \
+        tclConfig.sh
+}
+
+installPhase()
+{
+    make install
+    make install-private-headers
+    ln -v -sf tclsh8.5 /usr/bin/tclsh
+}

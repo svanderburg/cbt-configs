@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/gettext
+
+group=lfs-stage1
+workDir="$name-$version/gettext-tools"
+
+buildPhase()
+{
+    ./configure --prefix=/tools --disable-shared
+    make -C gnulib-lib
+    make -C src msgfmt
+}
+
+installPhase()
+{
+    cp -v src/msgfmt /tools/bin
+}

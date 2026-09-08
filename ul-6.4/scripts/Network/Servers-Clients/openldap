@@ -1,0 +1,62 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=openldap
+version=2.4.14
+group=Network/Servers-Clients
+license=BSD
+description="OpenLDAP"
+src="o/openldap/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+openldap is an open source suite of tools implementing the
+Lightweight Directory Access Protocol (LDAP).
+EOF
+}
+
+buildPhase()
+{
+    # Prevents error: storage size of 'peercred' isn't known
+    export CPPFLAGS=-D_GNU_SOURCE
+
+    ./configure --prefix=/usr \
+        --libexecdir=/usr/sbin \
+        --sysconfdir=/etc \
+        --localstatedir=/srv/ldap \
+        --disable-debug \
+        --enable-dynamic \
+        --enable-crypt \
+        --enable-modules \
+        --enable-rlookups \
+        --enable-backends \
+        --enable-overlays \
+        --disable-sql \
+        --disable-ndb
+    make depend
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    for LINK in lber ldap ldap_r
+    do
+        chmod -v 0755 /usr/lib/$(readlink /usr/lib/lib${LINK}.so)
+    done
+
+    install -v -m755 -d /usr/share/doc/$name-$version/{drafts,guide,rfc}
+    install -v -m644 doc/drafts/* /usr/share/doc/$name-$version/drafts
+    install -v -m644 doc/rfc/* /usr/share/doc/$name-$version/rfc
+    cp -v -R doc/guide/* /usr/share/doc/$name-$version/guide
+
+    install -m754 $cbtBaseDir/init.d/openldap1 /etc/rc.d/init.d
+    install -m754 $cbtBaseDir/init.d/openldap2 /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/openldap1 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/openldap2 /usr/share/ul/ul-init
+}

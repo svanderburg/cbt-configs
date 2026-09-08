@@ -1,0 +1,65 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=hal
+version=0.5.10
+group=Services
+license=GPLv2/AFLv2.1
+description="Hardware abstraction layer"
+src="h/hal/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+HAL is a hardware abstraction layer, which is a piece of software that provides
+a view of the various hardware attached to a system. In addition to this, HAL
+keeps detailed metadata for each piece of hardware and provides hooks such that
+system and desktop-level software can react to changes in the hardware
+configuration in order to maintain system policy.
+
+The most important goal of HAL is to provide plug-and-play facilities for
+UNIX-like desktops with focus on providing a rich and extensible description of
+device characteristics and features. One example of the functionality provided
+by HAL is when you plug in a USB storage device. HAL can automatically create a
+mount point in /media and mount the device.
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 19 haldaemon
+    useradd -u 19 -c "HAL Daemon User" -d /dev/null -g haldaemon -s /bin/false haldaemon
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if polkit-action --version
+    then
+        extraArgs="--enable-policy-kit --enable-console-kit"
+    fi
+
+    if getfacl --version
+    then
+        extraArgs="$extraArgs --enable-acl-management"
+    fi
+
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+        --libexecdir=/usr/lib/hal \
+        --localstatedir=/var $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -m754 $cbtBaseDir/init.d/haldaemon /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/haldaemon /usr/share/ul/ul-init
+}

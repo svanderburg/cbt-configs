@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=nautilus-sendto
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="Nautilus sendto extension"
+src="n/nautilus-sendto/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+nautilus-sendto is a GNOME desktop utility and Nautilus file manager plugin that
+adds a "Send To..." right-click context menu option. It allows users to quickly
+attach files or folders to a new email draft or send them via instant messaging
+apps.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

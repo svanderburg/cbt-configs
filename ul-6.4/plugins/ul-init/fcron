@@ -1,0 +1,5 @@
+description="fcron task scheduler"
+startSequenceNumber=40
+stopSequenceNumber=08
+startRunLevels="1 2 3 4 5"
+stopRunLevels="0 6"

@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gimp
+version=2.6.12
+group=Applications
+license=GPLv2
+description="GNU Image Manipulation Program"
+src="g/gimp/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GIMP is a cross-platform image editor available for GNU/Linux, macOS, Windows
+and more operating systems.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+      --sysconfdir=/etc/opt/gnome-$gnome2Version \
+      --mandir=/opt/gnome-$gnome2Version/share/man \
+      --disable-print # We can install Gutenprint later
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    chown -R root:root *
+
+    make install
+
+    install -v -m755 -d /usr/share/doc/$name-$version
+    install -v -m644 docs/Wilber* /usr/share/doc/$name-$version
+}

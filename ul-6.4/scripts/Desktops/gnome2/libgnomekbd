@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgnomekbd
+version=2.32.0
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME keyboard integration library"
+src="l/libgnomekbd/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libgnomekbd package contains xkb hooks used by the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

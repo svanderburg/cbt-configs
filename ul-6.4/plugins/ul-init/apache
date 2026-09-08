@@ -1,0 +1,5 @@
+description="Apache HTTP server"
+startSequenceNumber=32
+stopSequenceNumber=28
+startRunLevels="3 4 5"
+stopRunLevels="0 1 2 6"

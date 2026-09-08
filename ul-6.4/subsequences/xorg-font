@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+fontXorgScripts="\
+Display/X11/font/encodings \
+Display/X11/font/font-util \
+Display/X11/font/font-adobe-75dpi \
+Display/X11/font/font-adobe-100dpi \
+Display/X11/font/font-adobe-utopia-75dpi \
+Display/X11/font/font-adobe-utopia-100dpi \
+Display/X11/font/font-adobe-utopia-type1 \
+Display/X11/font/font-alias \
+Display/X11/font/font-arabic-misc \
+Display/X11/font/font-bh-75dpi \
+Display/X11/font/font-bh-100dpi \
+Display/X11/font/font-bh-lucidatypewriter-75dpi \
+Display/X11/font/font-bh-lucidatypewriter-100dpi \
+Display/X11/font/font-bh-ttf \
+Display/X11/font/font-bh-type1 \
+Display/X11/font/font-bitstream-75dpi \
+Display/X11/font/font-bitstream-100dpi \
+Display/X11/font/font-bitstream-speedo \
+Display/X11/font/font-bitstream-type1 \
+Display/X11/font/font-cronyx-cyrillic \
+Display/X11/font/font-cursor-misc \
+Display/X11/font/font-daewoo-misc \
+Display/X11/font/font-dec-misc \
+Display/X11/font/font-ibm-type1 \
+Display/X11/font/font-isas-misc \
+Display/X11/font/font-jis-misc \
+Display/X11/font/font-micro-misc \
+Display/X11/font/font-misc-cyrillic \
+Display/X11/font/font-misc-ethiopic \
+Display/X11/font/font-misc-meltho \
+Display/X11/font/font-misc-misc \
+Display/X11/font/font-mutt-misc \
+Display/X11/font/font-schumacher-misc \
+Display/X11/font/font-screen-cyrillic \
+Display/X11/font/font-sony-misc \
+Display/X11/font/font-sun-misc \
+Display/X11/font/font-winitzki-cyrillic \
+Display/X11/font/font-xfree86-type1 \
+"

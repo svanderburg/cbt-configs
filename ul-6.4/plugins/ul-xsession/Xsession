@@ -1,0 +1,4 @@
+#!/bin/bash
+
+windowManager="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
+exec /usr/share/ul/ul-xsession/sessions/$windowManager

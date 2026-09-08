@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gens
+version=2.15.5
+license=GPLv2
+group=Emulators
+description="Sega Genesis emulator"
+src="g/gens/$name-$version.tar.gz"
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="Gens"
+genericName="Sega Genesis emulator"
+exec=gens
+comment="Gens emulator"
+mimeType="application/x-genesis-rom"
+categories="Emulator;"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is a Linux port (x86 processors) based on the Sega Genesis Emulator "Gens"
+version 2.12a
+EOF
+}
+
+buildPhase()
+{
+    LIBS="-L/usr/X11R$xorgVersion/lib" \
+        ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    if [ -d /opt/kde/share/mimelnk ]
+    then
+        mkdir -p /opt/kde/share/mimelnk/emulators
+        cd /opt/kde/share/mimelnk/emulators
+
+        cat > genesis.desktop << "EOF"
+[Desktop Entry]
+Type=MimeType
+Comment=Sega Genesis/Mega Drive ROM
+MimeType=application/x-genesis-rom
+Icon=binary
+Patterns=*.smd;*.SMD
+EOF
+    fi
+
+}

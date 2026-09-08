@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gsl
+version=1.14
+group=Libraries/Shared
+license=GPLv3
+description="GNU Scientific Library"
+src="g/gsl/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GSL, the GNU Scientific Library, is a collection of numerical routines for
+scientific computing.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

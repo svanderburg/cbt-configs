@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=scons
+version=1.3.1
+group=Tools/Development
+license=MIT
+description="Software Construction Tool"
+src="s/scons/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+SCons is a tool for building software (and other files). SCons is implemented
+in Python, and its "configuration files" are actually Python scripts, allowing
+you to use the full power of a real scripting language to solve build problems.
+You do not, however, need to know Python to use SCons effectively.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    python setup.py install
+}

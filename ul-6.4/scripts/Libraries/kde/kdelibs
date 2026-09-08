@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdelibs
+version=3.5.10
+group=Libraries/kde
+license=LGPLv2
+description="KDE libraries"
+src="k/kdelibs/$name-$version.tar.bz2"
+patches=("k/kdelibs/$name-$version-charset-1.patch" "k/kdelibs/$name-$version-menu-extensions-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+This package includes programs and libraries that are central to the development
+and execution of a KDE program, as well as internationalization files for these
+libraries, miscellaneous HTML documentation, theme modules and regression tests.
+EOF
+}
+
+buildPhase()
+{
+    # Fix compilation error
+    sed -i -e 's|linux/inotify|sys/inotify|' \
+       -e '/^static inline int inotify_init/,/^}/d' \
+       -e '/^static inline int inotify_add_watch/,/^}/d' \
+       -e '/^static inline int inotify_rm_watch/,/^}/d' \
+       kio/kio/kdirwatch.cpp
+
+    ./configure --prefix=/opt/kde-$kdeVersion \
+        --sysconfdir=/etc/opt/kde-$kdeVersion \
+        --disable-debug \
+        --disable-dependency-tracking
+    LD_LIBRARY_PATH="$QTDIR/lib" make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Rename applications.menu file because it has the same name as GNOME's
+    # As a result, KDE will adopt GNOME's menu organization.
+    # If we want to use multiple desktops, it is better to use unique names
+    # and use the XDG_MENU_PREFIX environment variable to make a distinction
+    # btween them
+
+    cd /etc/opt/kde-$kdeVersion/xdg/menus
+    mv applications.menu kde-applications.menu
+
+    # Install extra menu configuration file for the GNOME sub menu
+    install -m644 $cbtBaseDir/xdg/menus/kde-gnome.menu /etc/opt/kde-$kdeVersion/xdg/menus
+}

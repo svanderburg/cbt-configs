@@ -1,0 +1,127 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdegames
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE games"
+src="k/kdegames/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is a compilation of various games that integrate well with the KDE
+desktop:
+
+* atlantik
+    Monopoly-like board games
+
+* kasteroids
+    Shoot at those nasty asteroids.
+
+* katomic
+    Build complex atoms with a minimal amount of moves.
+
+* kbackgammon
+    Play backgammon against a local human player, via a game server or
+    against GNU Backgammon (not included)
+
+* kbattleship
+    Sink battleship of your opponents, with built-in game server.
+
+* kblackbox
+    Find atoms in a grid by shooting electrons.
+
+* kbounce
+    Claim areas and don't get disturbed.
+
+* keneloba
+    Push pieces of your opponent out of the board (an Abalone type game).
+
+* kfouleggs
+    A famous japanese game known as puyo-puyo.
+
+* kjumpingcube
+    A tactical game for number-crunchers.
+
+* klickety
+    A tetris like game.
+
+* klines
+    Place 5 equal pieces together, but wait, there are 3 new ones.
+
+* mahjongg
+    A tile laying patience.
+
+* kmines
+    The classical mine sweeper.
+
+* kolf
+    A mini golf game.
+
+* konquest
+    Conquer the planets of your enemy.
+
+* kpat
+    Several patience card games.
+
+* kpoker
+    The game of poker.
+
+* kreversi
+    The old reversi board game, also known as Othello.
+
+* ksame
+    Collect pieces of the same color.
+
+* kshisen
+    Patience game where you take away all pieces.
+
+* ksirtet
+    Very known if spelt this backwards.
+
+* ksmiletris
+    Another Tetris-like game.
+
+* ksnake
+    Don't bite yourself, eat apples!
+
+* ksokoban
+    Move all storage boxes into the cabinet.
+
+* kspaceduel
+    Two player game with shooting spaceships flying around a sun.
+
+* ktron
+    Like ksnake, but without fruits.
+
+* ktuberling
+    Kids game: make your own potato (NO french fries!)
+
+* kwin4
+    Place 4 pieces in a row.
+
+* libkdegames
+    KDE game library used by many of these programs, contains also images
+    of card decks.
+
+* lskat
+    Lieutnant skat.
+
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

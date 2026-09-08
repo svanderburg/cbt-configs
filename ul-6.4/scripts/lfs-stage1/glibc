@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/glibc
+
+group=lfs-stage1
+workDir=$name-$actualVersion
+
+buildPhase()
+{
+    # Fix a potential issue if /etc/ld.so.preload is used on the host system
+    sed -i 's@/etc/ld.so.preload@/tools/etc/ld.so.preload@' elf/rtld.c
+
+    mkdir ../$name-build
+    cd ../$name-build
+
+    # glibc no longer supports i386, so we can optimize for i486
+    echo "CFLAGS += -march=i486 -mtune=native" > configparms
+
+    ../$name-$actualVersion/configure --prefix=/tools \
+       --disable-profile --enable-add-ons \
+       --enable-kernel=2.6.0 --with-binutils=/tools/bin \
+       --without-gd --with-headers=/tools/include \
+       --without-selinux
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd ../$name-build
+
+    # Eliminate a harmless warning about the absence of an ld.so.conf
+    mkdir -v /tools/etc
+    touch /tools/etc/ld.so.conf
+
+    make install
+}

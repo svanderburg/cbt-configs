@@ -1,0 +1,59 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/gcc
+
+group=lfs-stage1
+srcs=("m/mpfr/mpfr-2.3.2.tar.bz2" "g/gmp/gmp-4.2.4.tar.bz2")
+workDir=$name-$version
+
+buildPhase()
+{
+    # It is not required to execute the fixincludes script because gcc-4.3.x
+    # and glibc-2.8 have already been installed. The following commands
+    # suppress running the script
+    cp -v gcc/Makefile.in{,.orig}
+    sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in
+
+    # For x86 machies a bootstrap build of gcc uses the -fomit-frame-pointer
+    # flag, but not a non-bootstrapped compiler. We want this compiler to be
+    # exactly the same so we must reenable it
+    cp -v gcc/Makefile.in{,.tmp}
+    sed 's/^XCFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
+      > gcc/Makefile.in
+
+    # The following commands will change the location of GCC's dynamic
+    # linker to the one installed it /tools. It also removes /usr/include
+    # from the default search path
+    for file in $(find gcc/config -name linux64.h -o -name linux.h)
+    do
+        cp -uv $file{,.orig}
+        sed -e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
+          -e 's@/usr@/tools@g' $file.orig > $file
+        echo "
+#undef STANDARD_INCLUDE_DIR
+#define STANDARD_INCLUDE_DIR 0" >> $file
+        touch $file.orig
+    done
+
+    mv -v ../mpfr-2.3.2 mpfr
+    mv -v ../gmp-4.2.4 gmp
+
+    mkdir ../$name-build
+    cd ../$name-build
+
+    ../$name-$version/configure --prefix=/tools \
+       --with-local-prefix=/tools --enable-clocale=gnu \
+       --enable-shared --enable-threads=posix \
+       --enable-__cxa_atexit --enable-languages=c,c++ \
+       --disable-libstdcxx-pch --disable-bootstrap
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    cd ../$name-build
+
+    make install
+}

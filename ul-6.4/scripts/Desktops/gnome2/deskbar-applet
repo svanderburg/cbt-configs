@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=deskbar-applet
+version=2.32.0
+group=Desktops/gnome2
+license=GPLv2
+description="Deskbar applet"
+src="d/deskbar-applet/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The goal of Deskbar-Applet is to provide an omnipresent versatile search
+interface. By typing search terms into the deskbar entry in your panel you are
+presented with the search results as you type.
+
+Searches are handled by a series of plugins. Deskbar-Applet provides a simple
+interface to manage these plugins to provide you with the search results that
+fit your needs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/deskbar-applet \
+        --localstatedir=/var/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

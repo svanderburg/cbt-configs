@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libdaemon
+version=0.14
+group=Libraries/Shared
+license=LGPLv2.1
+description="Daemon library"
+src="l/libdaemon/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The libdaemon package is a lightweight C library that eases the writing of UNIX
+daemons.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-netstatus
+version=2.28.2
+group=Desktops/gnome2
+license=GPLv2
+description="GNOME Netstatus"
+src="g/gnome-netstatus/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains an applet which provides information about a network
+interface on your panel.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gnome-netstatus
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

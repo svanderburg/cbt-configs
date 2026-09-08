@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=groff
+version=1.18.1.4
+group=lfs-stage2
+description="GNU roff"
+license=GPLv2
+src="g/groff/$name-$version.tar.gz"
+patches=("g/groff/$name-$version-debian_fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+groff (GNU roff) is a typesetting system that reads plain text input that
+includes formatting commands to produce output in PostScript, PDF, HTML, or DVI
+formats or for display to a terminal. Formatting commands can be low-level
+typesetting primitives, macros from a supplied package, or user-defined macros.
+All three approaches can be combined.
+EOF
+}
+
+buildPhase()
+{
+    # Many screen fonts don't have Unicode single quotes and dashes in them. Tell Groff to use the ASCII equivalents instead
+    sed -i -e 's/2010/002D/' -e 's/2212/002D/' \
+        -e 's/2018/0060/' -e 's/2019/0027/' font/devutf8/R.proto
+
+    PAGE=A4 ./configure --prefix=/usr --enable-multibyte
+    make
+}
+
+installPhase()
+{
+    make docdir=/usr/share/doc/$name-$version install
+    ln -sfv eqn /usr/bin/geqn
+    ln -sfv tbl /usr/bin/gtbl
+}

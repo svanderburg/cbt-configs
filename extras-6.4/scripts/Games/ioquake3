@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=ioquake3
+version=1.36
+group=Games
+license=GPLv2
+description="icculus.org Quake 3 port"
+src="i/ioquake3/$name-$version.tar.bz2"
+
+desktopTargetDir="/usr/local/share/applications"
+desktopName="Quake 3"
+genericName="Shoot em up game"
+exec=/usr/local/games/quake3/ioquake3.i386
+comment="icculus.org Quake 3 port"
+categories="Game;Shooter;"
+
+showLongDescription()
+{
+    cat << "EOF"
+A port of Quake 3 provided by icculus.org
+EOF
+}
+
+buildPhase()
+{
+    sed -i "s|-lGL|-lGL -L/usr/X11R$xorgVersion/lib|" Makefile
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+
+    mkdir -p /usr/local/games/quake3
+    cp -av build/release-linux-i386/* /usr/local/games/quake3
+}

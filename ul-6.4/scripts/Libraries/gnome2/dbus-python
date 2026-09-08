@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dbus-python
+version=0.83.2
+group=Libraries/gnome2
+license=MIT
+description="D-Bus Python bindings"
+src="d/dbus-python/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Python bindings for D-Bus.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

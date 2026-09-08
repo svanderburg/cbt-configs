@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-menus
+version=2.30.5
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Menus"
+src="g/gnome-menus/$name-$version.tar.bz2"
+patches=("g/gnome-menus/$name-$version-menu-extensions-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-menus contains the libgnome-menu library, the layout configuration
+files for the GNOME menu, as well as a simple menu editor.
+
+The libgnome-menu library implements the "Desktop Menu Specification"
+from freedesktop.org
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --enable-inotify
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Create directory file for Emulators group
+
+    install -m644 $cbtBaseDir/xdg/desktop-directories/Emulators.directory \
+        $cbtBaseDir/xdg/desktop-directories/KDE.directory \
+	/opt/gnome-$gnome2Version/share/desktop-directories
+
+    # Rename applications.menu file because it has the same name as KDE's
+    # As a result, GNOME will adopt KDE's menu organization.
+    # If we want to use multiple desktops, it is better to use unique names
+    # and use the XDG_MENU_PREFIX environment variable to make a distinction
+    # btween them
+
+    cd /etc/opt/gnome-$gnome2Version/xdg/menus
+    mv applications.menu gnome-applications.menu
+
+    # Install extra menu configuration file for the KDE sub menu
+    install -m644 $cbtBaseDir/xdg/menus/gnome-kde.menu /etc/opt/gnome-$gnome2Version/xdg/menus
+}

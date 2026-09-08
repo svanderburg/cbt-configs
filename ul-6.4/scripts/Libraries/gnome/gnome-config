@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=gnome-config
+group=Libraries/gnome
+description="Global configuration settings for GNOME libs"
+
+execute()
+{
+    echo "MANDATORY_MANPATH /opt/gnome/share/man" >> /etc/man_db.conf
+    echo "/opt/gnome/lib" >> /etc/ld.so.conf
+    ldconfig
+}

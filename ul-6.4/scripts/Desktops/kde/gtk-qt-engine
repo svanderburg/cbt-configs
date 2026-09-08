@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gtk-qt-engine
+version=0.8
+group=Desktops/kde
+license=GPLv2
+description="GTK-Qt engine"
+src="g/gtk-qt-engine/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A GTK theme engine that uses Qt for drawing. This theme can be used to nicely
+integrate GTK+ applications with KDE.
+EOF
+}
+
+buildPhase()
+{
+    # The indirectly included header: gdbusintrospection.h defines a struct
+    # with a field named: signals. signals is also a macro that is defined by
+    # Qt3, causing a complication error. This unsets the macro so that that
+    # error is prevented
+    sed -i '/#include <gdk\/gdkx.h>/i\
+#undef signals' src/qt_qt_wrapper.cpp
+
+    cmake -DCMAKE_INSTALL_PREFIX=/opt/kde-$kdeVersion
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    echo "gtkSearchPaths=/usr,/usr/local,/opt/gnome,/opt/gnome2" > /opt/kde/share/config/kcmgtkrc
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ortp
+version=0.16.3
+group=Libraries/Protocols
+license=LGPLv2.1
+description="Real-Time Transport Protocol implementation"
+src="o/ortp/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+oRTP is a LGPL licensed C library implementing the RTP protocol (rfc3550). It is
+available for most unix clones (primilarly Linux and HP-UX), and Microsoft
+Windows.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

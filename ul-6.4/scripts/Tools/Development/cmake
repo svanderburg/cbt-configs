@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=cmake
+version=2.8.3
+group=Tools/Development
+license=BSD
+description="Cross-platform Make system"
+src="c/cmake/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+CMake is an cross-platform, open-source make system.
+EOF
+}
+
+buildPhase()
+{
+    ./bootstrap --prefix=/usr \
+        --docdir=/share/doc/$name-$version --datadir=/share/$name-$version \
+        --mandir=/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    sed -i -e "s|/usr/X11R6|/usr/X11R$xorgVersion|g" /usr/share/$name-$version/Modules/FindX11.cmake &&
+    sed -i -e "s|/usr/X11R6|/usr/X11R$xorgVersion|g" /usr/share/$name-$version/Modules/FindOpenGL.cmake
+}

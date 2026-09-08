@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=upower
+version=0.9.7
+group=Libraries/Desktop
+license=GPLv2
+description="UPower abstraction"
+src="u/upower/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+UPower is an abstraction for enumerating power devices,
+listening to device events and querying history and statistics.
+Any application or service on the system can access the
+org.freedesktop.UPower service via the system message bus.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+        --libexecdir=/usr/lib/upower \
+	--localstatedir=/var
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

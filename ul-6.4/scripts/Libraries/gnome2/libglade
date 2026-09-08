@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libglade
+version=2.6.4
+group=Libraries/gnome2
+license=LGPLv2
+description="Glade interface file library"
+src="l/libglade/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library allows you to load glade interface files in a program at
+runtime. It doesn't require GLADE to be used, but GLADE is by far the
+easiest way to create the interface files.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

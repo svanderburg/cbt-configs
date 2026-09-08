@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=less
+version=418
+group=lfs-stage2
+description="GNU Less"
+license=GPLv3
+src="l/less/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+less is a terminal pager program used to view (but not change) the contents of
+a text file one screen at a time. It is similar to more, but has the extended
+capability of allowing both forward and backward navigation through the file.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

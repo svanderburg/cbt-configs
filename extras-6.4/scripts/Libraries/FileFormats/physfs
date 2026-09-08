@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=physfs
+version=2.0.1
+group=Libraries/FileFormats
+license=zlib
+description="Archive abstraction library for games"
+src="p/physfs/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+PhysicsFS is a library to provide abstract access to various archives. It is
+intended for use in video games, and the design was somewhat inspired by
+Quake 3's file subsystem.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    cmake -DCMAKE_INSTALL_PREFIX=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

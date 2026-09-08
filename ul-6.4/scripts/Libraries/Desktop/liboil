@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=liboil
+version=0.3.17
+group=Libraries/Desktop
+license=BSD-2
+description="Simple functions optimized for CPUs"
+src="l/liboil/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Liboil is a library of simple functions that are optimized for various CPUs.
+These functions are generally loops implementing simple algorithms, such as
+converting an array of N integers to floating-point numbers or multiplying and
+summing an array of N numbers. Such functions are candidates for significant
+optimization using various techniques, especially by using extended instructions
+provided by modern CPUs (Altivec, MMX, SSE, etc.).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

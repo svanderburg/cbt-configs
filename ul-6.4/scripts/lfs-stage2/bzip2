@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+source $cbtBaseDir/meta/bzip2
+
+group=lfs-stage2
+patches=("b/bzip2/$name-$version-install_docs-1.patch")
+
+buildPhase()
+{
+    # Prepare bzip2 compilation
+    make -f Makefile-libbz2_so
+    make clean
+
+    # Compile package
+    make
+}
+
+installPhase()
+{
+    chown -R root:root *
+
+    make PREFIX=/usr install
+
+    cp -v bzip2-shared /bin/bzip2
+    cp -av libbz2.so* /lib
+    ln -sfv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so
+    rm -v /usr/bin/{bunzip2,bzcat,bzip2}
+    ln -sfv bzip2 /bin/bunzip2
+    ln -sfv bzip2 /bin/bzcat
+}

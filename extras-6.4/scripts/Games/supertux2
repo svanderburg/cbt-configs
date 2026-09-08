@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=supertux2
+version=0.3.4
+group=Games
+license=GPLv3
+description="Supertux Beta"
+src="s/supertux/supertux-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+SuperTux is an open-source classic 2D jump'n run sidescroller game in a style
+similar to the original Super Mario games.
+
+This is a beta version offering an in-development forst world.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    cmake -DCMAKE_INSTALL_PREFIX=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Fix path to executable in desktop item
+    sed -i 's|Exec=supertux2|Exec=/usr/games/supertux2|' /usr/share/applications/supertux2.desktop
+}

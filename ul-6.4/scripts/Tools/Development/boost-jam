@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=boost-jam
+version=3.1.18
+group=Tools/Development
+license=boost
+description="Boost Jam build tool"
+src="b/boost-jam/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Boost.Jam (BJam) is a build tool based on FTJam, which in turn is based on
+Perforce Jam. It contains significant improvements made to facilitate its use in
+the Boost Build System, but should be backward compatible with Perforce Jam.
+EOF
+}
+
+buildPhase()
+{
+    ./build.sh
+}
+
+installPhase()
+{
+    cd bin.linux*
+    install -m755 bjam /usr/bin
+}

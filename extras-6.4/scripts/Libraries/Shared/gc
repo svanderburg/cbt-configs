@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gc
+version=7.1
+group=Libraries/Shared
+license=MIT
+description="Garbage collector implementation for uncooperative environments"
+src="g/gc/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Boehm-Demers-Weiser conservative garbage collector can be used as a garbage
+collecting replacement for C malloc or C++ new. It allows you to allocate memory
+basically as you normally would, without explicitly deallocating memory that is
+no longer useful. The collector automatically recycles memory when it determines
+that it can no longer be otherwise accessed.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=ld.so-configure
+group=lfs-stage2
+description="Creates a basic ld.so.conf"
+
+execute()
+{
+    cat > /etc/ld.so.conf << "EOF"
+# Begin /etc/ld.so.conf
+
+/usr/lib
+/usr/local/lib
+/opt/lib
+
+# End /etc/ld.so.conf
+EOF
+}

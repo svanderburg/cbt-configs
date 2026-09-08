@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xscreensaver
+version=5.12
+group=Tools/Graphics
+license=BSD
+description="Screensaver system for X"
+src="x/xscreensaver/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+XScreenSaver is the standard screen saver collection shipped on most Linux and
+Unix systems running the X11 Window System, since its first release in 1992.
+
+On X11 systems, XScreenSaver is two things: it is both a large collection of
+screen savers; and it is also the framework for blanking and locking the screen.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --libexecdir=/usr/lib
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

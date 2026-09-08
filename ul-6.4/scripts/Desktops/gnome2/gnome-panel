@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gnome-panel
+version=2.32.1
+group=Desktops/gnome2
+license=LGPLv2
+description="GNOME Panel"
+src="g/gnome-panel/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+gnome-panel contains the GNOME panel, the libpanel-applet library and
+several applets:
+
+  + the GNOME panel is the area on your desktop from which you can run
+    applications and applets, and perform other tasks.
+
+  + the libpanel-applet library allows to develop small applications
+    which may be embedded in the panel. These are called applets.
+    Documentation for the API is available with gtk-doc.
+
+  + the applets supplied here include the Workspace Switcher, the Window
+    List, the Window Selector, the Notification Area, the Clock and the
+    infamous 'Wanda the Fish'.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --libexecdir=/opt/gnome-$gnome2Version/lib/gnome-panel \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=xdg-menu
+version=0.2
+group=Tools/Misc
+# License is not in the source package, but listed as GPLv2 on:
+# https://build.opensuse.org/projects/openSUSE:Factory/packages/xdg-menu/files/xdg-menu.spec
+license=GPLv2
+description="XDG Menu converter"
+src="x/xdg-menu/$name-$version.tar.bz2"
+patches=("x/xdg-menu/xdg-menu-su.patch" "x/xdg-menu/xdg-menu-twm.patch")
+defaultPatchLevel=0
+
+showLongDescription()
+{
+    cat << "EOF"
+This package contains a Perl script which converts XDG menus to formats used by
+various kinds of window manager, such as WindowMaker, TWM and fvwm2.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    install -m755 xdg_menu /usr/bin
+    install -m755 xdg_menu_su /usr/bin
+
+    # Update Window Maker configuration to have an XDG desktop menu
+    cd /etc/WindowMaker
+    mv WMRootMenu WMRootMenu.bak
+    sed -e '2i\ ("Desktop menu", OPEN_MENU, "| xdg_menu"),\' WMRootMenu.bak > WMRootMenu
+}

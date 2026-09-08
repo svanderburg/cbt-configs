@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdenetwork
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE network"
+src="k/kdenetwork/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A collection network applications for KDE:
+
+* kdict: graphical client for the DICT protocol.
+* kit: AOL instant messenger client, using the TOC protocol
+* knewsticker: RDF newsticker applet
+* kpf: public fileserver applet
+* kppp: dialer and front end for pppd
+* ksirc: IRC client
+* ktalkd: talk daemon
+* kxmlrpc: KDE XmlRpc Daemon
+* lanbrowsing: lan browsing kio slave
+* krfb: Desktop Sharing server, allow others to access your desktop via VNC
+* krdc: a client for Desktop Sharing and other VNC servers
+* wifi: Wireless LAN tools
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -m754 $cbtBaseDir/init.d/lisa /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/lisa /usr/share/ul/ul-init
+}

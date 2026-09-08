@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gperf
+version=3.0.3
+group=Libraries/Shared
+license=GPLv3
+description="GNU Perfect Hashing library"
+src="g/gperf/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU gperf. It is a program that generates perfect hash
+functions for sets of key words. A perfect hash function is:
+
+    A hash function and a data structure that allows
+    recognition of a key word in a set of words using 
+    exactly 1 probe into the data structure.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr --docdir=/usr/share/doc/$name-$version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -m644 -v doc/gperf.{dvi,ps,pdf} \
+                 /usr/share/doc/$name-$version
+}

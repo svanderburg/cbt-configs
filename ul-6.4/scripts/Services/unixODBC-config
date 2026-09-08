@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source $cbtBaseDir/settings/lfs-settings
+
+name=qt-config
+group=Libraries/kde
+description="Global configuration settings for unixODBC"
+
+execute()
+{
+    echo "/opt/unixODBC/lib" >> /etc/ld.so.conf
+    ldconfig
+}

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libbinio
+version=1.4
+group=Libraries/FileFormats
+license=LGPLv2.1
+description="Platform-independent way to access binary data streams in C++"
+src="l/libbinio/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The binary I/O stream class library presents a platform-independent
+way to access binary data streams in C++.
+
+The library is hardware independent in the form that it transparently
+converts between the different forms of machine-internal binary data
+representation.
+
+It further employs no special I/O protocol and can be used on
+arbitrary binary data sources.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

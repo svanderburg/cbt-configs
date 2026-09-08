@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=dbus
+version=1.2.10
+group=Services
+license=GPLv2/AFLv2.1
+description="D-Bus message bus"
+src="d/dbus/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+D-Bus is a simple system for interprocess communication and coordination.
+
+The "and coordination" part is important; D-Bus provides a bus daemon that does
+things like:
+ - notify applications when other apps exit
+ - start services on demand
+ - support single-instance applications
+EOF
+}
+
+preConfigurePhase()
+{
+    # Create users and groups
+    groupadd -g 18 messagebus
+    useradd -u 18 -c "D-BUS Message Daemon User"  -d /dev/null -g messagebus -s /bin/false messagebus
+}
+
+buildPhase()
+{
+    # Fix compilation error
+    sed -i '1i\
+#include <syslog.h>' dbus/dbus-sysdeps-util-unix.c
+
+    ./configure --prefix=/usr --sysconfdir=/etc --libexecdir=/usr/lib/dbus-1.0 --localstatedir=/var
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    install -m754 $cbtBaseDir/init.d/dbus /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/dbus /usr/share/ul/ul-init
+}

@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=vim
+version=7.2
+group=lfs-stage2
+description="VI iMproved"
+license=GPLv2
+srcs=("v/vim/$name-$version.tar.bz2" "v/vim/$name-$version-lang.tar.gz")
+patches=("v/vim/$name-$version-fixes-3.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Vim is a highly configurable text editor built to make creating and changing any
+kind of text very efficient. It is included as "vi" with most UNIX systems.
+EOF
+}
+
+buildPhase()
+{
+    # Change the default location of the vimrc configuration file to /etc
+    echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+
+    ./configure --prefix=/usr --enable-multibyte
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    ln -sfv vim /usr/bin/vi
+    for L in  /usr/share/man/{,*/}man1/vim.1
+    do
+        ln -sfv vim.1 $(dirname $L)/vi.1
+    done
+
+    ln -sfv ../vim/vim72/doc /usr/share/doc/$name-$version
+}

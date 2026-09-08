@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gobject-introspection
+version=0.9.8
+group=Libraries/gnome2
+license=LGPLv2.1
+description="GObject Introspection"
+src="g/gobject-introspection/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The goal of the project is to describe the APIs and collect them in
+a uniform, machine readable format.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

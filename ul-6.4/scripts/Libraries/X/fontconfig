@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=fontconfig
+version=2.6.0
+group=Libraries/X
+license=X11
+description="Font config"
+src="f/fontconfig/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The fontconfig package is a library for configuring and customizing font
+access.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc --localstatedir=/var \
+        --disable-docs --without-add-fonts \
+        --with-docdir=/usr/share/doc/$name-$version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+
+    # Create basic font configuration
+    cat > /etc/fonts/local.conf <<EOF
+<fontconfig>
+    <dir>/usr/X11R$xorgVersion/lib/X11/fonts/OTF</dir>
+    <dir>/usr/X11R$xorgVersion/lib/X11/fonts/TTF</dir>
+    <dir>/usr/X11R$xorgVersion/lib/X11/fonts/Type1</dir>
+</fontconfig>
+EOF
+}

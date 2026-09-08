@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=portmap
+version=6.0
+group=Network/Tools
+license=BSD
+description="RPC portmapper"
+src="p/portmap/$name-$version.tgz"
+
+showLongDescription()
+{
+    cat << "EOF"
+Portmap is a server that converts RPC program numbers into DARPA protocol port
+numbers. It must be running in order to make RPC calls.
+EOF
+}
+
+buildPhase()
+{
+    make
+}
+
+installPhase()
+{
+    make install
+    install -m754 $cbtBaseDir/init.d/portmap /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/portmap /usr/share/ul/ul-init
+}

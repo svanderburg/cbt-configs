@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage2SourcePackage
+source $cbtBaseDir/settings/lfs-settings
+
+name=grub
+version=0.97
+group=lfs-stage2
+description="Grand Unified Bootloader"
+license=GPLv2
+src="g/grub/$name-$version.tar.gz"
+patches=("g/grub/$name-$version-disk_geometry-1.patch" "g/grub/$name-$version-256byte_inode-1.patch")
+showLongDescription()
+{
+    cat << "EOF"
+GNU GRUB is a Multiboot boot loader.
+
+Briefly, a boot loader is the first software program that runs when a computer
+starts. It is responsible for loading and transferring control to the operating
+system kernel software (such as the Hurd or Linux). The kernel, in turn,
+initializes the rest of the operating system (e.g. GNU).
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    mkdir -pv /boot/grub
+    cp -v /usr/lib/grub/i386-pc/stage{1,2} /boot/grub
+}

@@ -1,0 +1,60 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gcc346
+name2=gcc
+version=3.4.6
+group=Tools/Development
+license=GPLv3
+description="GNU Compiler Collection"
+srcs=("g/gcc/$name2-$version.tar.bz2")
+patches=("g/gcc/$name2-$version-linkonce-1.patch" "g/gcc/$name2-$version-posix-1.patch")
+workDir=$name2-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+Fortran, and Java well as libraries for these languages (libstdc++,...).
+
+GCC was originally written as the compiler for the GNU operating system.
+
+A reason why you want to install this compiler is to use Fortran 77. In GCC
+4.x, this implementation has been replaced with Fortran 95.
+
+Moreover, you need this compiler to bootstrap GCC 2.95.3, which can be used
+to deploy old binary packages.
+EOF
+}
+
+buildPhase()
+{
+    mkdir ../$name2-build
+    cd ../$name2-build
+
+    unset CFLAGS || true
+    unset CXXFLAGS || true
+
+    ../$name2-$version/configure --prefix=/opt/$name2-$version \
+        --enable-shared --enable-threads=posix \
+        --enable-clocale=gnu --libexecdir=/opt/$name2-$version/lib \
+	--mandir=/opt/$name2-$version/share/man \
+	--infodir=/opt/$name2-$version/share/info
+    make $globalBuildOptions bootstrap
+}
+
+installPhase()
+{
+    cd ../$name2-build
+
+    make install
+    ln -v -sf gcc /opt/$name2-$version/bin/cc
+    ln -v -sf g77 /opt/$name2-$version/bin/f77
+    install -v -m644 ../$name2-$version/libffi/src/x86/ffitarget.h /opt/$name2-$version/include
+
+    chown -R root:root /opt/$name2-$version/lib/gcc
+}
+
+

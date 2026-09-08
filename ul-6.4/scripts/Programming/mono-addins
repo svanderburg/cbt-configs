@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mono-addins
+version=0.5
+group=Programming
+license=MIT
+description="Framework for extensible Mono applications"
+src="m/mono-addins/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Mono.Addins is a generic framework for creating extensible applications,
+and for creating libraries which extend those applications.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make
+}
+
+installPhase()
+{
+    make install
+}

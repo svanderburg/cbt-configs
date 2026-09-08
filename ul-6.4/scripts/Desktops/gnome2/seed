@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=seed
+version=2.31.1
+group=Desktops/gnome2
+license=LGPLv3
+description="Seed JavaScript integration library"
+src="s/seed/$name-$version.tar.bz2"
+patches=("s/seed/$name-$version-fixes-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+Seed is a library and interpreter, dynamically bridging (through
+gobject-introspection) the WebKit JavaScriptCore engine with the GObject type
+system. In a more concrete sense, Seed enables you to immediately write
+applications around a significant portion of the GNOME platform, and easily
+embed JavaScript as a scripting language in your GObject library.
+EOF
+}
+
+buildPhase()
+{
+    CPPFLAGS="-I/opt/gnome-$gnome2Version/include/dbus-1.0" \
+        LIBS="-L/opt/gnome-$gnome2Version/lib" \
+        ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

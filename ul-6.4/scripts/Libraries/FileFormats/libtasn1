@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libtasn1
+version=2.9
+group=Libraries/FileFormats
+license=LGPLv2.1
+description="A small ASN.1 library"
+src="l/libtasn1/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is GNU Libtasn1, a small ASN.1 library.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

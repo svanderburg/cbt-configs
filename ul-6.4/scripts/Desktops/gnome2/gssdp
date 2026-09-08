@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gssdp
+version=0.8.2
+group=Desktops/gnome2
+license=LGPLv2
+description="GObject-based API for SSDP"
+src="g/gssdp/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A GObject-based API for handling resource discovery and announcement over SSDP.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

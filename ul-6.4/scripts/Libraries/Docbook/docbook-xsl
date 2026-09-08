@@ -1,0 +1,73 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=docbook-xsl
+version=1.71.1
+group=Libraries/Docbook
+license=MIT
+description="Docbook XSL stylesheets"
+src="d/docbook-xsl/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+The docbook-xsl package contains xsl stylesheets that are useful for performing
+transformations on XML DocBook files.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    install -v -m755 -d /usr/share/xml/docbook/xsl-stylesheets-$version
+
+    cp -v -R VERSION common eclipse extensions fo highlighting html \
+             htmlhelp images javahelp lib manpages params profiling \
+             slides template tools website wordml xhtml             \
+        /usr/share/xml/docbook/xsl-stylesheets-$version
+
+    install -v -m644 -D README \
+                         /usr/share/doc/docbook-xsl-$version/README.XSL
+    install -v -m755    RELEASE-NOTES* NEWS* \
+                        /usr/share/doc/docbook-xsl-$version
+
+}
+
+postConfigurePhase()
+{
+    if [ ! -d /etc/xml ]
+    then
+        install -v -m755 -d /etc/xml
+    fi
+
+    if [ ! -f /etc/xml/catalog ]
+    then
+        xmlcatalog --noout --create /etc/xml/catalog
+    fi
+
+    xmlcatalog --noout --add "rewriteSystem" \
+           "http://docbook.sourceforge.net/release/xsl/$version" \
+           "/usr/share/xml/docbook/xsl-stylesheets-$version" \
+        /etc/xml/catalog
+
+    xmlcatalog --noout --add "rewriteURI" \
+           "http://docbook.sourceforge.net/release/xsl/$version" \
+           "/usr/share/xml/docbook/xsl-stylesheets-$version" \
+        /etc/xml/catalog
+
+    xmlcatalog --noout --add "rewriteSystem" \
+           "http://docbook.sourceforge.net/release/xsl/current" \
+           "/usr/share/xml/docbook/xsl-stylesheets-$version" \
+        /etc/xml/catalog
+
+    xmlcatalog --noout --add "rewriteURI" \
+           "http://docbook.sourceforge.net/release/xsl/current" \
+           "/usr/share/xml/docbook/xsl-stylesheets-$version" \
+        /etc/xml/catalog
+}

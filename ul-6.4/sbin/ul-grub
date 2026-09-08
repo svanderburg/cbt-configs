@@ -1,0 +1,60 @@
+#!/bin/bash -e
+
+EDITOR="${EDITOR:-vi}"
+
+if [ ! -f /boot/grub/menu.lst ]
+then
+    echo "No menu.lst exists, creating a template one!" >&2
+    read
+
+    rootDevice="$(mount | grep " on / " | cut -d ' ' -f1)"
+    bootDevice="$(mount | grep " on /boot " | cut -d ' ' -f1)"
+
+    if [ "$bootDevice" = "" ]
+    then
+        bootDevice="$rootDevice"
+    fi
+
+    cat > /boot/grub/menu.lst <<EOF
+# Begin /boot/grub/menu.lst
+
+# By default boot the first menu entry.
+default 0
+
+# Allow 30 seconds before booting the default.
+timeout 30
+
+# Use prettier colors.
+color green/black light-green/black
+
+# The first entry is for UL-6.4
+title UL 6.4
+root (hd0,3) # Change this line to match the root device
+kernel /boot/lfskernel-2.6.27.57 root=$rootDevice
+EOF
+
+fi
+
+"$EDITOR" /boot/grub/menu.lst
+
+cat << "EOF"
+
+If you have not yet installed GRUB on the Master Boot Record yet, open the
+GRUB command-line tool with:
+
+grub
+
+Tell GRUB where to search for its stage{1, 2} files. In the following example
+it assumes the 7th partition of the first hard drive:
+
+root (hd0,6)
+
+Tell GRUB to install itself onto the MBR. To install on the root of /dev/hda
+run:
+
+setup (hd0)
+
+If all went well, quit the GRUB shell:
+
+quit
+EOF

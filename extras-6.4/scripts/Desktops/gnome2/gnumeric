@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=gnumeric
+version=1.10.17
+group=Desktops/gnome2
+license=GPLv2
+description="Gnumeric spreadsheet"
+src="g/gnumeric/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+Gnumeric is a spreadsheet program for the GNOME desktop.
+EOF
+}
+
+buildPhase()
+{
+    # It seems that GDA and libgnomedb support is broken
+    # GDA support requires a header that isn't included. libgnomedb doesn't
+    # compile against any libgda version that I tried
+
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+	--with-gnome
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

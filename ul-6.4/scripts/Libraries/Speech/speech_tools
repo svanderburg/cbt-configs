@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=speech_tools
+version=2.1
+group=Libraries/Speech
+license=BSD-4
+description="Speech tools"
+src="s/speech_tools/$name-$version-release.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+The Edinburgh speech tools system is a library of C++ classes, functions
+and utility programs that are frequently used in speech software. The
+system compiles to a single unix library .a file which can be linked
+with software. At present, C++ classes for several useful speech and
+language classes have been written, along with audio software and some
+basic signal processing software.
+EOF
+}
+
+buildPhase()
+{
+    echo
+}
+
+installPhase()
+{
+    mkdir -p /opt/$name
+    cp -av * /opt/$name
+    chown -R root:root /opt/$name
+    cd /opt/$name
+    ./configure --prefix=/opt/$name
+    make $globalBuildOptions
+}

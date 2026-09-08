@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+sourcesDir=/mnt/source
+
+set +h
+umask 022

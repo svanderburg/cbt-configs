@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=gegl
+version=0.0.22
+group=Libraries/Graphics
+license=LGPLv3
+description="gegl graph based image processing"
+src="g/gegl/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GEGL (Generic Graphics Library) is a graph based image processing
+framework.
+
+GEGL provides infrastructure to do demand based cached non destructive
+image editing on larger than RAM buffers. Through babl it provides
+support for a wide range of color models and pixel storage formats for
+input and output.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

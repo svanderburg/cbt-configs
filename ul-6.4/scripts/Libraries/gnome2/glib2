@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=glib2
+version=2.26.1
+group=Libraries/gnome2
+license=LGPLv2
+description="Low-level core library"
+src="g/glib/glib-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GLib is the low-level core library that forms the basis for projects such as
+GTK+ and GNOME. It provides data structure handling for C, portability wrappers,
+and interfaces for such runtime functionality as an event loop, threads, dynamic
+loading, and an object system.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgweather
+version=2.30.3
+group=Desktops/gnome2
+license=GPLv2
+description="Weather access library for GNOME"
+src="l/libgweather/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libgweather is a library to access weather information from online services for
+numerous locations.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

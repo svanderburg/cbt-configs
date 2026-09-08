@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libgnome
+version=2.32.0
+group=Libraries/gnome2
+license=LGPLv2
+description="GNOME library"
+src="l/libgnome/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the non-gui part of the library formerly known as gnome-libs.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version \
+        --sysconfdir=/etc/opt/gnome-$gnome2Version \
+        --localstatedir=/var/lib \
+        --mandir=/opt/gnome-$gnome2Version/share/man
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

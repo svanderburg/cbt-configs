@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=alsa-tools
+version=1.0.18
+group=Hardware
+license=GPLv2
+description="ALSA tools"
+src="a/alsa-tools/$name-$version.tar.bz2"
+selectedSubComponents="ac3dec as10k1 echomixer envy24control hdsploader ld10k1 mixartloader pcxhrloader qlo10k1 rmedigicontrol sb16_csp sscape_ctl us428control usx2yloader vxloader seq/sbiload"
+# Not enabled: hdspconf hdspmixer (needs FLTK)
+
+showLongDescription()
+{
+    cat << "EOF"
+The alsa-tools package contains advanced tools for certain soundcards.
+EOF
+}
+
+buildPhase()
+{
+    for dir in $selectedSubComponents
+    do
+        cd "$dir"
+        ./configure --prefix=/usr
+        make $globalBuildOptions
+        cd ..
+    done
+}
+
+installPhase()
+{
+    for dir in $selectedSubComponents 
+    do
+        cd "$dir"
+        make install
+        cd ..
+    done
+}

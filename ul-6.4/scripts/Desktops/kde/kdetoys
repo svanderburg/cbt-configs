@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=kdetoys
+version=3.5.10
+group=Desktops/kde
+license=GPLv2
+description="KDE toys"
+src="k/kdetoys/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+A number of toy applications for KDE:
+
+* amor: Amusing Misuse Of Resources put's comic figures above your windows
+* eyesapplet: a kicker applet similar to XEyes
+* fifteenapplet: kicker applet, order 15 pieces in a 4x4 square by moving them
+* kaphorism: displays aphorisms
+* kmoon: system tray applet showing the moon phase
+* kodo: mouse movement meter
+* kscore: kicker applet with a sports ticker
+* kteatime: system tray applet that makes sure your tea doesn't get too strong
+* ktux: Tux-in-a-Spaceship screen saver
+* kweather: kicker applet that will display the current weather outside
+* kworldwatch: application and kicker applet showing daylight area on the world
+               globe
+
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/kde-$kdeVersion --disable-debug \
+        --disable-dependency-tracking
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

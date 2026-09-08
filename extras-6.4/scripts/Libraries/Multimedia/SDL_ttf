@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=SDL_ttf
+version=2.0.11
+license=zlib
+group=Libraries/Multimedia
+description="SDL True Type Font"
+src="s/SDL_ttf/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+This library is a wrapper around the excellent FreeType 2.0 library.
+This library allows you to use TrueType fonts to render text in SDL
+applications.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

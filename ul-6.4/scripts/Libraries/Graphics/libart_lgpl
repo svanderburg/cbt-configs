@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libart_lgpl
+version=2.3.21
+group=Libraries/Graphics
+license=LGPLv2
+description="High performance 2D graphics library"
+src="l/libart_lgpl/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+This is the LGPL'd component of libart. All functions needed for
+running the Gnome canvas, and for printing support, will be going in
+here. The GPL'd component will be getting various enhanced functions
+for specific applications.
+EOF
+}
+
+# '
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

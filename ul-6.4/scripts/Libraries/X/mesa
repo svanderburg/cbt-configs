@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=mesa
+version=7.0.4
+group=Libraries/X
+license=X11
+description="Mesa3D library"
+srcs=("m/MesaLib/MesaLib-$version.tar.bz2" "m/MesaDemos/MesaDemos-$version.tar.bz2" "m/MesaGLUT/MesaGLUT-$version.tar.bz2")
+sourceRoot=Mesa-$version
+
+showLongDescription()
+{
+    cat << "EOF"
+Mesa3D provides an open source implementation of OpenGL and translates these
+specifications to vendor-specific graphics hardware drivers. Mesa also contains
+an OpenGL-compatible implementation of a software renderer.
+EOF
+}
+
+buildPhase()
+{
+    make linux-dri-x86 OPT_FLAGS="$CFLAGS -fno-strict-aliasing" \
+        DRI_DRIVER_INSTALL_DIR=${XORG_PREFIX}/lib/libX11/modules/dri \
+        X11_INCLUDES=-I${XORG_PREFIX}/include \
+        EXTRA_LIB_PATH=-L${XORG_PREFIX}/lib
+
+    sed -i 's@-l$(GLUT_LIB)@@' configs/default
+    make -C progs/xdemos PROGS='glxinfo glxgears'
+}
+
+installPhase()
+{
+    make install INSTALL_DIR=${XORG_PREFIX} \
+        DRI_DRIVER_INSTALL_DIR=${XORG_PREFIX}/lib/libX11/modules/dri
+    install -dv ${XORG_PREFIX}/share/doc/$name-$version
+    install -v -m644 docs/* ${XORG_PREFIX}/share/doc/$name-$version
+
+    install -v -m755 progs/xdemos/glx{info,gears} ${XORG_PREFIX}/bin
+
+    ln -s -v ${XORG_PREFIX}/include/GL /usr/include
+
+    # We need to retain the source code. xorg-server needs it
+    mv ../Mesa-$version /usr/src
+}
+

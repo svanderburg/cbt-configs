@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=libnotify
+version=0.5.2
+group=Libraries/gnome2
+license=LGPLv2.1
+description="Notification library"
+src="l/libnotify/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+libnotify is a library that allows applications to send passive,
+desktop-independent notifications to a notification daemon. It serves as a
+simple wrapper to pass messages to standard systems and supports sandboxed
+applications (like Flatpaks or Snaps) by routing notifications through the XDG
+Desktop Portal API.
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/opt/gnome-$gnome2Version
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+}

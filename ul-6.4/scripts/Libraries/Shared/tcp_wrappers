@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=tcp_wrappers
+version=7.6
+group=Libraries/Shared
+license=GPLv2
+description="TCP wrappers"
+src="t/tcp_wrappers/${name}_${version}.tar.gz"
+patches=("t/tcp_wrappers/$name-$version-shared_lib_plus_plus-1.patch")
+
+showLongDescription()
+{
+    cat << "EOF"
+tcp_wrappers is a host-based networking ACL system, used to filter network
+access to Internet Protocol servers on (Unix-like) operating systems. It allows
+host or subnetwork IP addresses, names and/or ident query replies, to be used as
+tokens on which to filter for access control purposes. 
+EOF
+}
+
+buildPhase()
+{
+    sed -i -e "s,^extern char \*malloc();,/* & */," scaffold.c
+    make REAL_DAEMON_DIR=/usr/sbin STYLE=-DPROCESS_OPTIONS linux
+}
+
+installPhase()
+{
+    make install
+}

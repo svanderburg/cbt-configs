@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=speechd
+version=0.56
+group=Libraries/Speech
+license=GPLv2
+description="Speech daemon"
+src="s/speechd/$name-$version.tar.gz"
+
+showLongDescription()
+{
+    cat << "EOF"
+speechd implements the /dev/speech device -- all text written to this file will
+be spoken aloud.
+EOF
+}
+
+buildPhase()
+{
+    make INSTALL_BINDIR=/usr/bin INSTALL_MANDIR=/usr/share/man/man1
+}
+
+installPhase()
+{
+    make INSTALL_BINDIR=/usr/bin INSTALL_MANDIR=/usr/share/man/man1 install
+
+    install -m754 $cbtBaseDir/init.d/speechd /etc/rc.d/init.d
+    install -d -m755 /usr/share/ul/ul-init
+    install -m644 $cbtBaseDir/plugins/ul-init/speechd /usr/share/ul/ul-init
+}

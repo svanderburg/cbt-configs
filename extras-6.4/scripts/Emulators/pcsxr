@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=pcsxr
+version=1.9.92
+license=GPLv2
+group=Emulators
+description="Play Station emulator"
+src="p/pcsxr/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+PCSX-Reloaded is a forked version of the dead PCSX emulator, with a nicer
+interface and several improvements to stability and functionality.
+EOF
+}
+
+buildPhase()
+{
+    local extraArgs=
+
+    if pkg-config --libs libcdio > /dev/null
+    then
+        extraArgs="--enable-libcdio"    
+    fi
+
+    ./configure --prefix=/usr --enable-opengl $extraArgs
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    
+    # Change category of the desktop item to: Emulator
+    sed -i 's/Categories=Game;/Categories=Emulator;/' /usr/share/applications/pcsx.desktop
+}

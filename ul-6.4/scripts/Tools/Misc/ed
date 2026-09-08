@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/ul-packages-settings
+
+name=ed
+version=1.1
+group=Tools/Misc
+license=GPLv3
+description="GNU Ed"
+src="e/ed/$name-$version.tar.bz2"
+
+showLongDescription()
+{
+    cat << "EOF"
+GNU ed is a line-oriented text editor. It is used to create, display, modify
+andotherwise manipulate text files, both interactively and via shell scripts.
+A restricted version of ed, red, can only edit files in the current directory
+and cannot execute shell commands.
+
+Ed is the 'standard' text editor in the sense that it is the original editor
+for Unix, and thus widely available. For most purposes, however, it is
+superseded by full-screen editors. 
+EOF
+}
+
+buildPhase()
+{
+    ./configure --prefix=/usr
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    make install-man
+}

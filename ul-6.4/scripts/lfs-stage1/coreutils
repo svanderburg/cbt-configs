@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deployStage1SourcePackage
+source $cbtBaseDir/settings/lfs-stage1-settings
+source $cbtBaseDir/meta/coreutils
+patches=("c/coreutils/$name-$version-old_build_kernel-1.patch")
+
+group=lfs-stage1
+
+buildPhase()
+{
+    ./configure --prefix=/tools --enable-install-program=hostname
+    make $globalBuildOptions
+}
+
+installPhase()
+{
+    make install
+    #cp -v src/su /tools/bin/su-tools
+    # CBT tools require a su implementation to do unprivileged builds. Use this until shadow gets installed
+    cp -v src/su /tools/bin/su
+}

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+# Configure WDM
+
+if [ -x /usr/bin/wdm ]
+then
+    # WindowMaker should always be first
+    wmTypes="WindowMaker"
+    
+    # Add remaining window manager sessions
+    for sessionTypeFile in /usr/share/ul/ul-xsession/sessions/*
+    do
+        wmType="$(basename "$sessionTypeFile")"
+
+        set +e
+        descriptionLine="$(grep 'Description: ' $sessionTypeFile)"
+	set -e
+
+	if [ "$descriptionLine" = "" ]
+	then
+	    description="$wmType"
+	else
+	    description="${descriptionLine#*: }"
+	fi
+	
+	if [ "$wmType" != "windowmaker" ] && [ "$wmType" != "failsafe" ]
+	then
+            wmTypes="${wmTypes}:${description}"
+	fi
+    done
+    
+    cp /etc/wdm/wdm-config /etc/wdm/wdm-config.bak
+    sed -e "s|DisplayManager\*session:         .*|DisplayManager\*session:         /usr/share/ul/ul-xsession/Xsession|" \
+      -e "s|DisplayManager\*wdmWm:           .*|DisplayManager\*wdmWm:           $wmTypes|" \
+      /etc/wdm/wdm-config.bak > /etc/wdm/wdm-config
+    rm /etc/wdm/wdm-config.bak
+fi
