@@ -110,7 +110,8 @@ Input device support --->
        Hardware I/O ports --->
 {M}        Gameport support (NEW)
 
-< > I2C support --->
+# required for nvidiafb
+<*> I2C support --->
 
 Multimedia devices --->
 [ ]    DAB adapters
@@ -122,6 +123,7 @@ Graphics support --->
 <*>    Support for frame buffer devices --->
 [*]        VESA VGA graphics support
 <M>        nVidia Framebuffer Support
+[*]            Enable DDC Support
 [ ]    Backlight & LCD device support --->
        Console display driver support --->
 <M>        Framebuffer Console support
