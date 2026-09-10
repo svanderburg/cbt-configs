@@ -28,4 +28,7 @@ buildPhase()
 installPhase()
 {
     make prefix=/usr install
+
+    # Modify udev rule to give ordinary users access to the /etc/svga* device files
+    sed -i 's/0660/0666/' /etc/udev/rules.d/56-svga.rules
 }
