@@ -331,6 +331,55 @@ are included:
   version of `udev` including `libgudev`, which is not compatible with the
   included versions of the Linux kernel headers, HAL and X.Org server.
 
+KDE and GNOME-specific sub menus
+--------------------------------
+Since KDE 3.0 and GNOME 2.0, organizing menu items has been standardized by the
+freedesktop.org group. Both desktops use the same file formats and the same
+search directories for desktop menu items.
+
+An advantage of this standardization effort is that both desktops have access to
+exactly the same application set. Moreover, it is no longer required to maintain
+two different menu configurations.
+
+As a result, for application developers it has become easier to support any kind
+of freedesktop.org-compatible desktop environment.
+
+Something that I consider a disadvantage is the usability issues that surface
+when both desktops are concurrently installed on the same system.
+
+Some applications are designed for one kind of desktop specifically. As a
+consequence, both desktop environment have applications that perform exactly the
+same functions, such as:
+
+* A file manager (GNOME has Nautilus, KDE has Konqueror)
+* An image viewer (GNOME has EOG, KDE has KView and Kuickshow)
+* A terminal emulator (GNOME has the GNOME Terminal, KDE has Konsole)
+
+Although it is nice to have the freedom to, for example, use the GNOME terminal
+from a KDE session, you most likely want to give the preference to the
+applications that are tailored towards the needs of the desktop environment that
+you have selected.
+
+If a menu is polluted with similar applications from both desktops, I consider
+the user experience to be confusing, especially if you have to show the Linux
+desktop experience to less technical users.
+
+In UL-6.4, I have categorized some applications as KDE and GNOME-specific and
+created two specialized sub menus:
+
+* When starting a KDE session, all GNOME-specific applications are organized in
+  a specialized "GNOME Menu" sub menu. The KDE sub menus only display
+  KDE-specific and general applications
+* When starting a GNOME session, all KDE-specific applications are organized in
+  a specialized "KDE Menu" sub menu. The GNOME sub menus only display
+  GNOME-specific and general applications
+
+Some applications may not be desktop-specific (but may still be using
+technology commonly used for a desktop). For example, both Mozilla Firefox and
+the GIMP use GTK+ (the GUI toolkit used by the GNOME desktop), but I have not
+considered them to be GNOME specific. General applications are available in the
+default menus of both the KDE and GNOME desktops.
+
 Display managers
 ----------------
 By default, an installation uses runlevel 3 that provides a textual login. It
