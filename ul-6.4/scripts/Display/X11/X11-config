@@ -8,7 +8,7 @@ description="Global configuration settings for X11"
 
 execute()
 {
-    echo "MANDATORY_MANPATH /usr/X11$xorgVersion/share/man" >> /etc/man_db.conf
+    echo "MANDATORY_MANPATH /usr/X11R$xorgVersion/share/man" >> /etc/man_db.conf
     echo "/usr/X11R$xorgVersion/lib" >> /etc/ld.so.conf
     ldconfig
 
