@@ -49,4 +49,8 @@ buildPhase()
 installPhase()
 {
     make install
+
+    # Categorize the GDA desktop menu items as GNOME-specific
+    sed -i 's/Categories=/Categories=GNOME;/' /opt/gnome-$gnome2Version/share/applications/gda-browser-4.0.desktop
+    sed -i 's/Categories=/Categories=GNOME;/' /opt/gnome-$gnome2Version/share/applications/gda-control-center-4.0.desktop
 }
