@@ -514,10 +514,6 @@
 			</Include>
 		</Menu>
 	</Menu>
-	<Menu>
-		<MergeFile>kde-gnome.menu</MergeFile>
-		<Name>GNOME Menu</Name>
-	</Menu>
 	<Include>
 		<And>
 		<Category>KDE</Category>
