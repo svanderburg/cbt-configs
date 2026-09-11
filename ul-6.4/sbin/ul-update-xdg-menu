@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+if which twm
+then
+    cd /usr/X11R6/share/X11/twm
+
+    sed -e '/^menu "defops"/i\
+sinclude(`/usr/X11R6/share/X11/twm/xdg-menu.twmrc'"'"')
+' \
+      -e '/"Twm"\tf.title/a\
+"Applications"  f.menu "xdg_menu"
+' system.twmrc.bak > system.twmrc.m4
+
+    xdg_menu --format twm --root-menu /etc/xdg/menus/ul-applications.menu > xdg-menu.twmrc
+    m4 system.twmrc.m4 > system.twmrc
+fi
+
+if which mwm
+then
+    cd /usr/X11R6/lib/X11/mwm
+
+    xdg_menu --format twm --root-menu /etc/xdg/menus/ul-applications.menu > xdg-menu.mwmrc
+
+    sed '/"Root Menu"/a\
+"Application"          f.menu "xdg_menu"
+' system.mwmrc.bak > tmp
+    cat xdg-menu.mwmrc tmp > system.mwmrc
+    rm tmp
+fi

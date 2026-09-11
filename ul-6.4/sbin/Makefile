@@ -18,7 +18,9 @@ SCRIPTS=ul-adduser \
 	ul-stage2 \
 	ul-stage3 \
 	ul-timezone \
+	ul-update-xdg-menu \
 	ul-utc \
+	ul-xdg-menu \
 	ul-xdm \
 	ul-xinit
 

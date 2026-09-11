@@ -25,6 +25,7 @@ do
        "xorgconfig"  "Configure X.Org server" \
        "ul-xdm"      "Select X display manager" \
        "ul-cfgdms"   "Configure display managers" \
+       "ul-xdg-menu" "Enable XDG menu in window managers" \
         2>&1 1>&3)
     exitStatus=$?
     set -e

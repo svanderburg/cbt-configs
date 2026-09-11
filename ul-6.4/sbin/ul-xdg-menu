@@ -1,0 +1,67 @@
+#!/bin/bash -e
+
+# Update Window Maker configuration
+
+if wmaker --version
+then
+    cd /etc/WindowMaker
+
+    if [ ! -f WMRootMenu.bak ]
+    then
+        mv WMRootMenu WMRootMenu.bak
+    fi
+
+    sed -e '2i\ ("XDG Menu", OPEN_MENU, "| xdg_menu --format WindowMaker --root-menu /etc/xdg/menus/ul-applications.menu"),\' WMRootMenu.bak > WMRootMenu
+
+    cd /usr/share/WindowMaker
+
+    if [ ! -f plmenu.bak ]
+    then
+        mv plmenu plmenu.bak
+    fi
+
+    sed -e '2i\ ("XDG Menu", OPEN_MENU, "| xdg_menu --format WindowMaker --root-menu /etc/xdg/menus/ul-applications.menu"),\' plmenu.bak > plmenu
+fi
+
+# Update fvwm95 configuration
+
+if which fvwm95
+then
+    cd /usr/X11R6/lib/X11/fvwm95
+
+    if [ ! -f system.fvwm95rc.bak ]
+    then
+        mv system.fvwm95rc system.fvwm95rc.bak
+    fi
+
+    sed -e '/DestroyMenu "Programs"/i\
+PipeRead "xdg_menu --format fvwm2 --root-menu \/etc\/xdg\/menus\/ul-applications.menu"
+' \
+      -e '/AddToMenu "Programs"/a\
+  "XDG Menu"                            Popup xdg_menu
+' \
+      -e 's/  "Accessories/+ "Accessories/' \
+      system.fvwm95rc.bak > system.fvwm95rc
+fi
+
+if which twm
+then
+    cd /usr/X11R6/share/X11/twm
+
+    if [ ! -f system.twmrc.bak ]
+    then
+        cp system.twmrc system.twmrc.bak
+    fi
+fi
+
+if which mwm
+then
+    cd /usr/X11R6/lib/X11/mwm
+
+    if [ ! -f system.mwmrc.bak ]
+    then
+        cp system.mwmrc system.mwmrc.bak
+    fi
+fi
+
+ul-update-xdg-menu
