@@ -21,6 +21,12 @@ EOF
 
 buildPhase()
 {
+    # Fix error: lvalue required as left operand of an assigment
+    sed -i 's|(void \*) mif =|mif =|' modules/FvwmTaskBar/BatStatModule.c
+
+    # Fix error: pasting "." and "res" does not give a valid preprocessing token
+    sed -i 's|##field|field|g' modules/FvwmIconMan/FvwmIconMan.c
+
     ./configure --prefix=/usr/X11R$xorgVersion
     make $globalBuildOptions
 }
