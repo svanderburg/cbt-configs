@@ -25,7 +25,11 @@ EOF
 buildPhase()
 {
     autoreconf -f -i
-    ./configure --prefix=/usr --sysconfdir=/etc --enable-shared
+    ./configure --prefix=/usr \
+        --sysconfdir=/etc \
+        --enable-shared \
+        --with-gnustepdir=/usr/GNUstep \
+        --enable-usermenu
     make $globalBuildOptions
 }
 
