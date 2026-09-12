@@ -331,11 +331,11 @@ are included:
   version of `udev` including `libgudev`, which is not compatible with the
   included versions of the Linux kernel headers, HAL and X.Org server.
 
-KDE and GNOME-specific sub menus
---------------------------------
+KDE, GNOME and X-specific sub menus
+-----------------------------------
 Since KDE 3.0 and GNOME 2.0, organizing menu items has been standardized by the
-freedesktop.org group. Both desktops use the same file formats and the same
-search directories for desktop menu items.
+freedesktop.org group. Both desktop environments use the same file formats and
+the same search directories for desktop menu items.
 
 An advantage of this standardization effort is that both desktops have access to
 exactly the same application set. Moreover, it is no longer required to maintain
@@ -345,40 +345,81 @@ As a result, for application developers it has become easier to support any kind
 of freedesktop.org-compatible desktop environment.
 
 Something that I consider a disadvantage is the usability issues that surface
-when both desktops are concurrently installed on the same system.
+when multiple desktop environments are concurrently installed on the same
+system.
 
 Some applications are designed for one kind of desktop specifically. As a
-consequence, both desktop environment have applications that perform exactly the
-same functions, such as:
+consequence, the desktop environments' menus display multiple applications that
+perform exactly the same functions, such as:
 
-* A file manager (GNOME has Nautilus, KDE has Konqueror)
-* An image viewer (GNOME has EOG, KDE has KView and Kuickshow)
-* A terminal emulator (GNOME has the GNOME Terminal, KDE has Konsole)
+* A file manager (GNOME has Nautilus, KDE has Konqueror, for ordinary window
+  managers you may want to use XFM)
+* An image viewer (GNOME has EOG, KDE has KView and Kuickshow, for ordinary
+  window managers you may want to use ImageMagick's viewer)
+* A terminal emulator (GNOME has the GNOME Terminal, KDE has Konsole, ordinary
+  window managers typically refer to xterm)
 
 Although it is nice to have the freedom to, for example, use the GNOME terminal
 from a KDE session, you most likely want to give the preference to the
 applications that are tailored towards the needs of the desktop environment that
 you have selected.
 
-If a menu is polluted with similar applications from both desktops, I consider
-the user experience to be confusing, especially if you have to show the Linux
-desktop experience to less technical users.
+If a menu is polluted with similar applications from multiple desktops, I
+consider the user experience to be confusing, especially if you have to show the
+Linux desktop experience to less technical users.
 
-In UL-6.4, I have categorized some applications as KDE and GNOME-specific and
-created two specialized sub menus:
+In UL-6.4, I have categorized some applications as X, KDE and GNOME-specific and
+created three specialized sub menus:
 
 * When starting a KDE session, all GNOME-specific applications are organized in
-  a specialized "GNOME Menu" sub menu. The KDE sub menus only display
-  KDE-specific and general applications
+  a specialized "GNOME Menu" sub menu and all X-specific applications in an
+  "X Applications" sub menu. The KDE sub menus only display KDE-specific and
+  general applications
 * When starting a GNOME session, all KDE-specific applications are organized in
-  a specialized "KDE Menu" sub menu. The GNOME sub menus only display
-  GNOME-specific and general applications
+  a specialized "KDE Menu" sub menu and all X-specific applications in an
+  "X Applications" sub menu. The GNOME sub menus only display GNOME-specific and
+  general applications
 
 Some applications may not be desktop-specific (but may still be using
-technology commonly used for a desktop). For example, both Mozilla Firefox and
-the GIMP use GTK+ (the GUI toolkit used by the GNOME desktop), but I have not
+technology preferred by a specific desktop). For example, both Mozilla Firefox
+and the GIMP use GTK+ (the GUI toolkit used by the GNOME desktop), but I have not
 considered them to be GNOME specific. General applications are available in the
-default menus of both the KDE and GNOME desktops.
+default menus of all desktop environments.
+
+XDG desktop menu integration with non-standardized window managers
+------------------------------------------------------------------
+As explained, KDE and GNOME use a standardized format for organizing their menus.
+The other window managers in this distribution also have menu functionality, but
+they use their own format.
+
+It is still possible for these other window managers to use the freedesktop.org
+menu organization by using a tool called: `xdg_menu`. `xdg_menu` that can
+automatically convert freedesktop.org menus to the format of all kinds of window
+managers.
+
+All window managers in this distribution (TWM, MWM, fvwm95 and Window Maker) are
+supported. When XDG menu integration is enabled, you should see an "XDG Menu" sub
+menu.
+
+You can enable XDG menu integration by running:
+
+```bash
+$ ul-xdg-menu
+```
+
+fvwm95 and Window Maker can on-the-fly convert the XDG menus through a pipe. The
+configurations of TWM and MWM, need to be updated each time the menu structure
+changes (e.g. through a package installation). This can be done by running the
+following command:
+
+```bash
+$ ul-update-xdg-menu
+```
+
+When using the XDG menu integration feature, the menu structure gives the
+preference to ordinary X applications and general applications. KDE applications
+are organized in a "KDE Menu" sub menu and GNOME applications in a "GNOME Menu"
+sub menu.
 
 Display managers
 ----------------
