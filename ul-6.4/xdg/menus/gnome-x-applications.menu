@@ -1,0 +1,158 @@
+ <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+  "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+
+<Menu>
+    <Name>X Applications</Name>
+    <Directory>x-applications.directory</Directory>
+
+    <!-- Graphics menu -->
+    <Menu>
+        <Name>Graphics</Name>
+        <Include>
+            <And>
+                <Category>Graphics</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Multimedia menu -->
+    <Menu>
+        <Name>Multimedia</Name>
+        <Include>
+            <And>
+                <Or>
+                    <Category>Audio</Category>
+                    <Category>Video</Category>
+                    <Category>AudioVideo</Category>
+                </Or>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Development menu -->
+    <Menu>
+        <Name>Development</Name>
+        <Include>
+            <And>
+                <Category>Development</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Office menu -->
+    <Menu>
+        <Name>Office</Name>
+        <Include>
+            <And>
+                <Category>Office</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Network menu -->
+    <Menu>
+        <Name>Network</Name>
+        <Include>
+            <And>
+                <Category>Network</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Utilities menu -->
+    <Menu>
+        <Name>Utilities</Name>
+        <Include>
+            <And>
+                <Category>Utility</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- System menu -->
+    <Menu>
+        <Name>System</Name>
+        <Include>
+            <And>
+                <Category>System</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Emulators menu -->
+    <Menu>
+        <Name>Emulators</Name>
+        <Include>
+            <And>
+                <Category>Emulator</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Games menu -->
+    <Menu>
+        <Name>Games</Name>
+        <Include>
+            <And>
+                <Category>Game</Category>
+                <Category>X11</Category>
+                <Not><Category>Shooter</Category></Not>
+            </And>
+
+        </Include>
+
+        <!-- Shooters sub menu -->
+        <Menu>
+            <Name>Shooters</Name>
+            <Include>
+                <And>
+                    <Category>Game</Category>
+                    <Category>Shooter</Category>
+                    <Category>X11</Category>
+                </And>
+            </Include>
+        </Menu>
+    </Menu>
+
+    <!-- Education menu -->
+    <Menu>
+        <Name>Education</Name>
+        <Include>
+            <And>
+                <Category>Education</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Science menu -->
+    <Menu>
+        <Name>Science</Name>
+        <Include>
+            <And>
+                <Category>Science</Category>
+                <Category>X11</Category>
+            </And>
+        </Include>
+    </Menu>
+
+    <!-- Other menu -->
+    <Menu>
+        <Name>Other</Name>
+        <OnlyUnallocated/>
+        <Include>
+            <And>
+                <Category>X11</Category>
+                <Not><Category>Settings</Category></Not>
+            </And>
+        </Include>
+    </Menu>
+</Menu>

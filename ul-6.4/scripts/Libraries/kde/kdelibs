@@ -49,6 +49,7 @@ installPhase()
     cd /etc/opt/kde-$kdeVersion/xdg/menus
     mv applications.menu kde-applications.menu
 
-    # Install extra menu configuration file for the GNOME sub menu
+    # Install extra menu configuration file for the GNOME and X Applications sub menus
     install -m644 $cbtBaseDir/xdg/menus/kde-gnome.menu /etc/opt/kde-$kdeVersion/xdg/menus
+    install -m644 $cbtBaseDir/xdg/menus/kde-x-applications.menu /etc/opt/kde-$kdeVersion/xdg/menus
 }

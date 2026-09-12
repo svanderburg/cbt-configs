@@ -41,7 +41,8 @@ SessionsDirs=/etc/X11/sessions' /opt/kde-$kdeVersion/share/config/kdm/kdmrc
 
     # Add extra directory files
 
-    install -m644 $cbtBaseDir/xdg/desktop-directories/kde-emulators.directory \
+    install -m644 $cbtBaseDir/xdg/desktop-directories/kde-x-applications.directory \
+        $cbtBaseDir/xdg/desktop-directories/kde-emulators.directory \
         $cbtBaseDir/xdg/desktop-directories/kde-games-shooter.directory \
         $cbtBaseDir/xdg/desktop-directories/kde-gnome.directory \
 	/opt/kde-$kdeVersion/share/desktop-directories

@@ -38,6 +38,7 @@ installPhase()
 
     install -m644 $cbtBaseDir/xdg/desktop-directories/Emulators.directory \
         $cbtBaseDir/xdg/desktop-directories/KDE.directory \
+	$cbtBaseDir/xdg/desktop-directories/x-applications.directory \
 	/opt/gnome-$gnome2Version/share/desktop-directories
 
     # Rename applications.menu file because it has the same name as KDE's
@@ -49,6 +50,7 @@ installPhase()
     cd /etc/opt/gnome-$gnome2Version/xdg/menus
     mv applications.menu gnome-applications.menu
 
-    # Install extra menu configuration file for the KDE sub menu
+    # Install extra menu configuration file for the KDE and X Applications sub menus
     install -m644 $cbtBaseDir/xdg/menus/gnome-kde.menu /etc/opt/gnome-$gnome2Version/xdg/menus
+    install -m644 $cbtBaseDir/xdg/menus/gnome-x-applications.menu /etc/opt/gnome-$gnome2Version/xdg/menus
 }
