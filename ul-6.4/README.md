@@ -386,16 +386,16 @@ and the GIMP use GTK+ (the GUI toolkit used by the GNOME desktop), but I have no
 considered them to be GNOME specific. General applications are available in the
 default menus of all desktop environments.
 
-XDG desktop menu integration with non-standardized window managers
-------------------------------------------------------------------
-As explained, KDE and GNOME use a standardized format for organizing their menus.
-The other window managers in this distribution also have menu functionality, but
-they use their own format.
+XDG menu integration in non-standardized window managers
+--------------------------------------------------------
+As explained earlier, KDE and GNOME use a standardized file formats for
+organizing their menus. The other window managers in this distribution also have
+menu functionality, but they use their own file formats.
 
-It is still possible for these other window managers to use the freedesktop.org
-menu organization by using a tool called: `xdg_menu`. `xdg_menu` that can
-automatically convert freedesktop.org menus to the format of all kinds of window
-managers.
+It is possible to easily integrate a freedesktop.org-compatbile menu
+organization into these other window managers' configurations by using a tool
+called: `xdg_menu`. `xdg_menu` can automatically convert freedesktop.org menus
+to the file formats of all kinds of window managers.
 
 All window managers in this distribution (TWM, MWM, fvwm95 and Window Maker) are
 supported. When XDG menu integration is enabled, you should see an "XDG Menu" sub
