@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $cbtFunctionsDir/deploySourcePackage
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=ImageMagick
@@ -10,6 +10,14 @@ group=Tools/Graphics
 license=MIT
 description="ImageMagick utility"
 src="i/ImageMagick/$name-$pkgVersion.tar.xz"
+
+desktopTargetDir="/usr/share/applications"
+desktopName="ImageMagick display"
+genericName="Image viewer"
+exec=display
+comment="Image viewer"
+categories="X11;Graphics;"
+mimeType="image/gif;image/x-xpm;image/x-xbm;image/jpeg;image/x-bmp;image/png;image/x-ico;image/x-portable-bitmap;image/x-portable-pixmap;image/x-portable-greymap;image/tiff;image/jp2;"
 
 showLongDescription()
 {
