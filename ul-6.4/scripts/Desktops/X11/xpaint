@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $cbtFunctionsDir/deploySourcePackage
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=xpaint
@@ -10,6 +10,13 @@ license=GPLv3
 description="X Paint"
 src="x/xpaint/$name-$version.tar.bz2"
 patches=("x/xpaint/$name-$version-ewmh-minor-fixes.patch" "x/xpaint/$name-$version-minor_fixes.patch" "x/xpaint/$name-$version-small-improvements.patch")
+
+desktopTargetDir="/usr/share/applications"
+desktopName="X Paint"
+genericName="Drawing program"
+exec=xpaint
+comment="Drawing program"
+categories="X11;Graphics;"
 
 showLongDescription()
 {

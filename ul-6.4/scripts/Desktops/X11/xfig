@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $cbtFunctionsDir/deploySourcePackage
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=xfig
@@ -10,6 +10,14 @@ license=xfig
 description="X Figure Drawing"
 src="x/xfig/${name}.${version}.full.tar.gz"
 patches=("x/xfig/$name-$version.skip.missing.html.manpage.diff.gz")
+
+desktopTargetDir="/usr/share/applications"
+desktopName="XFig"
+genericName="Vector graphics editor"
+exec=xfig
+comment="Vector graphics editor"
+categories="Graphics;"
+mimeType="application/x-xfig"
 
 showLongDescription()
 {

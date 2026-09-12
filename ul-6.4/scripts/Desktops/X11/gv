@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $cbtFunctionsDir/deploySourcePackage
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=gv
@@ -9,6 +9,14 @@ group=Desktops/X11
 license=GPLv3
 description="Ghostscript frontend"
 src="g/gv/$name-$version.tar.gz"
+
+desktopTargetDir="/usr/share/applications"
+desktopName="GV"
+genericName="Ghostscript viewer"
+exec=gv
+comment="Ghostscript viewer"
+categories="X11;Graphics;"
+mimeType="application/postscript;"
 
 showLongDescription()
 {

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $cbtFunctionsDir/deploySourcePackage
+source $cbtFunctionsDir/deployXDGDesktopSourcePackage
 source $cbtBaseDir/settings/ul-packages-settings
 
 name=xpdf
@@ -10,6 +10,14 @@ license=GPLv2
 description="X PDF"
 src="x/xpdf/$name-$version.tar.gz"
 patches=("x/xpdf/$name-$version-CVE-2012-2142.diff.gz" "x/xpdf/xpdf.XPDFViewer.diff.gz" "x/xpdf/xpdfrc.diff.gz")
+
+desktopTargetDir="/usr/share/applications"
+desktopName="X PDF"
+genericName="PDF Viewer"
+exec=xpdf
+comment="PDF Viewer"
+categories="X11;Graphics;"
+mimeType="application/pdf;application/x-pdf"
 
 showLongDescription()
 {
