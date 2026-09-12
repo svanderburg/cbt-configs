@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=bitmap
+GenericName=Bitmap editor
+Comment=Bitmap editor
+Exec=bitmap
+Categories=X11;Graphics;

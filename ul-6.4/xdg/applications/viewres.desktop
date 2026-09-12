@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=viewres
+GenericName=Class browser
+Comment=Graphical class browser for Xt
+Exec=viewres
+Categories=X11;System;

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Editor
+Comment=Print contents of X events
+Exec=xev
+Categories=X11;System;

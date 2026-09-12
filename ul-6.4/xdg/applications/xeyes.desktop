@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Eyes
+Comment=Follow the mouse X demo
+Exec=xeyes
+Categories=X11;Education;

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=X Editor
+GenericName=Text Editor
+Comment=Text editor for X
+Exec=xedit
+Categories=X11;Utility;

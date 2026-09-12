@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Font Selector
+Comment=Point and click selection of X11 font names
+Exec=xfontsel
+Categories=X11;System;

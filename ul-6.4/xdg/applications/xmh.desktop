@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X MH
+Comment=Send and read mail with an X interface to MH
+Exec=xmh
+Categories=X11;Network;

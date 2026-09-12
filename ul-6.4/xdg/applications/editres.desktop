@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=editres
+GenericName=Resource editor
+Comment=Dynamic resource editor for X Toolkit applications
+Exec=editres
+Categories=X11;System;

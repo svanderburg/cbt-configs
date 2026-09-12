@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Biff
+Comment=Mailbox flag for X
+Exec=xbiff
+Categories=X11;Education;

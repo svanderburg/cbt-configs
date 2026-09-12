@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Kill
+Comment=Kill a client by its X resource
+Exec=xkill
+Categories=X11;System;

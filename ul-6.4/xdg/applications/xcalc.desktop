@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Calc
+Comment=Scientific calculator for X
+Exec=xcalc
+Categories=X11;Utility;

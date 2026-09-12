@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X dit view
+Comment=display ditroff output
+Exec=xditview
+Categories=X11;Development;

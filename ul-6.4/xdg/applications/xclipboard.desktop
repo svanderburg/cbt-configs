@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Clipboard
+Comment=X Clipboard client
+Exec=xclipboard
+Categories=X11;System;

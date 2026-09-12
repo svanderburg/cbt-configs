@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=oclock
+GenericName=Round clock
+Comment=Round X clock
+Exec=oclock
+Categories=X11;Science;

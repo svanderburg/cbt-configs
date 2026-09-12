@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Vidtune
+Comment=Video mode tuner for X
+Exec=xvidtune
+Categories=X11;System;

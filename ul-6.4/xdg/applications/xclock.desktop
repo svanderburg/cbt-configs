@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Clock
+Comment=Analog and digital clock for X
+Exec=xclock
+Categories=X11;System;

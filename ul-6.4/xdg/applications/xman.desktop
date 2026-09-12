@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Man
+Comment=Manual display program for X
+Exec=xman
+Categories=X11;Utility;

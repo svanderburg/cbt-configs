@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=ico
+GenericName=Icosahedron animator
+Comment=Animate an icosahedron or other polyhedron
+Exec=bitmap
+Categories=X11;Education;

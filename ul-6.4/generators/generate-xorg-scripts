@@ -67,6 +67,17 @@ installPhase()
     make install
 _EOF_
 
+    # Add desktop file if it exists for this package
+    if [ "$set" = "app" ] && [ -f ../xdg/applications/$name.desktop ]
+    then
+        cat >> $scriptBaseDir/$name << "_EOF_"
+
+    # Install desktop item
+    mkdir -p /usr/share/applications
+    install -m644 $cbtBaseDir/xdg/applications/$name.desktop /usr/share/applications
+_EOF_
+    fi
+
     # Additions for certain packages
     if [ "$set" = "app" ] && [ "$name" = "xinit" ]
     then

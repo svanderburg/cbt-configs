@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Logo
+Comment=X Window System logo displayer
+Exec=xlogo
+Categories=X11;Education;

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=xgc
+Comment=X Graphics Demo
+Exec=xgc
+Categories=X11;Education;

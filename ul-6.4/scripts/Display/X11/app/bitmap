@@ -26,4 +26,8 @@ buildPhase()
 installPhase()
 {
     make install
+
+    # Install desktop item
+    mkdir -p /usr/share/applications
+    install -m644 $cbtBaseDir/xdg/applications/$name.desktop /usr/share/applications
 }
