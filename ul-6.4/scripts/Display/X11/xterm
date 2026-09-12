@@ -14,6 +14,7 @@ desktopTargetDir="/usr/share/applications"
 desktopName="XTerm"
 genericName="Terminal client"
 exec=xterm
+icon=/usr/X11R$xorgVersion/share/pixmaps/xterm-color_48x48.xpm
 comment="Terminal client"
 categories="X11;Utility;"
 
