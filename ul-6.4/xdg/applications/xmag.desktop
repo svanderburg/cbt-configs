@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X Magnifier
+Comment=Magnify parts of the screen
+Exec=xmag
+Categories=X11;Utility;
