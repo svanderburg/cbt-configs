@@ -32,10 +32,6 @@ EOF
 
 buildPhase()
 {
-    # We're missing a constant INFINITY. This simulates it
-    #sed -i '1i\
-#define INFINITY 1e10000f' tools/qfcc/source/expr.c
-
     ./configure
     make $globalBuildOptions
 }
