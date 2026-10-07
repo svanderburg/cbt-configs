@@ -6,7 +6,7 @@ source $cbtBaseDir/settings/ul-packages-settings
 name=openssl
 version=0.9.8j
 group=Libraries/Security
-license=zlib
+license=openssl
 description="OpenSSL library library"
 src="o/openssl/$name-$version.tar.gz"
 patches=("o/openssl/$name-$version-fix_manpages-1.patch")

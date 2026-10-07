@@ -6,7 +6,7 @@ source $cbtBaseDir/settings/ul-packages-settings
 name=openssh
 version=3.2.3p1
 group=Network/Servers-Clients
-license=GPLv2
+license=BSD-3
 description="OpenSSH"
 src="o/openssh/$name-$version.tar.gz"
 
