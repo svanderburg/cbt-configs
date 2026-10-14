@@ -19,9 +19,11 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     if which rpm
     then
-        local extraArgs="--with-rpm"
+        extraArgs="--with-rpm"
     fi
 
     CFLAGS="$CFLAGS -I/opt/db-2.7/include" LDFLAGS="-L/opt/db-2.7/lib" \

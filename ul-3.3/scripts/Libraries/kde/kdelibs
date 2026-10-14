@@ -20,6 +20,8 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     # Hack that bypasses the ALSA check. libkmid is only compatible with ALSA
     # 0.5, but this distribution only provides ALSA 0.9. By default, if ALSA is
     # enabled in the kernel, kmid expects that ALSA functionality to be present

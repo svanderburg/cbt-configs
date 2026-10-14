@@ -34,7 +34,7 @@ buildPhase()
         --localstatedir=/var/lib \
         --mandir=/opt/gnome-$gnome2Version/share/man \
         --without-ca-file \
-	$extraArgs
+        $extraArgs
     make $globalBuildOptions
 }
 

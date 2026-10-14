@@ -19,6 +19,8 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     if which evolution
     then
         extraArgs="--with-evolution"

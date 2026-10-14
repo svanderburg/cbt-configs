@@ -21,7 +21,7 @@ EOF
 
 buildPhase()
 {
-    local extraArgs=""
+    local extraArgs=
 
     if python --version
     then

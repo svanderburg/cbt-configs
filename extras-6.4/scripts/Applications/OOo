@@ -40,8 +40,8 @@ buildPhase()
             --disable-odk \
             --disable-qadevooo \
             --enable-cairo \
-	    --enable-gio \
-	    --enable-dbus \
+            --enable-gio \
+            --enable-dbus \
             --without-afms \
             --without-fonts \
             --without-ppds \
@@ -52,14 +52,14 @@ buildPhase()
             --with-package-format=native \
             --with-vendor="BLFS" \
             --with-use-shell=bash \
-	    --with-lang="en" \
-	    --with-dict=ENUS,NLNL \
-	    --enable-minimizer \
-	    --enable-presenter-console \
-	    --enable-pdfimport \
-	    --enable-wiki-publisher \
-	    --enable-report-builder \
-	    $extraArgs
+            --with-lang="en" \
+            --with-dict=ENUS,NLNL \
+            --enable-minimizer \
+            --enable-presenter-console \
+            --enable-pdfimport \
+            --enable-wiki-publisher \
+            --enable-report-builder \
+            $extraArgs
     source LinuxX86Env.Set.sh
     ./bootstrap
     make

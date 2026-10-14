@@ -41,7 +41,7 @@ buildPhase()
     then
         extraArgs="$extraArgs --enable-libfaac"
     fi
-    
+
     if which faad
     then
         extraArgs="$extraArgs --enable-libfaad"
@@ -83,7 +83,7 @@ buildPhase()
         --enable-gpl \
         --enable-postproc --enable-x11grab \
         --enable-nonfree \
-	$extraArgs
+        $extraArgs
     make $globalBuildOptions
 }
 

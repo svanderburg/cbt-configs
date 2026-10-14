@@ -20,9 +20,11 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     if [ -f /usr/lib/libwrap.a ]
     then
-        local extraArgs="--with-libwrap"
+        extraArgs="--with-libwrap"
     fi
 
     ./configure --prefix=/usr --sysconfdir=/etc $extraArgs

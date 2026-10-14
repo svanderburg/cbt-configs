@@ -27,6 +27,8 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     if which java
     then
         extraArgs="--enable-java"

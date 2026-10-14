@@ -21,6 +21,8 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     if which openssl
     then
         extraArgs="--with-ssl"

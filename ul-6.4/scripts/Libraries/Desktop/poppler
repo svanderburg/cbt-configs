@@ -55,7 +55,7 @@ buildPhase()
 
     ./configure --prefix=/usr --sysconfdir=/etc \
         --enable-zlib --disable-gtk-test --enable-xpdf-headers \
-	$extraArgs
+        $extraArgs
     make $globalBuildOptions
 }
 

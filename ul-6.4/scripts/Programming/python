@@ -23,9 +23,11 @@ EOF
 
 buildPhase()
 {
+    local extraArgs=
+
     if which xmlwf
     then
-        local extraArgs="--with-system-expat"
+        extraArgs="--with-system-expat"
     fi
 
     # Fix gdbm compatibility

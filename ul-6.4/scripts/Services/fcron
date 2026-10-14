@@ -29,6 +29,8 @@ preConfigurePhase()
 
 buildPhase()
 {
+    local extraArgs=
+
     if ! which sendmail
     then
         extraArgs="--without-sendmail"
