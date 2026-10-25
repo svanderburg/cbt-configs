@@ -15,7 +15,7 @@ category="Multimedia"
 comment="X MultiMedia System"
 exec="/opt/gnome/bin/xmms"
 icon="xmms"
-mimeType="audio/x-mp3;audio/x-mod;audio/x-wav;audio/x-flac;audio/x-mpegurl;audio/x-mpegurl;audio/x-scpls;audio/vorbis;audio/x-ms-wma"
+mimeType="audio/x-mp3;audio/x-mod;audio/x-wav;audio/x-flac;audio/x-mpegurl;audio/x-scpls;audio/vorbis;audio/x-ms-wma"
 
 showLongDescription()
 {
