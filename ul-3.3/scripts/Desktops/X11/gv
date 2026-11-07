@@ -17,8 +17,18 @@ gv, an X11 ghostscript frontend based on Tim Theisen's ghostview 1.5.
 EOF
 }
 
+# '
+
 buildPhase()
 {
+    # Configure output directories
+    mv config.Unix config.Unix.bak
+    sed -e 's|/usr/local/bin/|/usr/bin|' \
+        -e 's|/usr/local/doc/gv/|/usr/share/doc/gv/|' \
+        -e 's|/usr/local/lib/gv/|/usr/lib/gv/|' \
+        -e 's|/usr/local/man/man1/|/usr/share/man/man1/|' \
+        config.Unix.bak > config.Unix
+
     xmkmf
     make Makefiles
     ln -s ../doc/gv.man source
