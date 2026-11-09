@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+source $cbtFunctionsDir/deploySourcePackage
+source $cbtBaseDir/settings/extra-settings
+
+name=opencbm
+version=0.4.2a
+group=Tools/Misc
+license=GPLv2
+description="Commodore 8-bit utilities"
+src="o/opencbm/$name-$version-src.zip"
+
+showLongDescription()
+{
+    cat << "EOF"
+Kernel driver and development library to control serial CBM devices, such as
+the Commodore 1541 disk drive. Fast copier included.
+EOF
+}
+
+buildPhase()
+{
+    sed -i -e 's|/usr/local|/usr|' \
+      -e 's|\$(PREFIX)/man|$(PREFIX)/share/man|' \
+      -e 's|\$(PREFIX)/info|$(PREFIX)/share/info|' \
+      LINUX/config.make
+    make -f LINUX/Makefile
+}
+
+installPhase()
+{
+    mkdir -p /lib/modules/`uname -r`/kernel/drivers/char
+    make -f LINUX/Makefile install
+}

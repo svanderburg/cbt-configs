@@ -5,6 +5,8 @@ optional="true"
 scripts="\
 Tools/Misc/dos2unix \
 Tools/Misc/mpg123 \
+Tools/Development/linuxdoc-tools \
+Tools/Misc/opencbm \
 Tools/Packers/lha \
 Tools/Packers/unrar \
 Tools/Packers/cabextract \
